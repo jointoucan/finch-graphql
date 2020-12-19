@@ -2,19 +2,19 @@ import browser from 'webextension-polyfill';
 import { graphql, GraphQLSchema, Source } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
-  TangerApiOptions,
+  TanagerApiOptions,
   GenericVariables,
-  TangerMessage,
-  TangerMessageKey,
-  TangerContext,
-  TangerMessageSource,
-  TangerContextObj,
+  TanagerMessage,
+  TanagerMessageKey,
+  TanagerContext,
+  TanagerMessageSource,
+  TanagerContextObj,
 } from './types';
 
-export class TangerApi {
+export class TanagerApi {
   schema: GraphQLSchema;
-  context: TangerContext;
-  constructor({ context, attachMessages, attachExternalMessages, ...options }: TangerApiOptions) {
+  context: TanagerContext;
+  constructor({ context, attachMessages, attachExternalMessages, ...options }: TanagerApiOptions) {
     this.schema = makeExecutableSchema(options);
     this.context = context ?? {};
 
@@ -29,33 +29,33 @@ export class TangerApi {
     }
   }
 
-  private getContext(baseContext: TangerContextObj = {}) {
+  private getContext(baseContext: TanagerContextObj = {}) {
     return typeof this.context === 'function'
     ? this.context(baseContext)
-    : { source: TangerMessageSource.Internal, ...baseContext, ...this.context };
+    : { source: TanagerMessageSource.Internal, ...baseContext, ...this.context };
   }
 
   async query<T extends {}, V extends GenericVariables>(
     query: string | Source,
     variables?: V,
-    baseContext?: TangerContextObj,
+    baseContext?: TanagerContextObj,
   ) {
     const context = this.getContext(baseContext);
     return graphql(this.schema, query, { root: true }, context, variables);
   }
 
-  onMessage(message: TangerMessage) {
-    if (message.type === TangerMessageKey.Generic && message.query) {
+  onMessage(message: TanagerMessage) {
+    if (message.type === TanagerMessageKey.Generic && message.query) {
       const { variables, query } = message;
-      return this.query(query, variables ?? {}, { source: TangerMessageSource.Message });
+      return this.query(query, variables ?? {}, { source: TanagerMessageSource.Message });
     }
   }
 
-  onExternalMessage(message: TangerMessage) {
-    if (message !== TangerMessageKey.Generic || !message.query) {
+  onExternalMessage(message: TanagerMessage) {
+    if (message !== TanagerMessageKey.Generic || !message.query) {
       return;
     }
     const { variables, query } = message;
-    return this.query(query, variables ?? {}, { source: TangerMessageSource.ExternalMessage });
+    return this.query(query, variables ?? {}, { source: TanagerMessageSource.ExternalMessage });
   }
 }

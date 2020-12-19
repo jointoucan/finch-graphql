@@ -1,27 +1,27 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-export enum TangerMessageKey {
-  Generic = 'Tanger-message'
+export enum TanagerMessageKey {
+  Generic = 'Tanager-message'
 }
 
-export enum TangerMessageSource {
+export enum TanagerMessageSource {
   Internal = 'internal',
   Message = 'message',
   ExternalMessage = 'external-message',
 }
 
 export type GenericVariables = { [key: string]: any };
-export type TangerContextObj = { [key: string]: any }
-export type TangerContext = TangerContextObj | ((obj: TangerContextObj) => TangerContextObj)
+export type TanagerContextObj = { [key: string]: any }
+export type TanagerContext = TanagerContextObj | ((obj: TanagerContextObj) => TanagerContextObj)
 
-export type TangerApiOptions = { 
-  context?: TangerContext
+export type TanagerApiOptions = { 
+  context?: TanagerContext
   attachMessages?: boolean
   attachExternalMessages?: boolean
 } & Parameters<typeof makeExecutableSchema>[0];
 
-export interface TangerMessage<T extends GenericVariables = {}> {
-  type?: TangerMessageKey.Generic;
+export interface TanagerMessage<T extends GenericVariables = {}> {
+  type?: TanagerMessageKey.Generic;
   query?: string;
   variables?: T;
 }

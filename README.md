@@ -1,19 +1,19 @@
-# Tanger
+# Tanager
 
-Tanger is a library that allows you to build up a local graphql that is accessible via messaging. The is currently setup to use browser messages between the background process of a web extension and its client scripts.
+Tanager is a library that allows you to build up a local graphql that is accessible via messaging. The is currently setup to use browser messages between the background process of a web extension and its client scripts.
 
 ```shell
-npm install --save tanger
+npm install --save tanager-graphql
 # or
-yarn add tanger
+yarn add tanager-graphql
 ```
 
 ## Build out an API
 
-The `TangerApi` class is a class that allows you to create an executable graphql schema. It is modeled to look just like the `ApolloServer` class. The only required properties in the options are `typeDefs` and `resolvers`.
+The `TanagerApi` class is a class that allows you to create an executable graphql schema. It is modeled to look just like the `ApolloServer` class. The only required properties in the options are `typeDefs` and `resolvers`.
 
 ```typescript
-import { TangerApi } from 'tanger'
+import { TanagerApi } from 'tanager'
 
 // Define your schema
 const typeDefs = `
@@ -38,7 +38,7 @@ const resolvers = {
 };
 
 // Create the executable schema
-const api = new TangerApi({
+const api = new TanagerApi({
   typeDefs,
   resolver,
 });
@@ -49,10 +49,10 @@ const api = new TangerApi({
 If you do not have any existing messages you may use the `attachMessages` option to automatically attach to the runtume messages. If you have existing messages you will want to setup up the manual handler to ensure you are able to resolve async resolvers.
 
 ```typescript
-import { TangerMessageKey } from 'tanger'; 
+import { TanagerMessageKey } from 'tanager'; 
 
 browser.runtime.onMessage.addListener((message) => {
-  if (message.type === TangerMessageKey.Generic) {
+  if (message.type === TanagerMessageKey.Generic) {
     return api.onMessage(message);
   }
 }, []);
@@ -62,7 +62,7 @@ This also has the ability to work with extenal messages but you should use the o
 
 ```typescript
 browser.runtime.onExternalMessage.addListener((message) => {
-  if (message.type === TangerMessageKey.Generic) {
+  if (message.type === TanagerMessageKey.Generic) {
     return api.onExternalMessage(message);
   }
 }, []);
@@ -73,7 +73,7 @@ browser.runtime.onExternalMessage.addListener((message) => {
 This is the main reason for this library, it makes it super easy to query large amounts of data from the background script without sending multiple messages.
 
 ```typescript
-import { queryApi } from 'tanger'
+import { queryApi } from 'tanager'
 
 const GetBrowserPermission = `
   query getBrowserPermission($input: PermissionsInput) {
