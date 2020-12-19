@@ -1,27 +1,27 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-export enum GraphQLMessageKey {
-  Generic = 'graphql-message'
+export enum TangerMessageKey {
+  Generic = 'Tanger-message'
 }
 
-export enum GraphQLMessageSource {
+export enum TangerMessageSource {
   Internal = 'internal',
   Message = 'message',
   ExternalMessage = 'external-message',
 }
 
 export type GenericVariables = { [key: string]: any };
-export type GraphQLContextObj = { [key: string]: any }
-export type GraphQLContext = GraphQLContextObj | ((obj: GraphQLContextObj) => GraphQLContextObj)
+export type TangerContextObj = { [key: string]: any }
+export type TangerContext = TangerContextObj | ((obj: TangerContextObj) => TangerContextObj)
 
-export type BackgroundGraphQLOptions = { 
-  context?: GraphQLContext
+export type TangerApiOptions = { 
+  context?: TangerContext
   attachMessages?: boolean
   attachExternalMessages?: boolean
 } & Parameters<typeof makeExecutableSchema>[0];
 
-export interface GraphQLMessage<T extends GenericVariables = {}> {
-  type?: GraphQLMessageKey.Generic;
+export interface TangerMessage<T extends GenericVariables = {}> {
+  type?: TangerMessageKey.Generic;
   query?: string;
   variables?: T;
 }
