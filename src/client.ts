@@ -1,4 +1,3 @@
-import { extend } from 'lodash';
 import browser from 'webextension-polyfill';
 import { GenericVariables, GraphQLMessageKey, GraphQLMessage } from './types';
 
