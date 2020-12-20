@@ -1,6 +1,7 @@
-import browser from 'webextension-polyfill';
-import { graphql, GraphQLSchema, Source } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import browser from "webextension-polyfill";
+import { graphql, GraphQLSchema, DocumentNode, print } from "graphql";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { isDocumentNode } from "./utils";
 import {
   TanagerApiOptions,
   GenericVariables,
@@ -9,12 +10,17 @@ import {
   TanagerContext,
   TanagerMessageSource,
   TanagerContextObj,
-} from './types';
+} from "./types";
 
 export class TanagerApi {
   schema: GraphQLSchema;
   context: TanagerContext;
-  constructor({ context, attachMessages, attachExternalMessages, ...options }: TanagerApiOptions) {
+  constructor({
+    context,
+    attachMessages,
+    attachExternalMessages,
+    ...options
+  }: TanagerApiOptions) {
     this.schema = makeExecutableSchema(options);
     this.context = context ?? {};
 
@@ -30,32 +36,53 @@ export class TanagerApi {
   }
 
   private getContext(baseContext: TanagerContextObj = {}) {
-    return typeof this.context === 'function'
-    ? this.context(baseContext)
-    : { source: TanagerMessageSource.Internal, ...baseContext, ...this.context };
+    return typeof this.context === "function"
+      ? this.context(baseContext)
+      : {
+          source: TanagerMessageSource.Internal,
+          ...baseContext,
+          ...this.context,
+        };
+  }
+
+  isQueryDocumentNode(query: string | DocumentNode): query is DocumentNode {
+    return typeof query === "object";
+  }
+
+  private documentNodeToString(query: DocumentNode) {
+    return print(query);
   }
 
   async query<T extends {}, V extends GenericVariables>(
-    query: string | Source,
+    query: string | DocumentNode,
     variables?: V,
-    baseContext?: TanagerContextObj,
+    baseContext?: TanagerContextObj
   ) {
     const context = this.getContext(baseContext);
-    return graphql(this.schema, query, { root: true }, context, variables);
+    return graphql(
+      this.schema,
+      isDocumentNode(query) ? this.documentNodeToString(query) : query,
+      { root: true },
+      context,
+      variables
+    );
   }
 
   onMessage(message: TanagerMessage) {
     if (message.type === TanagerMessageKey.Generic && message.query) {
       const { variables, query } = message;
-      return this.query(query, variables ?? {}, { source: TanagerMessageSource.Message });
+      return this.query(query, variables ?? {}, {
+        source: TanagerMessageSource.Message,
+      });
     }
   }
 
   onExternalMessage(message: TanagerMessage) {
-    if (message !== TanagerMessageKey.Generic || !message.query) {
-      return;
+    if (message.type === TanagerMessageKey.Generic && message.query) {
+      const { variables, query } = message;
+      return this.query(query, variables ?? {}, {
+        source: TanagerMessageSource.ExternalMessage,
+      });
     }
-    const { variables, query } = message;
-    return this.query(query, variables ?? {}, { source: TanagerMessageSource.ExternalMessage });
   }
 }

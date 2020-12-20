@@ -1,27 +1,30 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { DocumentNode } from "graphql";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 
 export enum TanagerMessageKey {
-  Generic = 'Tanager-message'
+  Generic = "Tanager-message",
 }
 
 export enum TanagerMessageSource {
-  Internal = 'internal',
-  Message = 'message',
-  ExternalMessage = 'external-message',
+  Internal = "internal",
+  Message = "message",
+  ExternalMessage = "external-message",
 }
 
 export type GenericVariables = { [key: string]: any };
-export type TanagerContextObj = { [key: string]: any }
-export type TanagerContext = TanagerContextObj | ((obj: TanagerContextObj) => TanagerContextObj)
+export type TanagerContextObj = { [key: string]: any };
+export type TanagerContext =
+  | TanagerContextObj
+  | ((obj: TanagerContextObj) => TanagerContextObj);
 
-export type TanagerApiOptions = { 
-  context?: TanagerContext
-  attachMessages?: boolean
-  attachExternalMessages?: boolean
+export type TanagerApiOptions = {
+  context?: TanagerContext;
+  attachMessages?: boolean;
+  attachExternalMessages?: boolean;
 } & Parameters<typeof makeExecutableSchema>[0];
 
 export interface TanagerMessage<T extends GenericVariables = {}> {
   type?: TanagerMessageKey.Generic;
-  query?: string;
+  query?: string | DocumentNode;
   variables?: T;
 }
