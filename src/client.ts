@@ -1,6 +1,8 @@
 import browser from "webextension-polyfill";
 import { DocumentNode, GraphQLFormattedError } from "graphql";
+import gql from 'graphql-tag';
 import { GenericVariables, TanagerMessageKey, TanagerMessage } from "./types";
+import { isDocumentNode } from './utils';
 
 const messageCreator = <V extends GenericVariables = {}>(
   query: string | DocumentNode,
@@ -8,7 +10,7 @@ const messageCreator = <V extends GenericVariables = {}>(
 ) => {
   return {
     type: TanagerMessageKey.Generic,
-    query,
+    query: isDocumentNode(query) ? query : gql(query),
     variables,
   };
 };

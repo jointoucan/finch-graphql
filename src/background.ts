@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 import { graphql, GraphQLSchema, DocumentNode, print } from "graphql";
+import gql from 'graphql-tag';
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { isDocumentNode } from "./utils";
 import {
@@ -59,12 +60,18 @@ export class TanagerApi {
     baseContext?: TanagerContextObj
   ) {
     const context = this.getContext(baseContext);
+    const documentNode = isDocumentNode(query) ? query : gql(query)
+    const queryStr = isDocumentNode(query) ? this.documentNodeToString(query) : query;
+    // Ignored because the types for operation definition are not allowing for access to name.
+    // @ts-ignore
+    const operationName = documentNode.definitions.find(def => def.kind === 'OperationDefinition')?.name?.value ?? 'anonymous';
     return graphql(
       this.schema,
-      isDocumentNode(query) ? this.documentNodeToString(query) : query,
+      queryStr,
       { root: true },
       context,
-      variables
+      variables,
+      operationName
     );
   }
 
