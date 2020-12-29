@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 import { TanagerApi } from "./background";
 import { TanagerMessageKey, TanagerMessageSource } from "./types";
 
@@ -29,12 +29,18 @@ describe("TanagerApi", () => {
       },
     });
     await api.onMessage({
-      query: `{ test }`,
+      query: gql`
+        query getTest {
+          test
+        }
+      `,
       variables: {},
-      type: TanagerMessageKey.Generic
+      type: TanagerMessageKey.Generic,
     });
     expect(resolverMethod).toHaveBeenCalled();
-    expect(resolverMethod.mock.calls[0][2]).toEqual({ source: TanagerMessageSource.Message });
+    expect(resolverMethod.mock.calls[0][2]).toEqual({
+      source: TanagerMessageSource.Message,
+    });
   });
 
   it("should pass along the context of an external message when using the external message handler", async () => {
@@ -48,15 +54,21 @@ describe("TanagerApi", () => {
       },
     });
     await api.onExternalMessage({
-      query: `{ test }`,
+      query: gql`
+        query getTest {
+          test
+        }
+      `,
       variables: {},
-      type: TanagerMessageKey.Generic
+      type: TanagerMessageKey.Generic,
     });
     expect(resolverMethod).toHaveBeenCalled();
-    expect(resolverMethod.mock.calls[0][2]).toEqual({ source: TanagerMessageSource.ExternalMessage });
+    expect(resolverMethod.mock.calls[0][2]).toEqual({
+      source: TanagerMessageSource.ExternalMessage,
+    });
   });
 
-  it('should support passing a document instead of a string', () => {
+  it("should support passing a document instead of a string", () => {
     const api = new TanagerApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
@@ -67,7 +79,9 @@ describe("TanagerApi", () => {
     });
 
     const doc = gql`
-      query test { test }
+      query test {
+        test
+      }
     `;
 
     expect(api.query(doc, {})).resolves.toEqual({

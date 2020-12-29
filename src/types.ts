@@ -17,11 +17,14 @@ export type TanagerContext =
   | TanagerContextObj
   | ((obj: TanagerContextObj) => TanagerContextObj);
 
+type MakeExecSchemaOptions = Parameters<typeof makeExecutableSchema>[0];
+
 export type TanagerApiOptions = {
   context?: TanagerContext;
   attachMessages?: boolean;
   attachExternalMessages?: boolean;
-} & Parameters<typeof makeExecutableSchema>[0];
+  typeDefs: MakeExecSchemaOptions["typeDefs"] | DocumentNode[];
+} & MakeExecSchemaOptions;
 
 export interface TanagerMessage<T extends GenericVariables = {}> {
   type?: TanagerMessageKey.Generic;

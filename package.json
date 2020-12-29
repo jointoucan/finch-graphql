@@ -1,12 +1,12 @@
 {
   "name": "tanager-graphql",
-  "version": "0.0.3",
-  "description": "",
+  "version": "0.0.4",
+  "description": "Graphql api for you background script of a web extension",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/index.js",
-    "dist/index.d.ts"
+    "dist/*.js",
+    "dist/*.d.ts"
   ],
   "repository": "https://github.com/jointoucan/tanager-graphql",
   "author": "Jacob Lowe",
