@@ -65,12 +65,12 @@ export class TanagerApi {
       ? this.documentNodeToString(query)
       : query;
 
-    let operationName = "";
+    let operationName = undefined;
     const operationDef = documentNode.definitions.find(
       (def) => def.kind === "OperationDefinition"
     );
     if (operationDef && "name" in operationDef) {
-      operationName = operationDef?.name?.value ?? ("" as string);
+      operationName = operationDef?.name?.value ?? undefined;
     }
 
     return graphql(
