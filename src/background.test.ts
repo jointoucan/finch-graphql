@@ -40,6 +40,7 @@ describe("TanagerApi", () => {
     expect(resolverMethod).toHaveBeenCalled();
     expect(resolverMethod.mock.calls[0][2]).toEqual({
       source: TanagerMessageSource.Message,
+      sender: undefined,
     });
   });
 
@@ -65,6 +66,7 @@ describe("TanagerApi", () => {
     expect(resolverMethod).toHaveBeenCalled();
     expect(resolverMethod.mock.calls[0][2]).toEqual({
       source: TanagerMessageSource.ExternalMessage,
+      sender: undefined,
     });
   });
 

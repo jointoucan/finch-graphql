@@ -41,8 +41,8 @@ export class TanagerApi {
       ? this.context(baseContext)
       : {
           source: TanagerMessageSource.Internal,
-          ...(baseContext ?? {}),
           ...this.context,
+          ...(baseContext ?? {}),
         };
   }
 
@@ -83,7 +83,7 @@ export class TanagerApi {
     );
   }
 
-  onMessage(message: TanagerMessage, sender: browser.runtime.MessageSender) {
+  onMessage(message: TanagerMessage, sender?: browser.runtime.MessageSender) {
     if (message.type === TanagerMessageKey.Generic && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
@@ -95,7 +95,7 @@ export class TanagerApi {
 
   onExternalMessage(
     message: TanagerMessage,
-    sender: browser.runtime.MessageSender
+    sender?: browser.runtime.MessageSender
   ) {
     if (message.type === TanagerMessageKey.Generic && message.query) {
       const { variables, query } = message;

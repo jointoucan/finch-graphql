@@ -25,12 +25,9 @@ export const queryApi = async <
 ) => {
   const args:
     | [string, ReturnType<typeof messageCreator>]
-    | [ReturnType<typeof messageCreator>] = [
-    messageCreator<V>(query, variables),
-  ];
-  if (extensionId) {
-    args.unshift(extensionId);
-  }
+    | [ReturnType<typeof messageCreator>] = extensionId
+    ? [extensionId, messageCreator<V>(query, variables)]
+    : [messageCreator<V>(query, variables)];
   const resp = browser.runtime.sendMessage<TanagerMessage<V>, T>(...args) as {
     data: T | null;
     errors?: GraphQLFormattedError[];

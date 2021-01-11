@@ -1,6 +1,7 @@
 import { queryApi } from "../client";
 import { DocumentNode, GraphQLFormattedError } from "graphql";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useExtension } from "./ExtensionProvider";
 
 interface BackgroundQueryOptions<V> {
   variables?: V;
@@ -13,6 +14,7 @@ export const useQuery = <T, V>(
   query: DocumentNode,
   { skip, variables }: BackgroundQueryOptions<V> = {}
 ) => {
+  const { id } = useExtension();
   const mounted = useRef(true);
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<QueryError | null>(null);
@@ -21,8 +23,12 @@ export const useQuery = <T, V>(
   const makeQuery = useCallback(
     async (argVars?: V) => {
       try {
-        // @ts-ignore variables are kinda weird
-        const resp = await queryApi<T, V>(query, argVars ?? variables ?? {});
+        const resp = await queryApi<T, V>(
+          query,
+          // @ts-ignore variables are kinda weird
+          argVars ?? variables ?? {},
+          id
+        );
 
         if (resp.data && mounted.current) {
           setData(resp.data);
