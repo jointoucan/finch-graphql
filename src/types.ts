@@ -36,3 +36,8 @@ export interface TanagerMessage<T extends GenericVariables = {}> {
   query?: string | DocumentNode;
   variables?: T;
 }
+
+export interface TanagerQueryOptions {
+  id?: string;
+  port?: browser.runtime.Port;
+}

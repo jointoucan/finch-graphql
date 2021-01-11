@@ -1,7 +1,12 @@
 import browser from "webextension-polyfill";
 import { DocumentNode, GraphQLFormattedError } from "graphql";
 import gql from "graphql-tag";
-import { GenericVariables, TanagerMessageKey, TanagerMessage } from "./types";
+import {
+  GenericVariables,
+  TanagerMessageKey,
+  TanagerMessage,
+  TanagerQueryOptions,
+} from "./types";
 import { isDocumentNode } from "./utils";
 
 const messageCreator = <V extends GenericVariables = {}>(
@@ -21,13 +26,15 @@ export const queryApi = async <
 >(
   query: string | DocumentNode,
   variables?: V,
-  extensionId?: string
+  options: TanagerQueryOptions = {}
 ) => {
+  const { id: extensionId } = options;
   const args:
     | [string, ReturnType<typeof messageCreator>]
     | [ReturnType<typeof messageCreator>] = extensionId
     ? [extensionId, messageCreator<V>(query, variables)]
     : [messageCreator<V>(query, variables)];
+
   const resp = browser.runtime.sendMessage<TanagerMessage<V>, T>(...args) as {
     data: T | null;
     errors?: GraphQLFormattedError[];
