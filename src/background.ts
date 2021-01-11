@@ -23,7 +23,7 @@ export class TanagerApi {
     ...options
   }: TanagerApiOptions) {
     this.schema = makeExecutableSchema(options);
-    this.context = context ?? {};
+    this.context = context ?? { source: TanagerMessageSource.Internal };
 
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
@@ -36,13 +36,13 @@ export class TanagerApi {
     }
   }
 
-  private getContext(baseContext: TanagerContextObj = {}) {
+  private getContext(baseContext?: TanagerContextObj) {
     return typeof this.context === "function"
       ? this.context(baseContext)
       : {
           source: TanagerMessageSource.Internal,
-          ...baseContext,
           ...this.context,
+          ...(baseContext ?? {}),
         };
   }
 
@@ -54,9 +54,9 @@ export class TanagerApi {
     return print(query);
   }
 
-  async query<T extends {}, V extends GenericVariables>(
+  async query<Query extends {}, Variables extends GenericVariables>(
     query: string | DocumentNode,
-    variables?: V,
+    variables?: Variables,
     baseContext?: TanagerContextObj
   ) {
     const context = this.getContext(baseContext);
@@ -83,20 +83,25 @@ export class TanagerApi {
     );
   }
 
-  onMessage(message: TanagerMessage) {
+  onMessage(message: TanagerMessage, sender?: browser.runtime.MessageSender) {
     if (message.type === TanagerMessageKey.Generic && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
         source: TanagerMessageSource.Message,
+        sender,
       });
     }
   }
 
-  onExternalMessage(message: TanagerMessage) {
+  onExternalMessage(
+    message: TanagerMessage,
+    sender?: browser.runtime.MessageSender
+  ) {
     if (message.type === TanagerMessageKey.Generic && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
         source: TanagerMessageSource.ExternalMessage,
+        sender,
       });
     }
   }
