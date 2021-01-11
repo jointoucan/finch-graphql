@@ -1,5 +1,6 @@
 import { DocumentNode } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import browser from "webextension-polyfill";
 
 export enum TanagerMessageKey {
   Generic = "Tanager-message",
@@ -12,7 +13,11 @@ export enum TanagerMessageSource {
 }
 
 export type GenericVariables = { [key: string]: any };
-export type TanagerContextObj = { [key: string]: any };
+export type TanagerContextObj = {
+  source: TanagerMessageSource;
+  sender?: browser.runtime.MessageSender;
+  [key: string]: any;
+};
 export type TanagerContext =
   | TanagerContextObj
   | ((obj: TanagerContextObj) => TanagerContextObj);
