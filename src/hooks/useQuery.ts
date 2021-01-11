@@ -3,8 +3,8 @@ import { DocumentNode, GraphQLFormattedError } from "graphql";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useExtension } from "./ExtensionProvider";
 
-interface BackgroundQueryOptions<V> {
-  variables?: V;
+interface BackgroundQueryOptions<Variables> {
+  variables?: Variables;
   skip?: Boolean;
 }
 

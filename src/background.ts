@@ -54,9 +54,9 @@ export class TanagerApi {
     return print(query);
   }
 
-  async query<T extends {}, V extends GenericVariables>(
+  async query<Query extends {}, Variables extends GenericVariables>(
     query: string | DocumentNode,
-    variables?: V,
+    variables?: Variables,
     baseContext?: TanagerContextObj
   ) {
     const context = this.getContext(baseContext);

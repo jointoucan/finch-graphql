@@ -9,9 +9,9 @@ import {
 } from "./types";
 import { isDocumentNode } from "./utils";
 
-const messageCreator = <V extends GenericVariables = {}>(
+const messageCreator = <Variables extends GenericVariables = {}>(
   query: string | DocumentNode,
-  variables: V
+  variables: Variables
 ) => {
   return {
     type: TanagerMessageKey.Generic,
@@ -21,22 +21,24 @@ const messageCreator = <V extends GenericVariables = {}>(
 };
 
 export const queryApi = async <
-  T extends {} = {},
-  V extends GenericVariables = {}
+  Query extends {} = {},
+  Variables extends GenericVariables = {}
 >(
   query: string | DocumentNode,
-  variables?: V,
+  variables?: Variables,
   options: TanagerQueryOptions = {}
 ) => {
   const { id: extensionId } = options;
   const args:
     | [string, ReturnType<typeof messageCreator>]
     | [ReturnType<typeof messageCreator>] = extensionId
-    ? [extensionId, messageCreator<V>(query, variables)]
-    : [messageCreator<V>(query, variables)];
+    ? [extensionId, messageCreator<Variables>(query, variables)]
+    : [messageCreator<Variables>(query, variables)];
 
-  const resp = browser.runtime.sendMessage<TanagerMessage<V>, T>(...args) as {
-    data: T | null;
+  const resp = browser.runtime.sendMessage<TanagerMessage<Variables>, Query>(
+    ...args
+  ) as {
+    data: Query | null;
     errors?: GraphQLFormattedError[];
   };
   return resp;

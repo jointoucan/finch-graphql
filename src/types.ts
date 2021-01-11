@@ -31,10 +31,10 @@ export type TanagerApiOptions = {
   typeDefs: MakeExecSchemaOptions["typeDefs"] | DocumentNode[];
 } & MakeExecSchemaOptions;
 
-export interface TanagerMessage<T extends GenericVariables = {}> {
+export interface TanagerMessage<Variables extends GenericVariables = {}> {
   type?: TanagerMessageKey.Generic;
   query?: string | DocumentNode;
-  variables?: T;
+  variables?: Variables;
 }
 
 export interface TanagerQueryOptions {
