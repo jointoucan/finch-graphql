@@ -36,6 +36,7 @@
   "peerDependencies": {
     "@graphql-tools/schema": "^7.1.2",
     "graphql": "^15.4.0",
-    "webextension-polyfill": "^0.7.0"
+    "webextension-polyfill": "^0.7.0",
+    "react": "<=16.x"
   }
 }
