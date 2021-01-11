@@ -10,20 +10,20 @@ interface BackgroundQueryOptions<V> {
 
 type QueryError = GraphQLFormattedError | Error;
 
-export const useQuery = <T, V>(
+export const useQuery = <Query, Variables>(
   query: DocumentNode,
-  { skip, variables }: BackgroundQueryOptions<V> = {}
+  { skip, variables }: BackgroundQueryOptions<Variables> = {}
 ) => {
   const { id } = useExtension();
   const mounted = useRef(true);
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<Query | null>(null);
   const [error, setError] = useState<QueryError | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const makeQuery = useCallback(
-    async (argVars?: V) => {
+    async (argVars?: Variables) => {
       try {
-        const resp = await queryApi<T, V>(
+        const resp = await queryApi<Query, Variables>(
           query,
           // @ts-ignore variables are kinda weird
           argVars ?? variables ?? {},

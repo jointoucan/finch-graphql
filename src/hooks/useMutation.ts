@@ -6,28 +6,28 @@ import { useExtension } from "./ExtensionProvider";
 type MutationError = GraphQLFormattedError | Error;
 type Response<T> = { data: T | null; errors?: GraphQLFormattedError[] } | null;
 
-export const useMutation = <T, V>(
+export const useMutation = <Query, Variables>(
   query: DocumentNode
 ): [
-  (variables: V) => Promise<Response<T>>,
+  (variables: Variables) => Promise<Response<Query>>,
   {
-    data: T | null;
+    data: Query | null;
     loading: Boolean;
     error?: MutationError;
   }
 ] => {
   const { id, port } = useExtension();
   const mounted = useRef(true);
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<Query | null>(null);
   const [error, setError] = useState<MutationError | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const makeMutation = useCallback(
-    async (argVars: V) => {
+    async (argVars: Variables) => {
       setLoading(true);
-      let resp: Response<T> | null = null;
+      let resp: Response<Query> | null = null;
       try {
-        resp = await queryApi<T, V>(query, argVars, { id, port });
+        resp = await queryApi<Query, Variables>(query, argVars, { id, port });
         if (resp.data && mounted.current) {
           setData(resp.data);
         }
