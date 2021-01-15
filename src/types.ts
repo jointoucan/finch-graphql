@@ -1,6 +1,5 @@
 import { DocumentNode } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import browser from "webextension-polyfill";
 
 export enum FinchMessageKey {
   Generic = "Finch-message",

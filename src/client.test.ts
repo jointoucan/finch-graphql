@@ -1,5 +1,4 @@
 import { queryApi } from "./client";
-import browser from "webextension-polyfill";
 import gql from "graphql-tag";
 import { FinchMessageKey } from "./types";
 
