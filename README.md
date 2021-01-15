@@ -10,10 +10,10 @@ yarn add finch-graphql
 
 ## Build out an API
 
-The `TanagerApi` class is a class that allows you to create an executable graphql schema. It is modeled to look just like the `ApolloServer` class. The only required properties in the options are `typeDefs` and `resolvers`.
+The `FinchApi` class is a class that allows you to create an executable graphql schema. It is modeled to look just like the `ApolloServer` class. The only required properties in the options are `typeDefs` and `resolvers`.
 
 ```typescript
-import { TanagerApi } from "finch-graphql";
+import { FinchApi } from "finch-graphql";
 
 // Define your schema
 const typeDefs = `
