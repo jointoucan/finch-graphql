@@ -1,6 +1,6 @@
-import browser from "webextension-polyfill";
 import { DocumentNode, GraphQLFormattedError } from "graphql";
 import gql from "graphql-tag";
+import { sendMessage } from "./browser";
 import {
   GenericVariables,
   FinchMessageKey,
@@ -29,17 +29,17 @@ export const queryApi = async <
   options: FinchQueryOptions = {}
 ) => {
   const { id: extensionId } = options;
-  const args:
-    | [string, ReturnType<typeof messageCreator>]
-    | [ReturnType<typeof messageCreator>] = extensionId
-    ? [extensionId, messageCreator<Variables>(query, variables)]
-    : [messageCreator<Variables>(query, variables)];
+  const args: [string, unknown] | [unknown] = [
+    messageCreator<Variables>(query, variables),
+  ];
 
-  const resp = browser.runtime.sendMessage<FinchMessage<Variables>, Query>(
-    ...args
-  ) as {
+  if (extensionId) {
+    args.unshift(extensionId);
+  }
+
+  const resp = sendMessage<{
     data: Query | null;
     errors?: GraphQLFormattedError[];
-  };
+  }>(...args);
   return resp;
 };

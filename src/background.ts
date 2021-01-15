@@ -1,4 +1,3 @@
-import browser from "webextension-polyfill";
 import { graphql, GraphQLSchema, DocumentNode, print } from "graphql";
 import gql from "graphql-tag";
 import { makeExecutableSchema } from "@graphql-tools/schema";
@@ -12,6 +11,7 @@ import {
   FinchMessageSource,
   FinchContextObj,
 } from "./types";
+import { addExteneralMessageListener, addMessageListener } from "./browser";
 
 export class FinchApi {
   schema: GraphQLSchema;
@@ -29,10 +29,10 @@ export class FinchApi {
     this.onExternalMessage = this.onExternalMessage.bind(this);
 
     if (attachMessages) {
-      browser.runtime.onMessage.addListener(this.onMessage);
+      addMessageListener(this.onMessage);
     }
     if (attachExternalMessages) {
-      browser.runtime.onMessageExternal.addListener(this.onExternalMessage);
+      addExteneralMessageListener(this.onExternalMessage);
     }
   }
 
