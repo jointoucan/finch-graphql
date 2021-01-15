@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
-import { TanagerApi } from "./background";
-import { TanagerMessageKey, TanagerMessageSource } from "./types";
+import { FinchApi } from "./background";
+import { FinchMessageKey, FinchMessageSource } from "./types";
 
-describe("TanagerApi", () => {
+describe("FinchApi", () => {
   it("should build up and schema based on typeDefs and resolvers", () => {
-    const api = new TanagerApi({
+    const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
         Query: {
@@ -20,7 +20,7 @@ describe("TanagerApi", () => {
 
   it("should pass along the context of a message when using the message handler", async () => {
     const resolverMethod = jest.fn().mockResolvedValue(true);
-    const api = new TanagerApi({
+    const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
         Query: {
@@ -35,18 +35,18 @@ describe("TanagerApi", () => {
         }
       `,
       variables: {},
-      type: TanagerMessageKey.Generic,
+      type: FinchMessageKey.Generic,
     });
     expect(resolverMethod).toHaveBeenCalled();
     expect(resolverMethod.mock.calls[0][2]).toEqual({
-      source: TanagerMessageSource.Message,
+      source: FinchMessageSource.Message,
       sender: undefined,
     });
   });
 
   it("should pass along the context of an external message when using the external message handler", async () => {
     const resolverMethod = jest.fn().mockResolvedValue(true);
-    const api = new TanagerApi({
+    const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
         Query: {
@@ -61,17 +61,17 @@ describe("TanagerApi", () => {
         }
       `,
       variables: {},
-      type: TanagerMessageKey.Generic,
+      type: FinchMessageKey.Generic,
     });
     expect(resolverMethod).toHaveBeenCalled();
     expect(resolverMethod.mock.calls[0][2]).toEqual({
-      source: TanagerMessageSource.ExternalMessage,
+      source: FinchMessageSource.ExternalMessage,
       sender: undefined,
     });
   });
 
   it("should support passing a document instead of a string", () => {
-    const api = new TanagerApi({
+    const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
         Query: {

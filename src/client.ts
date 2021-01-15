@@ -3,9 +3,9 @@ import { DocumentNode, GraphQLFormattedError } from "graphql";
 import gql from "graphql-tag";
 import {
   GenericVariables,
-  TanagerMessageKey,
-  TanagerMessage,
-  TanagerQueryOptions,
+  FinchMessageKey,
+  FinchMessage,
+  FinchQueryOptions,
 } from "./types";
 import { isDocumentNode } from "./utils";
 
@@ -14,7 +14,7 @@ const messageCreator = <Variables extends GenericVariables = {}>(
   variables: Variables
 ) => {
   return {
-    type: TanagerMessageKey.Generic,
+    type: FinchMessageKey.Generic,
     query: isDocumentNode(query) ? query : gql(query),
     variables,
   };
@@ -26,7 +26,7 @@ export const queryApi = async <
 >(
   query: string | DocumentNode,
   variables?: Variables,
-  options: TanagerQueryOptions = {}
+  options: FinchQueryOptions = {}
 ) => {
   const { id: extensionId } = options;
   const args:
@@ -35,7 +35,7 @@ export const queryApi = async <
     ? [extensionId, messageCreator<Variables>(query, variables)]
     : [messageCreator<Variables>(query, variables)];
 
-  const resp = browser.runtime.sendMessage<TanagerMessage<Variables>, Query>(
+  const resp = browser.runtime.sendMessage<FinchMessage<Variables>, Query>(
     ...args
   ) as {
     data: Query | null;

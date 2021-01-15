@@ -1,5 +1,5 @@
 {
-  "name": "tanager-graphql",
+  "name": "finch-graphql",
   "version": "0.2.0",
   "description": "Graphql api for you background script of a web extension",
   "main": "dist/index.js",
@@ -8,7 +8,7 @@
     "dist/*.js",
     "dist/*.d.ts"
   ],
-  "repository": "https://github.com/jointoucan/tanager-graphql",
+  "repository": "https://github.com/jointoucan/finch-graphql",
   "author": "Jacob Lowe",
   "license": "MIT",
   "private": false,

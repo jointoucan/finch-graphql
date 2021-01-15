@@ -1,7 +1,7 @@
 import { queryApi } from "./client";
 import browser from "webextension-polyfill";
 import gql from "graphql-tag";
-import { TanagerMessageKey } from "./types";
+import { FinchMessageKey } from "./types";
 
 describe("queryApi", () => {
   it("should send and message to the background script", async () => {
@@ -18,7 +18,7 @@ describe("queryApi", () => {
     `;
     await queryApi(fooQuery, {}, { id: "foo" });
     expect(browser.runtime.sendMessage).toBeCalledWith("foo", {
-      type: TanagerMessageKey.Generic,
+      type: FinchMessageKey.Generic,
       query: fooQuery,
       variables: {},
     });

@@ -4,26 +4,26 @@ import gql from "graphql-tag";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { isDocumentNode } from "./utils";
 import {
-  TanagerApiOptions,
+  FinchApiOptions,
   GenericVariables,
-  TanagerMessage,
-  TanagerMessageKey,
-  TanagerContext,
-  TanagerMessageSource,
-  TanagerContextObj,
+  FinchMessage,
+  FinchMessageKey,
+  FinchContext,
+  FinchMessageSource,
+  FinchContextObj,
 } from "./types";
 
-export class TanagerApi {
+export class FinchApi {
   schema: GraphQLSchema;
-  context: TanagerContext;
+  context: FinchContext;
   constructor({
     context,
     attachMessages,
     attachExternalMessages,
     ...options
-  }: TanagerApiOptions) {
+  }: FinchApiOptions) {
     this.schema = makeExecutableSchema(options);
-    this.context = context ?? { source: TanagerMessageSource.Internal };
+    this.context = context ?? { source: FinchMessageSource.Internal };
 
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
@@ -36,11 +36,11 @@ export class TanagerApi {
     }
   }
 
-  private getContext(baseContext?: TanagerContextObj) {
+  private getContext(baseContext?: FinchContextObj) {
     return typeof this.context === "function"
       ? this.context(baseContext)
       : {
-          source: TanagerMessageSource.Internal,
+          source: FinchMessageSource.Internal,
           ...this.context,
           ...(baseContext ?? {}),
         };
@@ -57,7 +57,7 @@ export class TanagerApi {
   async query<Query extends {}, Variables extends GenericVariables>(
     query: string | DocumentNode,
     variables?: Variables,
-    baseContext?: TanagerContextObj
+    baseContext?: FinchContextObj
   ) {
     const context = this.getContext(baseContext);
     const documentNode = isDocumentNode(query) ? query : gql(query);
@@ -83,24 +83,24 @@ export class TanagerApi {
     );
   }
 
-  onMessage(message: TanagerMessage, sender?: browser.runtime.MessageSender) {
-    if (message.type === TanagerMessageKey.Generic && message.query) {
+  onMessage(message: FinchMessage, sender?: browser.runtime.MessageSender) {
+    if (message.type === FinchMessageKey.Generic && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
-        source: TanagerMessageSource.Message,
+        source: FinchMessageSource.Message,
         sender,
       });
     }
   }
 
   onExternalMessage(
-    message: TanagerMessage,
+    message: FinchMessage,
     sender?: browser.runtime.MessageSender
   ) {
-    if (message.type === TanagerMessageKey.Generic && message.query) {
+    if (message.type === FinchMessageKey.Generic && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
-        source: TanagerMessageSource.ExternalMessage,
+        source: FinchMessageSource.ExternalMessage,
         sender,
       });
     }
