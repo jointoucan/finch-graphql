@@ -1,43 +1,42 @@
 import { DocumentNode } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import browser from "webextension-polyfill";
 
-export enum TanagerMessageKey {
-  Generic = "Tanager-message",
+export enum FinchMessageKey {
+  Generic = "Finch-message",
 }
 
-export enum TanagerMessageSource {
+export enum FinchMessageSource {
   Internal = "internal",
   Message = "message",
   ExternalMessage = "external-message",
 }
 
 export type GenericVariables = { [key: string]: any };
-export type TanagerContextObj = {
-  source: TanagerMessageSource;
+export type FinchContextObj = {
+  source: FinchMessageSource;
   sender?: browser.runtime.MessageSender;
   [key: string]: any;
 };
-export type TanagerContext =
-  | TanagerContextObj
-  | ((obj: TanagerContextObj) => TanagerContextObj);
+export type FinchContext =
+  | FinchContextObj
+  | ((obj: FinchContextObj) => FinchContextObj);
 
 type MakeExecSchemaOptions = Parameters<typeof makeExecutableSchema>[0];
 
-export type TanagerApiOptions = {
-  context?: TanagerContext;
+export type FinchApiOptions = {
+  context?: FinchContext;
   attachMessages?: boolean;
   attachExternalMessages?: boolean;
   typeDefs: MakeExecSchemaOptions["typeDefs"] | DocumentNode[];
 } & MakeExecSchemaOptions;
 
-export interface TanagerMessage<Variables extends GenericVariables = {}> {
-  type?: TanagerMessageKey.Generic;
+export interface FinchMessage<Variables extends GenericVariables = {}> {
+  type?: FinchMessageKey.Generic;
   query?: string | DocumentNode;
   variables?: Variables;
 }
 
-export interface TanagerQueryOptions {
+export interface FinchQueryOptions {
   id?: string;
   port?: browser.runtime.Port;
 }

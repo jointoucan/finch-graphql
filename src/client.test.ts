@@ -1,16 +1,20 @@
 import { queryApi } from "./client";
-import browser from "webextension-polyfill";
 import gql from "graphql-tag";
-import { TanagerMessageKey } from "./types";
+import { FinchMessageKey } from "./types";
 
 describe("queryApi", () => {
   it("should send and message to the background script", async () => {
-    browser.runtime.sendMessage = jest.fn();
+    const ogChrome = window.chrome;
+    window.chrome = undefined;
+    browser.runtime.sendMessage = jest.fn().mockResolvedValue({});
     await queryApi(`{ test }`, {});
     expect(browser.runtime.sendMessage).toBeCalled();
+    window.chrome = ogChrome;
   });
   it("should send and message to the background script externally", async () => {
-    browser.runtime.sendMessage = jest.fn();
+    const ogChrome = window.chrome;
+    window.chrome = undefined;
+    browser.runtime.sendMessage = jest.fn().mockResolvedValue({});
     const fooQuery = gql`
       query foo {
         test
@@ -18,9 +22,22 @@ describe("queryApi", () => {
     `;
     await queryApi(fooQuery, {}, { id: "foo" });
     expect(browser.runtime.sendMessage).toBeCalledWith("foo", {
-      type: TanagerMessageKey.Generic,
+      type: FinchMessageKey.Generic,
       query: fooQuery,
       variables: {},
     });
+    window.chrome = ogChrome;
+  });
+
+  it("should send and message to the background script using chrome apis if available", async () => {
+    const ogChrome = window.chrome;
+    chrome.runtime.sendMessage = jest
+      .fn()
+      .mockImplementation((_message: unknown, callback: (resp: {}) => {}) => {
+        callback({});
+      });
+    await queryApi(`{ test }`, {});
+    expect(chrome.runtime.sendMessage).toBeCalled();
+    window.chrome = ogChrome;
   });
 });

@@ -1,11 +1,11 @@
-# Tanager Graphql
+# Finch Graphql
 
-Tanager is a library that allows you to build up a local graphql that is accessible via messaging. The is currently setup to use browser messages between the background process of a web extension and its client scripts.
+Finch is a library that allows you to build up a local graphql that is accessible via messaging. The is currently setup to use browser messages between the background process of a web extension and its client scripts.
 
 ```shell
-npm install --save tanager-graphql
+npm install --save finch-graphql
 # or
-yarn add tanager-graphql
+yarn add finch-graphql
 ```
 
 ## Build out an API
@@ -13,7 +13,7 @@ yarn add tanager-graphql
 The `TanagerApi` class is a class that allows you to create an executable graphql schema. It is modeled to look just like the `ApolloServer` class. The only required properties in the options are `typeDefs` and `resolvers`.
 
 ```typescript
-import { TanagerApi } from 'tanager-graphql'
+import { TanagerApi } from "finch-graphql";
 
 // Define your schema
 const typeDefs = `
@@ -34,11 +34,11 @@ const typeDefs = `
 const resolvers = {
   Browser: (parent, { input }) => {
     return browser.premissions.contains(input);
-  }
+  },
 };
 
 // Create the executable schema
-const api = new TanagerApi({
+const api = new FinchApi({
   typeDefs,
   resolver,
 });
@@ -49,7 +49,7 @@ const api = new TanagerApi({
 If you do not have any existing messages you may use the `attachMessages` option to automatically attach to the runtume messages. If you have existing messages you will want to setup up the manual handler to ensure you are able to resolve async resolvers.
 
 ```typescript
-import { TanagerMessageKey } from 'tanager-graphql'; 
+import { FinchMessageKey } from "finch-graphql";
 
 browser.runtime.onMessage.addListener((message) => {
   if (message.type === TanagerMessageKey.Generic) {
@@ -73,7 +73,7 @@ browser.runtime.onExternalMessage.addListener((message) => {
 This is the main reason for this library, it makes it super easy to query large amounts of data from the background script without sending multiple messages.
 
 ```typescript
-import { queryApi } from 'tanager-graphql'
+import { queryApi } from "finch-graphql";
 
 const GetBrowserPermission = `
   query getBrowserPermission($input: PermissionsInput) {
@@ -81,16 +81,13 @@ const GetBrowserPermission = `
       permissions(input: $input)
     }
   }
-`
-
-(async function main() {
+`(async function main() {
   const resp = await queryApi(GetBrowserPermission, {
-    input: { permissions: ['geolocation'] }
-  })
-  
+    input: { permissions: ["geolocation"] },
+  });
+
   if (resp.data?.browser?.permissions) {
     // Do stuff with permissions
   }
-})()
+})();
 ```
-
