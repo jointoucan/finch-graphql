@@ -27,7 +27,7 @@ export const useQuery = <Query, Variables>(
           query,
           // @ts-ignore variables are kinda weird
           argVars ?? variables ?? {},
-          id
+          { id }
         );
 
         if (resp.data && mounted.current) {
