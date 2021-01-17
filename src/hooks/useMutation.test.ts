@@ -1,22 +1,22 @@
 import React from "react";
 import { renderHook, act } from "@testing-library/react-hooks";
-import { useQuery } from "./useQuery";
 import gql from "graphql-tag";
 import { FinchMessageKey } from "../types";
 import { ExtensionProvider } from "./ExtensionProvider";
+import { useMutation } from "./useMutation";
 
 const testDoc = gql`
-  query foo {
+  mutation foo {
     bar
   }
 `;
 
-describe("useQuery", () => {
+describe("useMutation", () => {
   beforeEach(() => {
     chrome.runtime.lastError = undefined;
     chrome.runtime.sendMessage = jest.fn();
   });
-  it("should send a message to the background", async () => {
+  it("should send a message to the background once called", async () => {
     const sendMessageMock = jest
       .fn()
       .mockImplementation((message, callback) => {
@@ -26,9 +26,11 @@ describe("useQuery", () => {
       });
     chrome.runtime.sendMessage = sendMessageMock;
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
+    const wrapper = renderHook(() => useMutation(testDoc));
 
-    await wrapper.waitForNextUpdate();
+    await act(async () => {
+      await wrapper.result.current[0]({});
+    });
 
     expect(sendMessageMock.mock.calls[0][0]).toEqual({
       query: testDoc,
@@ -36,7 +38,7 @@ describe("useQuery", () => {
       type: FinchMessageKey.Generic,
     });
 
-    expect(wrapper.result.current.data).toEqual({ bar: true });
+    expect(wrapper.result.current[1].data).toEqual({ bar: true });
   });
   it("should return an error if a last error is set", async () => {
     const sendMessageMock = jest
@@ -47,36 +49,13 @@ describe("useQuery", () => {
     chrome.runtime.sendMessage = sendMessageMock;
     chrome.runtime.lastError = new Error("foo");
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
+    const wrapper = renderHook(() => useMutation(testDoc));
 
-    await wrapper.waitForNextUpdate();
-
-    expect(wrapper.result.current.error.message).toBe("foo");
-  });
-  it("refetch should send another message", async () => {
-    const sendMessageMock = jest
-      .fn()
-      .mockImplementation((message, callback) => {
-        setTimeout(() => {
-          callback({ data: { bar: true } });
-        }, 0);
-      });
-    chrome.runtime.sendMessage = sendMessageMock;
-
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
-
-    await wrapper.waitForNextUpdate();
     await act(async () => {
-      await wrapper.result.current.refetch();
+      await wrapper.result.current[0]({});
     });
 
-    expect(sendMessageMock).toBeCalledTimes(2);
-
-    expect(sendMessageMock.mock.calls[1][0]).toEqual({
-      query: testDoc,
-      variables: {},
-      type: FinchMessageKey.Generic,
-    });
+    expect(wrapper.result.current[1].error.message).toBe("foo");
   });
   it("wrapping it in a provider should allow for external calls", async () => {
     const sendMessageMock = jest
@@ -84,13 +63,15 @@ describe("useQuery", () => {
       .mockImplementation((_, callback) => callback());
     chrome.runtime.sendMessage = sendMessageMock;
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}), {
+    const wrapper = renderHook(() => useMutation(testDoc), {
       wrapper: ({ children }) => {
         return React.createElement(ExtensionProvider, { children, id: "foo" });
       },
     });
 
-    await wrapper.waitForNextUpdate();
+    await act(async () => {
+      await wrapper.result.current[0]({});
+    });
 
     // First param is id on external calls
     expect(sendMessageMock.mock.calls[0][0]).toEqual("foo");
