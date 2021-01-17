@@ -1,3 +1,5 @@
+![Finch GraphQL](./assets/finch-graphql.svg)
+
 # Finch Graphql
 
 Finch is a library that allows you to build up a local GraphQL API that is accessible via client scripts of an web extension. When [external messaging](https://developer.chrome.com/docs/extensions/mv2/messaging/#external-webpage) is setup you may even query Finch GraphQL from a connectable website.
