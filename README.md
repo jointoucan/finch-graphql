@@ -56,7 +56,7 @@ If you do not have any existing messages you may use the `attachMessages` option
 import { FinchMessageKey } from "finch-graphql";
 
 browser.runtime.onMessage.addListener((message) => {
-  if (message.type === TanagerMessageKey.Generic) {
+  if (message.type === FinchMessageKey.Generic) {
     return api.onMessage(message);
   }
 }, []);
@@ -66,7 +66,7 @@ This also has the ability to work with extenal messages but you should use the o
 
 ```typescript
 browser.runtime.onExternalMessage.addListener((message) => {
-  if (message.type === TanagerMessageKey.Generic) {
+  if (message.type === FinchMessageKey.Generic) {
     return api.onExternalMessage(message);
   }
 }, []);
@@ -127,7 +127,7 @@ jest.mock("finch-graphql", () => {
   const { finch } = jest.requireActual("./path-to/finch-instance");
   return {
     __esModule: true,
-    ...finch,
+    ...ogFinch,
     queryApi: (query, variables) =>
       finch.onMessage({
         type: ogFinch.FinchMessageKey.Generic, // or your custom key
