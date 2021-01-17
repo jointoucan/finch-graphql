@@ -16,7 +16,7 @@ export const useMutation = <Query, Variables>(
     error?: MutationError;
   }
 ] => {
-  const { id, port } = useExtension();
+  const { id, port, messageKey } = useExtension();
   const mounted = useRef(true);
   const [data, setData] = useState<Query | null>(null);
   const [error, setError] = useState<MutationError | undefined>();
@@ -27,7 +27,11 @@ export const useMutation = <Query, Variables>(
       setLoading(true);
       let resp: Response<Query> | null = null;
       try {
-        resp = await queryApi<Query, Variables>(query, argVars, { id, port });
+        resp = await queryApi<Query, Variables>(query, argVars, {
+          id,
+          port,
+          messageKey,
+        });
         if (resp.data && mounted.current) {
           setData(resp.data);
         }
