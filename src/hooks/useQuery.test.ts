@@ -86,6 +86,7 @@ describe("useQuery", () => {
 
     const wrapper = renderHook(() => useQuery(testDoc, {}), {
       wrapper: ({ children }) => {
+        // @ts-ignore
         return React.createElement(ExtensionProvider, { children, id: "foo" });
       },
     });

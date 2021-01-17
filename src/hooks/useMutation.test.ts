@@ -65,6 +65,7 @@ describe("useMutation", () => {
 
     const wrapper = renderHook(() => useMutation(testDoc), {
       wrapper: ({ children }) => {
+        // @ts-ignore
         return React.createElement(ExtensionProvider, { children, id: "foo" });
       },
     });
