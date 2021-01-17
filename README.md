@@ -1,12 +1,22 @@
 # Finch Graphql
 
-Finch is a library that allows you to build up a local graphql that is accessible via messaging. The is currently setup to use browser messages between the background process of a web extension and its client scripts. If you have external messaging turned on you may also query the GraphQL API from a website.
+Finch is a library that allows you to build up a local GraphQL API that is accessible via client scripts of an web extension. When [external messaging](https://developer.chrome.com/docs/extensions/mv2/messaging/#external-webpage) is setup you may even query Finch GraphQL from a connectable website.
+
+## Install
 
 ```shell
-npm install --save finch-graphql
+npm install --save finch-graphql graphql react
 # or
-yarn add finch-graphql
+yarn add finch-graphql graphql react
 ```
+
+> ⚠️ Currently React is needed for the included React hooks
+
+## How it works
+
+Traditional implementation of GraphQL pass queries through HTTP, Finch GraphQL passes these queries though the browsers messaging system.
+
+![Diagram](./assets/diagram.svg)
 
 ## Build out an API
 
@@ -46,7 +56,7 @@ const api = new FinchApi({
 
 ### Additional options
 
-Finch, when initializing the api, has some keys to be able to customize your api. **onQueryReponse** allows you to see all request happening, so if you want to setup some type of logging it is possible to use this hook. **messageKey** instead of useing the generic `Finch-message` you can create your own key to pass messages along with. **attachMessages** and **attachExternalMessages** will auto attach messages to the browser message queue.
+Finch, when initializing the api, has some keys to be able to customize your api. **onQueryReponse** allows you to see all request happening, so if you want to setup some type of logging it is possible to use this hook. **messageKey** instead of using the generic `Finch-message` you can create your own key to pass messages along with. **attachMessages** and **attachExternalMessages** will auto attach messages to the browser message queue.
 
 ## Attaching to messaging
 
@@ -102,7 +112,7 @@ There is two hooks available to use if you are using a React application. First 
 
 ```typescript
 const MyComponent = () => {
-  const { data, error } = useQuery<Query, Variabled>(
+  const { data, error } = useQuery<QueryTypes, VariableTypes>(
     MyComponentQueryDoc,
     { variables: { enabled: true } }
   );
