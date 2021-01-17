@@ -90,4 +90,42 @@ describe("FinchApi", () => {
       data: { test: true },
     });
   });
+
+  it("should allow for a custom message key", async () => {
+    const api = new FinchApi({
+      typeDefs: `type Query { test: Boolean! }`,
+      resolvers: {
+        Query: {
+          test: () => true,
+        },
+      },
+      messageKey: "Custom",
+    });
+
+    const respBad = await api.onExternalMessage({
+      query: gql`
+        query getTest {
+          test
+        }
+      `,
+      variables: {},
+      type: FinchMessageKey.Generic,
+    });
+
+    expect(respBad).toBeFalsy();
+
+    const respGood = await api.onExternalMessage({
+      query: gql`
+        query getTest {
+          test
+        }
+      `,
+      variables: {},
+      type: "Custom",
+    });
+
+    expect(respGood).toEqual({
+      data: { test: true },
+    });
+  });
 });

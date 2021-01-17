@@ -11,10 +11,11 @@ import { isDocumentNode } from "./utils";
 
 const messageCreator = <Variables extends GenericVariables = {}>(
   query: string | DocumentNode,
-  variables: Variables
+  variables: Variables,
+  messageKey?: string
 ) => {
   return {
-    type: FinchMessageKey.Generic,
+    type: messageKey ?? FinchMessageKey.Generic,
     query: isDocumentNode(query) ? query : gql(query),
     variables,
   };
@@ -28,9 +29,9 @@ export const queryApi = async <
   variables?: Variables,
   options: FinchQueryOptions = {}
 ) => {
-  const { id: extensionId } = options;
+  const { id: extensionId, messageKey } = options;
   const args: [string, unknown] | [unknown] = [
-    messageCreator<Variables>(query, variables),
+    messageCreator<Variables>(query, variables, messageKey),
   ];
 
   if (extensionId) {

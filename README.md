@@ -1,6 +1,6 @@
 # Finch Graphql
 
-Finch is a library that allows you to build up a local graphql that is accessible via messaging. The is currently setup to use browser messages between the background process of a web extension and its client scripts.
+Finch is a library that allows you to build up a local graphql that is accessible via messaging. The is currently setup to use browser messages between the background process of a web extension and its client scripts. If you have external messaging turned on you may also query the GraphQL API from a website.
 
 ```shell
 npm install --save finch-graphql
@@ -43,6 +43,10 @@ const api = new FinchApi({
   resolver,
 });
 ```
+
+### Additional options
+
+Finch, when initializing the api, has some keys to be able to customize your api. **onQueryReponse** allows you to see all request happening, so if you want to setup some type of logging it is possible to use this hook. **messageKey** instead of useing the generic `Finch-message` you can create your own key to pass messages along with. **attachMessages** and **attachExternalMessages** will auto attach messages to the browser message queue.
 
 ## Attaching to messaging
 
@@ -90,4 +94,46 @@ const GetBrowserPermission = `
     // Do stuff with permissions
   }
 })();
+```
+
+## React Hooks
+
+There is two hooks available to use if you are using a React application. First is the **useQuery** hook.
+
+```typescript
+const MyComponent = () => {
+  const { data, error } = useQuery<Query, Variabled>(
+    MyComponentQueryDoc,
+    { variables: { enabled: true } }
+  );
+
+  if (error) {
+    return null;
+  }
+
+  return (
+    ...
+  )
+}
+```
+
+## Testing
+
+Testing between your background resolvers and client scripts is now super easy. Here is a snippet of code that will connect your background resolvers to the content scripts queries. Note this is using a jest mock.
+
+```typescript
+jest.mock("finch-graphql", () => {
+  const ogFinch = jest.requireActual("finch-graphql");
+  const { finch } = jest.requireActual("./path-to/finch-instance");
+  return {
+    __esModule: true,
+    ...finch,
+    queryApi: (query, variables) =>
+      finch.onMessage({
+        type: ogFinch.FinchMessageKey.Generic, // or your custom key
+        query,
+        variables,
+      }),
+  };
+});
 ```

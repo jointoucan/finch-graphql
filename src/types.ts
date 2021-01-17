@@ -23,15 +23,25 @@ export type FinchContext =
 
 type MakeExecSchemaOptions = Parameters<typeof makeExecutableSchema>[0];
 
+interface QueryResponseMeta {
+  query: DocumentNode;
+  operationName?: string;
+  variables: any;
+  context: FinchContext;
+  timeTaken: number;
+}
+
 export type FinchApiOptions = {
   context?: FinchContext;
   attachMessages?: boolean;
   attachExternalMessages?: boolean;
   typeDefs: MakeExecSchemaOptions["typeDefs"] | DocumentNode[];
+  messageKey?: string;
+  onQueryResponse?: (meta: QueryResponseMeta) => void;
 } & MakeExecSchemaOptions;
 
 export interface FinchMessage<Variables extends GenericVariables = {}> {
-  type?: FinchMessageKey.Generic;
+  type?: FinchMessageKey.Generic | string;
   query?: string | DocumentNode;
   variables?: Variables;
 }
@@ -39,4 +49,5 @@ export interface FinchMessage<Variables extends GenericVariables = {}> {
 export interface FinchQueryOptions {
   id?: string;
   port?: browser.runtime.Port;
+  messageKey?: string;
 }

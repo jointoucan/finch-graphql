@@ -16,14 +16,20 @@ import { addExteneralMessageListener, addMessageListener } from "./browser";
 export class FinchApi {
   schema: GraphQLSchema;
   context: FinchContext;
+  onQueryResponse: FinchApiOptions["onQueryResponse"];
+  messageKey?: string;
   constructor({
     context,
     attachMessages,
     attachExternalMessages,
+    messageKey,
+    onQueryResponse = () => {},
     ...options
   }: FinchApiOptions) {
     this.schema = makeExecutableSchema(options);
     this.context = context ?? { source: FinchMessageSource.Internal };
+    this.messageKey = messageKey;
+    this.onQueryResponse = onQueryResponse;
 
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
@@ -73,7 +79,9 @@ export class FinchApi {
       operationName = operationDef?.name?.value ?? undefined;
     }
 
-    return graphql(
+    const ts = performance.now();
+
+    const response = await graphql(
       this.schema,
       queryStr,
       { root: true },
@@ -81,10 +89,28 @@ export class FinchApi {
       variables,
       operationName
     );
+
+    const timeTaken = Math.round(performance.now() - ts);
+
+    // NOTE: This ensure not outside code breaks this functionality
+    try {
+      this.onQueryResponse({
+        query: documentNode,
+        variables,
+        context,
+        timeTaken,
+        operationName,
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+
+    return response;
   }
 
   onMessage(message: FinchMessage, sender?: browser.runtime.MessageSender) {
-    if (message.type === FinchMessageKey.Generic && message.query) {
+    const messageKey = this.messageKey ?? FinchMessageKey.Generic;
+    if (message.type === messageKey && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
         source: FinchMessageSource.Message,
@@ -97,7 +123,8 @@ export class FinchApi {
     message: FinchMessage,
     sender?: browser.runtime.MessageSender
   ) {
-    if (message.type === FinchMessageKey.Generic && message.query) {
+    const messageKey = this.messageKey ?? FinchMessageKey.Generic;
+    if (message.type === messageKey && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
         source: FinchMessageSource.ExternalMessage,
