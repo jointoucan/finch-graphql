@@ -1,4 +1,4 @@
-import { DocumentNode } from "graphql";
+import { DocumentNode, ExecutionResult } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 export enum FinchMessageKey {
@@ -27,8 +27,9 @@ interface QueryResponseMeta {
   query: DocumentNode;
   operationName?: string;
   variables: any;
-  context: FinchContext;
+  context: FinchContextObj;
   timeTaken: number;
+  response: ExecutionResult;
 }
 
 export type FinchApiOptions = {

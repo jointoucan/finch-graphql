@@ -100,6 +100,7 @@ export class FinchApi {
         context,
         timeTaken,
         operationName,
+        response,
       });
     } catch (e) {
       console.warn(e);
