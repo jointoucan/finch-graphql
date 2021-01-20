@@ -95,37 +95,26 @@ export class FinchApi {
       operationName = operationDef?.name?.value ?? undefined;
     }
 
+    let validationErrors: readonly GraphQLError[] = [];
     if (this.rules.length) {
-      const validationErrors = validate(this.schema, documentNode, this.rules);
-      if (validationErrors) {
-        return Promise.resolve({
-          data: null,
-          errors: validationErrors,
-        });
-      }
+      validationErrors = validate(this.schema, documentNode, this.rules);
     }
 
     const ts = performance.now();
+    const shouldExecute = !validationErrors.length;
 
-    let pendingResponse: ReturnType<typeof graphql>;
-
-    if (operationName === "Introspection" && this.disableIntrospection) {
-      pendingResponse = Promise.resolve({
-        data: null,
-        errors: [new GraphQLError("Introspection disabled")],
-      });
-    }
-
-    const response = pendingResponse
-      ? await pendingResponse
-      : await graphql(
+    const response = await (shouldExecute
+      ? graphql(
           this.schema,
           queryStr,
           { root: true },
           context,
           variables,
           operationName
-        );
+        )
+      : Promise.resolve({
+          errors: validationErrors,
+        }));
 
     const timeTaken = Math.round(performance.now() - ts);
 
