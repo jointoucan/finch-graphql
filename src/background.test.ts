@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { FinchApi } from "./background";
+import { FinchApi } from "./background/background";
 import { FinchMessageKey, FinchMessageSource } from "./types";
 
 describe("FinchApi", () => {
@@ -127,5 +127,32 @@ describe("FinchApi", () => {
     expect(respGood).toEqual({
       data: { test: true },
     });
+  });
+  it("should allow for the disabling of introspection", async () => {
+    const api = new FinchApi({
+      typeDefs: `type Query { test: Boolean! }`,
+      resolvers: {
+        Query: {
+          test: () => true,
+        },
+      },
+      disableIntrospection: true,
+    });
+
+    const { errors, data } = await api.onExternalMessage({
+      query: gql`
+        query getIntrospection {
+          __schema {
+            types {
+              name
+            }
+          }
+        }
+      `,
+      variables: {},
+      type: FinchMessageKey.Generic,
+    });
+
+    expect(errors[0].message).toMatch(/Introspection is disabled/);
   });
 });
