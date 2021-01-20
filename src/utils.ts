@@ -1,4 +1,4 @@
-import { DocumentNode, GraphQLError } from "graphql";
+import { DocumentNode } from "graphql";
 
 export const isDocumentNode = (
   query: string | DocumentNode

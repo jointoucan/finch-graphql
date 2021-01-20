@@ -139,7 +139,7 @@ describe("FinchApi", () => {
       disableIntrospection: true,
     });
 
-    const { errors, data } = await api.onExternalMessage({
+    const { errors } = await api.onExternalMessage({
       query: gql`
         query getIntrospection {
           __schema {

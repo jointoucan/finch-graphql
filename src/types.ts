@@ -1,4 +1,4 @@
-import { DocumentNode, ExecutionResult, FieldNode } from "graphql";
+import { DocumentNode, ExecutionResult } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 export enum FinchMessageKey {
