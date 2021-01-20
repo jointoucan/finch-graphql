@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { FinchApi } from "./background/background";
+import { FinchApi } from "./background";
 import { FinchMessageKey, FinchMessageSource } from "./types";
 
 describe("FinchApi", () => {
