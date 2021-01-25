@@ -34,11 +34,15 @@ export class FinchApi {
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
 
+    const attachOptions = {
+      messageKey: this.messageKey ?? FinchMessageKey.Generic,
+    };
+
     if (attachMessages) {
-      addMessageListener(this.onMessage);
+      addMessageListener(this.onMessage, attachOptions);
     }
     if (attachExternalMessages) {
-      addExteneralMessageListener(this.onExternalMessage);
+      addExteneralMessageListener(this.onExternalMessage, attachOptions);
     }
   }
 
