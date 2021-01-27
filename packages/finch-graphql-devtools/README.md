@@ -1,29 +1,31 @@
 # Finch GraphQL Devtools
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Finch GraphQL devtools is an extension that will allow you to query a [Finch GraphQL](https://github.com/jointoucan/finch-graphql) background process to be able to debug the schema, query, and mutate data in the extension.
+
+![Screen Shot](./app/images/screen-shot.png)
 
 ## Install
 
-	$ npm install
+    $ yarn
 
 ## Development
 
-    npm run dev chrome
-    npm run dev firefox
-    npm run dev opera
-    npm run dev edge
+    yarn dev chrome
+    yarn dev firefox
+    yarn dev opera
+    yarn dev edge
 
 ## Build
 
-    npm run build chrome
-    npm run build firefox
-    npm run build opera
-    npm run build edge
+    yarn build chrome
+    yarn build firefox
+    yarn build opera
+    yarn build edge
 
 ## Environment
 
-The build tool also defines a variable named `process.env.NODE_ENV` in your scripts. 
+The build tool also defines a variable named `process.env.NODE_ENV` in your scripts.
 
-## Docs
+## Built with
 
-* [webextension-toolbox](https://github.com/HaNdTriX/webextension-toolbox)
+- [webextension-toolbox](https://github.com/HaNdTriX/webextension-toolbox)
