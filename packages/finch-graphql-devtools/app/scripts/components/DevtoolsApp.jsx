@@ -1,39 +1,22 @@
 import { queryApi, FinchMessageKey } from 'finch-graphql'
-import React, { useMemo, useState } from 'react'
-import { Tabs, TabPanels, TabPanel, ChakraProvider } from '@chakra-ui/react'
+import React, { useMemo } from 'react'
+import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react'
 import GraphiQL from 'graphiql'
 import { Header } from './Header'
 import { SettingsEditor } from './SettingsEditor'
-import { StorageKey } from '../constants'
+import { StorageKey, DefaultQuery } from '../constants'
 import { useLocalStorage } from '../hooks/useLocalStorage'
+import { Theme } from './Theme'
 
 export const graphQLFetcher = ({ messageKey, extensionId }) => async ({
   query,
   variables,
 }) => {
-  const resp = await queryApi(query, variables || {}, {
+  return queryApi(query, variables || {}, {
     messageKey,
     id: extensionId,
   })
-  console.log(resp)
-  return resp
 }
-
-const defaultQuery = `
-# Welcome to GraphiQL for Finch GraphQL
-#
-# GraphiQL is an in-browser tool for writing, validating, and
-# testing GraphQL queries. Try it out.
-#
-
-query getExtensionInfo {
-  browser {
-    manifest {
-      name
-      version
-    }
-  }
-}`
 
 export const DevtoolsApp = () => {
   const [extensionId, setExtensionId] = useLocalStorage(
@@ -44,18 +27,23 @@ export const DevtoolsApp = () => {
     StorageKey.MessageKey,
     FinchMessageKey.Generic,
   )
+  const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0)
 
   const fetcher = useMemo(() => {
     return graphQLFetcher({ messageKey, extensionId })
   }, [messageKey, extensionId])
 
   return (
-    <ChakraProvider>
-      <Tabs>
+    <Theme>
+      <Tabs
+        colorScheme="teal"
+        onChange={index => setTabIndex(index)}
+        defaultIndex={tabIndex}
+      >
         <Header />
         <TabPanels>
           <TabPanel p="0">
-            <GraphiQL fetcher={fetcher} defaultQuery={defaultQuery} />
+            <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
           </TabPanel>
           <TabPanel p="0">
             <SettingsEditor
@@ -71,6 +59,6 @@ export const DevtoolsApp = () => {
           </TabPanel>
         </TabPanels>
       </Tabs>
-    </ChakraProvider>
+    </Theme>
   )
 }

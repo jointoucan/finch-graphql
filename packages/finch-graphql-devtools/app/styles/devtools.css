@@ -29,24 +29,64 @@ body,
   height: 45px;
 }
 
-.topBar.finch-header .title {
-  display: inline-block;
-  font-size: 1.4em;
-  color: #cacdd3;
-}
-
-.finch-logo {
-  width: 60.384px;
-  height: 37px;
-  margin: 4px 8px;
-}
-
-.finch-header,
-.graphiql-container .topBar {
-}
-
 .graphiql-container .topBar {
   padding: 24px;
+  background: #ebebeb;
+  border-bottom: 1px solid #cdcdcd;
+}
+
+.graphiql-container .docExplorerShow {
+  background: #ebebeb;
+  font-weight: 600;
+  line-height: 1.2;
+  border-color: #cdcdcd;
+}
+
+.graphiql-container .doc-explorer-title,
+.graphiql-container .history-title {
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: visible;
+}
+
+.graphiql-container .toolbar-button,
+.graphiql-container .execute-button {
+  background: #cdcdcd;
+  box-shadow: none;
+  font-weight: 600;
+  line-height: 1.2;
+  height: 2rem;
+  color: #161616;
+  fill: #161616;
+  transition: all 0.2s ease;
+}
+
+.graphiql-container .toolbar-button:focus,
+.graphiql-container .execute-button:focus {
+  background: #cdcdcd;
+  box-shadow: 0 0 0 3px rgb(66 153 225 / 60%);
+  outline: transparent;
+}
+
+.graphiql-container .toolbar-button {
+  border-radius: 0.375rem;
+}
+
+.graphiql-container .execute-button {
+  border: none;
+  width: 2rem;
+}
+
+.graphiql-container .execute-options > li.selected,
+.graphiql-container .history-contents > li:active,
+.graphiql-container .history-contents > li:hover,
+.graphiql-container .toolbar-menu-items > li.hover,
+.graphiql-container .toolbar-menu-items > li:active,
+.graphiql-container .toolbar-menu-items > li:hover,
+.graphiql-container .toolbar-select-options > li.hover,
+.graphiql-container .toolbar-select-options > li:active,
+.graphiql-container .toolbar-select-options > li:hover {
+  background: #e07a15;
 }
 
 /*

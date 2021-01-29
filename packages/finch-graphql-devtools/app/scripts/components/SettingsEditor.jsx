@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Input, Text } from '@chakra-ui/react'
+import { Box, Input, Text, Button } from '@chakra-ui/react'
 
 export const SettingsEditor = ({
   extensionId,
@@ -8,7 +8,7 @@ export const SettingsEditor = ({
   onChangeExtensionId,
 }) => {
   return (
-    <Box p={4}>
+    <Box py={4} px={5}>
       <Text labelFor="messageKey">Extension ID</Text>
       <Input value={extensionId || ''} onChange={onChangeExtensionId} mb={2} />
       <Text labelFor="messageKey">Message Key</Text>
