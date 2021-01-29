@@ -1,13 +1,30 @@
 import { FinchMessage } from "./types";
 
+/* 
+  NOTE: chrome apis need to return true the call sendResponse
+  https://developer.chrome.com/docs/extensions/mv2/messaging/#simple
+*/
+
 export const addMessageListener = (
   handler: (
     message: FinchMessage,
     sender: browser.runtime.MessageSender | chrome.runtime.MessageSender
-  ) => Promise<unknown>
+  ) => Promise<unknown>,
+  options: { messageKey: string }
 ) => {
   if (typeof chrome === "object") {
-    chrome.runtime.onMessage.addListener(handler);
+    chrome.runtime.onMessage.addListener(
+      (
+        message: { type?: string; [key: string]: any },
+        sender: chrome.runtime.MessageSender,
+        sendReponse: (payload: any) => void
+      ) => {
+        if (message.type === options.messageKey) {
+          handler(message, sender).then((response) => sendReponse(response));
+          return true;
+        }
+      }
+    );
   } else if (typeof browser === "object") {
     browser.runtime.onMessage.addListener(handler);
   }
@@ -17,10 +34,22 @@ export const addExteneralMessageListener = (
   handler: (
     message: FinchMessage,
     sender: browser.runtime.MessageSender | chrome.runtime.MessageSender
-  ) => Promise<unknown>
+  ) => Promise<unknown>,
+  options: { messageKey: string }
 ) => {
   if (typeof chrome === "object") {
-    chrome.runtime.onMessageExternal.addListener(handler);
+    chrome.runtime.onMessageExternal.addListener(
+      (
+        message: { type?: string; [key: string]: any },
+        sender: chrome.runtime.MessageSender,
+        sendReponse: (payload: any) => void
+      ) => {
+        if (message.type === options.messageKey) {
+          handler(message, sender).then((response) => sendReponse(response));
+          return true;
+        }
+      }
+    );
   } else if (typeof browser === "object") {
     browser.runtime.onMessageExternal.addListener(handler);
   }

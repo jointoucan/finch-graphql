@@ -50,11 +50,15 @@ export class FinchApi {
       this.rules.unshift(NoIntrospection);
     }
 
+    const attachOptions = {
+      messageKey: this.messageKey ?? FinchMessageKey.Generic,
+    };
+
     if (attachMessages) {
-      addMessageListener(this.onMessage);
+      addMessageListener(this.onMessage, attachOptions);
     }
     if (attachExternalMessages) {
-      addExteneralMessageListener(this.onExternalMessage);
+      addExteneralMessageListener(this.onExternalMessage, attachOptions);
     }
   }
 
