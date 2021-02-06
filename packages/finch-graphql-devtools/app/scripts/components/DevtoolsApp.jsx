@@ -36,7 +36,7 @@ export const DevtoolsApp = () => {
   return (
     <Theme>
       <Tabs
-        colorScheme="teal"
+        colorScheme="blue"
         onChange={index => setTabIndex(index)}
         defaultIndex={tabIndex}
       >
@@ -48,8 +48,8 @@ export const DevtoolsApp = () => {
           <TabPanel p="0">
             <SettingsEditor
               extensionId={extensionId}
-              onChangeExtensionId={e => {
-                setExtensionId(e.target.value)
+              onChangeExtensionId={id => {
+                setExtensionId(id)
               }}
               messageKey={messageKey}
               onChangeMessageKey={e => {
