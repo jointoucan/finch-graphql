@@ -128,4 +128,31 @@ describe("FinchApi", () => {
       data: { test: true },
     });
   });
+  it("should allow for the disabling of introspection", async () => {
+    const api = new FinchApi({
+      typeDefs: `type Query { test: Boolean! }`,
+      resolvers: {
+        Query: {
+          test: () => true,
+        },
+      },
+      disableIntrospection: true,
+    });
+
+    const { errors } = await api.onExternalMessage({
+      query: gql`
+        query getIntrospection {
+          __schema {
+            types {
+              name
+            }
+          }
+        }
+      `,
+      variables: {},
+      type: FinchMessageKey.Generic,
+    });
+
+    expect(errors[0].message).toMatch(/Introspection is disabled/);
+  });
 });

@@ -1,7 +1,14 @@
-import { graphql, GraphQLSchema, DocumentNode, print } from "graphql";
+import {
+  graphql,
+  validate,
+  GraphQLSchema,
+  DocumentNode,
+  print,
+  GraphQLError,
+} from "graphql";
 import gql from "graphql-tag";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { isDocumentNode } from "./utils";
+import { isDocumentNode } from "../utils";
 import {
   FinchApiOptions,
   GenericVariables,
@@ -10,29 +17,38 @@ import {
   FinchContext,
   FinchMessageSource,
   FinchContextObj,
-} from "./types";
-import { addExteneralMessageListener, addMessageListener } from "./browser";
+} from "../types";
+import { addExteneralMessageListener, addMessageListener } from "../browser";
+import { NoIntrospection } from "./introspection";
 
 export class FinchApi {
   schema: GraphQLSchema;
   context: FinchContext;
   onQueryResponse: FinchApiOptions["onQueryResponse"];
   messageKey?: string;
+  disableIntrospection: boolean;
+  rules: any[];
   constructor({
     context,
     attachMessages,
     attachExternalMessages,
     messageKey,
     onQueryResponse = () => {},
+    disableIntrospection,
+    validationRules = [],
     ...options
   }: FinchApiOptions) {
     this.schema = makeExecutableSchema(options);
     this.context = context ?? { source: FinchMessageSource.Internal };
     this.messageKey = messageKey;
     this.onQueryResponse = onQueryResponse;
-
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
+    this.rules = validationRules;
+
+    if (disableIntrospection) {
+      this.rules.unshift(NoIntrospection);
+    }
 
     const attachOptions = {
       messageKey: this.messageKey ?? FinchMessageKey.Generic,
@@ -83,16 +99,26 @@ export class FinchApi {
       operationName = operationDef?.name?.value ?? undefined;
     }
 
-    const ts = performance.now();
+    let validationErrors: readonly GraphQLError[] = [];
+    if (this.rules.length) {
+      validationErrors = validate(this.schema, documentNode, this.rules);
+    }
 
-    const response = await graphql(
-      this.schema,
-      queryStr,
-      { root: true },
-      context,
-      variables,
-      operationName
-    );
+    const ts = performance.now();
+    const shouldExecute = !validationErrors.length;
+
+    const response = await (shouldExecute
+      ? graphql(
+          this.schema,
+          queryStr,
+          { root: true },
+          context,
+          variables,
+          operationName
+        )
+      : Promise.resolve({
+          errors: validationErrors,
+        }));
 
     const timeTaken = Math.round(performance.now() - ts);
 

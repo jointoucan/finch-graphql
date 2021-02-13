@@ -39,6 +39,8 @@ export type FinchApiOptions = {
   typeDefs: MakeExecSchemaOptions["typeDefs"] | DocumentNode[];
   messageKey?: string;
   onQueryResponse?: (meta: QueryResponseMeta) => void;
+  disableIntrospection?: boolean;
+  validationRules?: Array<any>;
 } & MakeExecSchemaOptions;
 
 export interface FinchMessage<Variables extends GenericVariables = {}> {
