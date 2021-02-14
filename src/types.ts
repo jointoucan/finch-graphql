@@ -1,5 +1,6 @@
 import { DocumentNode, ExecutionResult } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import { applyMiddleware } from "graphql-middleware";
 
 export enum FinchMessageKey {
   Generic = "Finch-message",
@@ -41,6 +42,7 @@ export type FinchApiOptions = {
   onQueryResponse?: (meta: QueryResponseMeta) => void;
   disableIntrospection?: boolean;
   validationRules?: Array<any>;
+  middleware?: Array<Parameters<typeof applyMiddleware>[1]>;
 } & MakeExecSchemaOptions;
 
 export interface FinchMessage<Variables extends GenericVariables = {}> {

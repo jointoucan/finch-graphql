@@ -42,6 +42,7 @@
     "react": "<=16.x"
   },
   "dependencies": {
-    "@graphql-tools/schema": "^7.1.2"
+    "@graphql-tools/schema": "^7.1.2",
+    "graphql-middleware": "^6.0.4"
   }
 }
