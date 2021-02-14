@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-typescript": "^7.12.1",
     "@testing-library/react-hooks": "^5.0.0",
-    "@types/chrome": "^0.0.129",
+    "@types/chrome": "^0.0.130",
     "@types/jest": "^26.0.15",
     "@types/react": "^17.0.0",
     "babel-jest": "^26.6.1",
