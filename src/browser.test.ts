@@ -1,14 +1,14 @@
-import { addMessageListener, addExteneralMessageListener } from "./browser";
+import { addMessageListener, addExteneralMessageListener } from './browser';
 
-describe("addMessageListener", () => {
-  it("should if using the chrome api immediatly return true and call sendResponse", () => {
+describe('addMessageListener', () => {
+  it('should if using the chrome api immediately return true and call sendResponse', () => {
     expect.assertions(3);
     const sendResponseMock = jest.fn();
     const handler = jest.fn().mockImplementation(() => {
       // NOTE: fake promise to avoid async
       return {
-        then: (send) => {
-          send({ foo: "bar" });
+        then: send => {
+          send({ foo: 'bar' });
         },
       };
     });
@@ -17,38 +17,38 @@ describe("addMessageListener", () => {
       runtime: {
         // @ts-ignore
         onMessage: {
-          addListener: jest.fn().mockImplementation((methodToTest) => {
+          addListener: jest.fn().mockImplementation(methodToTest => {
             //
             const resp = methodToTest(
               {
-                type: "foo",
-                query: "",
+                type: 'foo',
+                query: '',
                 variables: {},
               },
               {},
-              sendResponseMock
+              sendResponseMock,
             );
             expect(resp).toBe(true);
             expect(handler).toBeCalled();
-            expect(sendResponseMock).toBeCalledWith({ foo: "bar" });
+            expect(sendResponseMock).toBeCalledWith({ foo: 'bar' });
           }),
         },
       },
     };
 
-    addMessageListener(handler, { messageKey: "foo" });
+    addMessageListener(handler, { messageKey: 'foo' });
   });
 });
 
-describe("addExteneralMessageListener", () => {
-  it("should if using the chrome api immediatly return true and call sendResponse", () => {
+describe('addExteneralMessageListener', () => {
+  it('should if using the chrome api immediately return true and call sendResponse', () => {
     expect.assertions(3);
     const sendResponseMock = jest.fn();
     const handler = jest.fn().mockImplementation(() => {
       // NOTE: fake promise to avoid async
       return {
-        then: (send) => {
-          send({ foo: "bar" });
+        then: send => {
+          send({ foo: 'bar' });
         },
       };
     });
@@ -57,25 +57,25 @@ describe("addExteneralMessageListener", () => {
       runtime: {
         // @ts-ignore
         onMessageExternal: {
-          addListener: jest.fn().mockImplementation((methodToTest) => {
+          addListener: jest.fn().mockImplementation(methodToTest => {
             //
             const resp = methodToTest(
               {
-                type: "foo",
-                query: "",
+                type: 'foo',
+                query: '',
                 variables: {},
               },
               {},
-              sendResponseMock
+              sendResponseMock,
             );
             expect(resp).toBe(true);
             expect(handler).toBeCalled();
-            expect(sendResponseMock).toBeCalledWith({ foo: "bar" });
+            expect(sendResponseMock).toBeCalledWith({ foo: 'bar' });
           }),
         },
       },
     };
 
-    addExteneralMessageListener(handler, { messageKey: "foo" });
+    addExteneralMessageListener(handler, { messageKey: 'foo' });
   });
 });

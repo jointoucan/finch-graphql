@@ -1,20 +1,20 @@
-import { queryApi } from "../client";
-import { DocumentNode, GraphQLFormattedError } from "graphql";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useExtension } from "./ExtensionProvider";
+import { queryApi } from '../client';
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useExtension } from './ExtensionProvider';
 
 type MutationError = GraphQLFormattedError | Error;
 type Response<T> = { data: T | null; errors?: GraphQLFormattedError[] } | null;
 
 export const useMutation = <Query, Variables>(
-  query: DocumentNode
+  query: DocumentNode,
 ): [
   (variables: Variables) => Promise<Response<Query>>,
   {
     data: Query | null;
     loading: Boolean;
     error?: MutationError;
-  }
+  },
 ] => {
   const { id, port, messageKey } = useExtension();
   const mounted = useRef(true);
@@ -49,7 +49,7 @@ export const useMutation = <Query, Variables>(
       }
       return resp;
     },
-    [query]
+    [query],
   );
 
   useEffect(() => {

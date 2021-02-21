@@ -1,9 +1,9 @@
-import { queryApi } from "./client";
-import gql from "graphql-tag";
-import { FinchMessageKey } from "./types";
+import { queryApi } from './client';
+import gql from 'graphql-tag';
+import { FinchMessageKey } from './types';
 
-describe("queryApi", () => {
-  it("should send and message to the background script", async () => {
+describe('queryApi', () => {
+  it('should send and message to the background script', async () => {
     const ogChrome = window.chrome;
     window.chrome = undefined;
     browser.runtime.sendMessage = jest.fn().mockResolvedValue({});
@@ -11,7 +11,7 @@ describe("queryApi", () => {
     expect(browser.runtime.sendMessage).toBeCalled();
     window.chrome = ogChrome;
   });
-  it("should send and message to the background script externally", async () => {
+  it('should send and message to the background script externally', async () => {
     const ogChrome = window.chrome;
     window.chrome = undefined;
     browser.runtime.sendMessage = jest.fn().mockResolvedValue({});
@@ -20,8 +20,8 @@ describe("queryApi", () => {
         test
       }
     `;
-    await queryApi(fooQuery, {}, { id: "foo" });
-    expect(browser.runtime.sendMessage).toBeCalledWith("foo", {
+    await queryApi(fooQuery, {}, { id: 'foo' });
+    expect(browser.runtime.sendMessage).toBeCalledWith('foo', {
       type: FinchMessageKey.Generic,
       query: fooQuery,
       variables: {},
@@ -29,7 +29,7 @@ describe("queryApi", () => {
     window.chrome = ogChrome;
   });
 
-  it("should send and message to the background script using chrome apis if available", async () => {
+  it('should send and message to the background script using chrome apis if available', async () => {
     const ogChrome = window.chrome;
     chrome.runtime.sendMessage = jest
       .fn()

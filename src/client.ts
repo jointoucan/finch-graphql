@@ -1,18 +1,13 @@
-import { DocumentNode, GraphQLFormattedError } from "graphql";
-import gql from "graphql-tag";
-import { sendMessage } from "./browser";
-import {
-  GenericVariables,
-  FinchMessageKey,
-  FinchMessage,
-  FinchQueryOptions,
-} from "./types";
-import { isDocumentNode } from "./utils";
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
+import gql from 'graphql-tag';
+import { sendMessage } from './browser';
+import { GenericVariables, FinchMessageKey, FinchQueryOptions } from './types';
+import { isDocumentNode } from './utils';
 
 const messageCreator = <Variables extends GenericVariables = {}>(
   query: string | DocumentNode,
   variables: Variables,
-  messageKey?: string
+  messageKey?: string,
 ) => {
   return {
     type: messageKey ?? FinchMessageKey.Generic,
@@ -27,7 +22,7 @@ export const queryApi = async <
 >(
   query: string | DocumentNode,
   variables?: Variables,
-  options: FinchQueryOptions = {}
+  options: FinchQueryOptions = {},
 ) => {
   const { id: extensionId, messageKey } = options;
   const args: [string, unknown] | [unknown] = [

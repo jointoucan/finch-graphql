@@ -1,4 +1,4 @@
-import { FinchMessage } from "./types";
+import { FinchMessage } from './types';
 
 /* 
   NOTE: chrome apis need to return true the call sendResponse
@@ -8,24 +8,24 @@ import { FinchMessage } from "./types";
 export const addMessageListener = (
   handler: (
     message: FinchMessage,
-    sender: browser.runtime.MessageSender | chrome.runtime.MessageSender
+    sender: browser.runtime.MessageSender | chrome.runtime.MessageSender,
   ) => Promise<unknown>,
-  options: { messageKey: string }
+  options: { messageKey: string },
 ) => {
-  if (typeof chrome === "object") {
+  if (typeof chrome === 'object') {
     chrome.runtime.onMessage.addListener(
       (
         message: { type?: string; [key: string]: any },
         sender: chrome.runtime.MessageSender,
-        sendReponse: (payload: any) => void
+        sendReponse: (payload: any) => void,
       ) => {
         if (message.type === options.messageKey) {
-          handler(message, sender).then((response) => sendReponse(response));
+          handler(message, sender).then(response => sendReponse(response));
           return true;
         }
-      }
+      },
     );
-  } else if (typeof browser === "object") {
+  } else if (typeof browser === 'object') {
     browser.runtime.onMessage.addListener(handler);
   }
 };
@@ -33,45 +33,45 @@ export const addMessageListener = (
 export const addExteneralMessageListener = (
   handler: (
     message: FinchMessage,
-    sender: browser.runtime.MessageSender | chrome.runtime.MessageSender
+    sender: browser.runtime.MessageSender | chrome.runtime.MessageSender,
   ) => Promise<unknown>,
-  options: { messageKey: string }
+  options: { messageKey: string },
 ) => {
-  if (typeof chrome === "object") {
+  if (typeof chrome === 'object') {
     chrome.runtime.onMessageExternal.addListener(
       (
         message: { type?: string; [key: string]: any },
         sender: chrome.runtime.MessageSender,
-        sendReponse: (payload: any) => void
+        sendReponse: (payload: any) => void,
       ) => {
         if (message.type === options.messageKey) {
-          handler(message, sender).then((response) => sendReponse(response));
+          handler(message, sender).then(response => sendReponse(response));
           return true;
         }
-      }
+      },
     );
-  } else if (typeof browser === "object") {
+  } else if (typeof browser === 'object') {
     browser.runtime.onMessageExternal.addListener(handler);
   }
 };
 
 export async function sendMessage<MessageReponse extends {}>(
-  message: unknown
+  message: unknown,
 ): Promise<MessageReponse>;
 export async function sendMessage<MessageReponse extends {}>(
   extensionId: string,
-  message: unknown
+  message: unknown,
 ): Promise<MessageReponse>;
 export async function sendMessage<MessageReponse extends {}>(
   extensionId: string | unknown,
-  message?: unknown
+  message?: unknown,
 ): Promise<MessageReponse> {
   const args: [unknown] | [string, unknown] = [extensionId];
-  if (typeof message === "object") {
+  if (typeof message === 'object') {
     args.push(message);
   }
 
-  if (typeof chrome === "object") {
+  if (typeof chrome === 'object') {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(...args, (resp: MessageReponse) => {
         if (chrome.runtime.lastError) {
@@ -82,11 +82,13 @@ export async function sendMessage<MessageReponse extends {}>(
     });
   }
 
-  if (typeof browser === "object") {
+  if (typeof browser === 'object') {
     return browser.runtime.sendMessage(...args) as Promise<MessageReponse>;
   }
 
   return Promise.reject(
-    new Error("Cannot send message to extension, this browser is not supported")
+    new Error(
+      'Cannot send message to extension, this browser is not supported',
+    ),
   );
 }

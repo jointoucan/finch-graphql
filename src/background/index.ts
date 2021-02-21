@@ -1,2 +1,2 @@
-export { FinchApi } from "./FinchApi";
-export { NoIntrospection } from "./NoIntrospection";
+export { FinchApi } from './FinchApi';
+export { NoIntrospection } from './NoIntrospection';
