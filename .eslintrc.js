@@ -1,9 +1,9 @@
-const extensions = [".ts", ".js", ".jsx", ".tsx", ".json"];
+const extensions = ['.ts', '.js', '.jsx', '.tsx', '.json'];
 
 module.exports = {
-  extends: ["prettier"],
-  parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "prettier", "import"],
+  extends: ['prettier'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'prettier', 'import'],
   env: {
     es6: true,
     browser: true,
@@ -11,54 +11,54 @@ module.exports = {
   },
   rules: {
     // Remove till we can cleanup deps to avoid old versions of typescript lint from being used.
-    "no-use-before-define": "off",
+    'no-use-before-define': 'off',
     // Typescripts overrides
-    "no-shadow": "off",
-    "no-unused-vars": "off",
-    "no-undef": "off",
-    "no-unused-expressions": "off",
-    "@typescript-eslint/no-shadow": ["error"],
-    "@typescript-eslint/no-unused-vars": ["error"],
-    "@typescript-eslint/no-unused-expressions": ["error"],
+    'no-shadow': 'off',
+    'no-unused-vars': 'off',
+    'no-undef': 'off',
+    'no-unused-expressions': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
+    '@typescript-eslint/no-unused-vars': ['error'],
+    '@typescript-eslint/no-unused-expressions': ['error'],
 
-    "prettier/prettier": ["error"],
-    "no-plusplus": [
-      "error",
+    'prettier/prettier': ['error'],
+    'no-plusplus': [
+      'error',
       {
         allowForLoopAfterthoughts: true,
       },
     ],
-    "space-before-function-paren": [
-      "error",
+    'space-before-function-paren': [
+      'error',
       {
-        anonymous: "always",
-        named: "never",
-        asyncArrow: "always",
+        anonymous: 'always',
+        named: 'never',
+        asyncArrow: 'always',
       },
     ],
-    "no-underscore-dangle": ["error", { allow: ["__typename"] }],
-    "import/prefer-default-export": 0,
-    "import/extensions": [
-      "error",
-      "ignorePackages",
+    'no-underscore-dangle': ['error', { allow: ['__typename'] }],
+    'import/prefer-default-export': 0,
+    'import/extensions': [
+      'error',
+      'ignorePackages',
       {
-        js: "never",
-        jsx: "never",
-        ts: "never",
-        tsx: "never",
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
       },
     ],
-    "import/no-extraneous-dependencies": [
-      "error",
-      { devDependencies: ["**/*.test.ts"] },
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['**/*.test.ts'] },
     ],
   },
   settings: {
-    "import/extensions": extensions,
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"],
+    'import/extensions': extensions,
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
-    "import/resolver": {
+    'import/resolver': {
       node: {
         extensions,
       },
