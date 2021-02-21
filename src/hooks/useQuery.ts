@@ -1,7 +1,7 @@
-import { queryApi } from "../client";
-import { DocumentNode, GraphQLFormattedError } from "graphql";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useExtension } from "./ExtensionProvider";
+import { queryApi } from '../client';
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useExtension } from './ExtensionProvider';
 
 interface BackgroundQueryOptions<Variables> {
   variables?: Variables;
@@ -12,7 +12,7 @@ type QueryError = GraphQLFormattedError | Error;
 
 export const useQuery = <Query, Variables>(
   query: DocumentNode,
-  { skip, variables }: BackgroundQueryOptions<Variables> = {}
+  { skip, variables }: BackgroundQueryOptions<Variables> = {},
 ) => {
   const { id, messageKey } = useExtension();
   const mounted = useRef(true);
@@ -27,7 +27,7 @@ export const useQuery = <Query, Variables>(
           query,
           // @ts-ignore variables are kinda weird
           argVars ?? variables ?? {},
-          { id, messageKey }
+          { id, messageKey },
         );
 
         if (resp.data && mounted.current) {
@@ -46,7 +46,7 @@ export const useQuery = <Query, Variables>(
         }
       }
     },
-    [query, variables]
+    [query, variables],
   );
 
   useEffect(() => {

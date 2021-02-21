@@ -1,4 +1,4 @@
-import { createElement, createContext, FC, useContext } from "react";
+import { createElement, createContext, FC, useContext } from 'react';
 
 interface ExtensionProviderProps {
   id?: string;

@@ -9,10 +9,12 @@ jobs:
       - name: Setup container
         uses: actions/setup-node@v1
         with:
-          node-version: "12.x"
+          node-version: '12.x'
       - name: Install Yarn
         run: npm install yarn --global
       - name: Yarn install
         run: yarn
+      - name: Lint Code
+        run: yarn lint
       - name: Test Code
         run: yarn test

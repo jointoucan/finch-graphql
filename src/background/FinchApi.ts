@@ -5,11 +5,11 @@ import {
   DocumentNode,
   print,
   GraphQLError,
-} from "graphql";
-import gql from "graphql-tag";
-import { applyMiddleware } from "graphql-middleware";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { isDocumentNode } from "../utils";
+} from 'graphql';
+import gql from 'graphql-tag';
+import { applyMiddleware } from 'graphql-middleware';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { isDocumentNode } from '../utils';
 import {
   FinchApiOptions,
   GenericVariables,
@@ -18,14 +18,14 @@ import {
   FinchContext,
   FinchMessageSource,
   FinchContextObj,
-} from "../types";
-import { addExteneralMessageListener, addMessageListener } from "../browser";
-import { NoIntrospection } from "./NoIntrospection";
+} from '../types';
+import { addExteneralMessageListener, addMessageListener } from '../browser';
+import { NoIntrospection } from './NoIntrospection';
 
 export class FinchApi {
   schema: GraphQLSchema;
   context: FinchContext;
-  onQueryResponse: FinchApiOptions["onQueryResponse"];
+  onQueryResponse: FinchApiOptions['onQueryResponse'];
   messageKey?: string;
   disableIntrospection: boolean;
   rules: any[];
@@ -67,7 +67,7 @@ export class FinchApi {
   }
 
   private getContext(baseContext?: FinchContextObj) {
-    return typeof this.context === "function"
+    return typeof this.context === 'function'
       ? this.context(baseContext)
       : {
           source: FinchMessageSource.Internal,
@@ -77,7 +77,7 @@ export class FinchApi {
   }
 
   isQueryDocumentNode(query: string | DocumentNode): query is DocumentNode {
-    return typeof query === "object";
+    return typeof query === 'object';
   }
 
   private documentNodeToString(query: DocumentNode) {
@@ -87,7 +87,7 @@ export class FinchApi {
   async query<Query extends {}, Variables extends GenericVariables>(
     query: string | DocumentNode,
     variables?: Variables,
-    baseContext?: FinchContextObj
+    baseContext?: FinchContextObj,
   ) {
     const context = this.getContext(baseContext);
     const documentNode = isDocumentNode(query) ? query : gql(query);
@@ -97,9 +97,9 @@ export class FinchApi {
 
     let operationName = undefined;
     const operationDef = documentNode.definitions.find(
-      (def) => def.kind === "OperationDefinition"
+      def => def.kind === 'OperationDefinition',
     );
-    if (operationDef && "name" in operationDef) {
+    if (operationDef && 'name' in operationDef) {
       operationName = operationDef?.name?.value ?? undefined;
     }
 
@@ -118,7 +118,7 @@ export class FinchApi {
           { root: true },
           context,
           variables,
-          operationName
+          operationName,
         )
       : Promise.resolve({
           errors: validationErrors,
@@ -140,7 +140,7 @@ export class FinchApi {
       console.warn(e);
     }
 
-    return response;
+    return response as typeof response & { data?: Query };
   }
 
   onMessage(message: FinchMessage, sender?: browser.runtime.MessageSender) {
@@ -156,7 +156,7 @@ export class FinchApi {
 
   onExternalMessage(
     message: FinchMessage,
-    sender?: browser.runtime.MessageSender
+    sender?: browser.runtime.MessageSender,
   ) {
     const messageKey = this.messageKey ?? FinchMessageKey.Generic;
     if (message.type === messageKey && message.query) {

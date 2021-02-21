@@ -1,15 +1,15 @@
-import { DocumentNode, ExecutionResult } from "graphql";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { applyMiddleware } from "graphql-middleware";
+import { DocumentNode, ExecutionResult } from 'graphql';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { applyMiddleware } from 'graphql-middleware';
 
 export enum FinchMessageKey {
-  Generic = "Finch-message",
+  Generic = 'Finch-message',
 }
 
 export enum FinchMessageSource {
-  Internal = "internal",
-  Message = "message",
-  ExternalMessage = "external-message",
+  Internal = 'internal',
+  Message = 'message',
+  ExternalMessage = 'external-message',
 }
 
 export type GenericVariables = { [key: string]: any };
@@ -37,7 +37,7 @@ export type FinchApiOptions = {
   context?: FinchContext;
   attachMessages?: boolean;
   attachExternalMessages?: boolean;
-  typeDefs: MakeExecSchemaOptions["typeDefs"] | DocumentNode[];
+  typeDefs: MakeExecSchemaOptions['typeDefs'] | DocumentNode[];
   messageKey?: string;
   onQueryResponse?: (meta: QueryResponseMeta) => void;
   disableIntrospection?: boolean;
