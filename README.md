@@ -143,18 +143,14 @@ const MyComponent = () => {
 Testing between your background resolvers and client scripts is now super easy. Here is a snippet of code that will connect your background resolvers to the content scripts queries. Note this is using a jest mock.
 
 ```typescript
-jest.mock('finch-graphql', () => {
-  const ogFinch = jest.requireActual('finch-graphql');
-  const { finch } = jest.requireActual('./path-to/finch-instance');
-  return {
-    __esModule: true,
-    ...ogFinch,
-    queryApi: (query, variables) =>
-      finch.onMessage({
-        type: ogFinch.FinchMessageKey.Generic, // or your custom key
-        query,
-        variables,
-      }),
-  };
-});
+import { backgroundApiInstance } from '~/background/graphql';
+
+// This will connect the background resolvers to the client scripts when called.
+export const connectBackgroundResolvers = () => {
+  browser.runtime.sendMessage = jest
+    .fn()
+    .mockImplementation((message, sender) =>
+      backgroundApiInstance.onMessage(message, sender),
+    );
+};
 ```
