@@ -1,6 +1,6 @@
 {
   "name": "finch-graphql",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Graphql api for your background script of a web extension",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -56,6 +56,7 @@
   "dependencies": {
     "graphql-tag": "^2.11.0",
     "@graphql-tools/schema": "^7.1.2",
-    "graphql-middleware": "^6.0.4"
+    "graphql-middleware": "^6.0.4",
+    "use-deep-compare-effect": "^1.6.1"
   }
 }
