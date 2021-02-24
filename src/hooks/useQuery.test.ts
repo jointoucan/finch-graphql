@@ -96,7 +96,7 @@ describe('useQuery', () => {
     // First param is id on external calls
     expect(sendMessageMock.mock.calls[0][0]).toEqual('foo');
   });
-  it("should refetch a query when the variables change", async () => {
+  it('should refetch a query when the variables change', async () => {
     const sendMessageMock = jest
       .fn()
       .mockImplementation((_, callback) => callback());
@@ -106,22 +106,22 @@ describe('useQuery', () => {
       ({ foo }) => useQuery(testDoc, { variables: { foo } }),
       {
         initialProps: {
-          foo: "bar",
+          foo: 'bar',
         },
         wrapper: ({ children }) => {
           return React.createElement(ExtensionProvider, {
             // @ts-ignore
             children,
-            id: "foo",
+            id: 'foo',
           });
         },
-      }
+      },
     );
 
     await wrapper.waitForNextUpdate();
 
     act(() => {
-      wrapper.rerender({ foo: "baz" });
+      wrapper.rerender({ foo: 'baz' });
     });
 
     await wrapper.waitForNextUpdate();

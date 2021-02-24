@@ -1,8 +1,8 @@
-import { queryApi } from "../client";
-import { DocumentNode, GraphQLFormattedError } from "graphql";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useExtension } from "./ExtensionProvider";
-import useDeepCompareEffect from "use-deep-compare-effect";
+import { queryApi } from '../client';
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useExtension } from './ExtensionProvider';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 
 interface BackgroundQueryOptions<Variables> {
   variables?: Variables;
