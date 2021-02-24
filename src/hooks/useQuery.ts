@@ -2,6 +2,7 @@ import { queryApi } from "../client";
 import { DocumentNode, GraphQLFormattedError } from "graphql";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useExtension } from "./ExtensionProvider";
+import useDeepCompareEffect from "use-deep-compare-effect";
 
 interface BackgroundQueryOptions<Variables> {
   variables?: Variables;
@@ -49,12 +50,12 @@ export const useQuery = <Query, Variables>(
     [query, variables]
   );
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (!skip) {
       setLoading(true);
       makeQuery();
     }
-  }, [query, skip]);
+  }, [query, skip, variables]);
 
   useEffect(() => {
     mounted.current = true;

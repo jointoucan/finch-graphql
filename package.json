@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@graphql-tools/schema": "^7.1.2",
-    "graphql-middleware": "^6.0.4"
+    "graphql-middleware": "^6.0.4",
+    "use-deep-compare-effect": "^1.6.1"
   }
 }
