@@ -1,9 +1,9 @@
-import gql from "graphql-tag";
-import { FinchApi } from "./background";
-import { FinchMessageKey, FinchMessageSource } from "./types";
+import gql from 'graphql-tag';
+import { FinchApi } from './background';
+import { FinchMessageKey, FinchMessageSource } from './types';
 
-describe("FinchApi", () => {
-  it("should build up and schema based on typeDefs and resolvers", () => {
+describe('FinchApi', () => {
+  it('should build up and schema based on typeDefs and resolvers', () => {
     const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
@@ -13,12 +13,12 @@ describe("FinchApi", () => {
       },
     });
 
-    expect(api.query("{ test }", {})).resolves.toEqual({
+    expect(api.query('{ test }', {})).resolves.toEqual({
       data: { test: true },
     });
   });
 
-  it("should pass along the context of a message when using the message handler", async () => {
+  it('should pass along the context of a message when using the message handler', async () => {
     const resolverMethod = jest.fn().mockResolvedValue(true);
     const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
@@ -44,7 +44,7 @@ describe("FinchApi", () => {
     });
   });
 
-  it("should pass along the context of an external message when using the external message handler", async () => {
+  it('should pass along the context of an external message when using the external message handler', async () => {
     const resolverMethod = jest.fn().mockResolvedValue(true);
     const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
@@ -70,7 +70,7 @@ describe("FinchApi", () => {
     });
   });
 
-  it("should support passing a document instead of a string", () => {
+  it('should support passing a document instead of a string', () => {
     const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
@@ -91,7 +91,7 @@ describe("FinchApi", () => {
     });
   });
 
-  it("should allow for a custom message key", async () => {
+  it('should allow for a custom message key', async () => {
     const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
@@ -99,7 +99,7 @@ describe("FinchApi", () => {
           test: () => true,
         },
       },
-      messageKey: "Custom",
+      messageKey: 'Custom',
     });
 
     const respBad = await api.onExternalMessage({
@@ -121,14 +121,14 @@ describe("FinchApi", () => {
         }
       `,
       variables: {},
-      type: "Custom",
+      type: 'Custom',
     });
 
     expect(respGood).toEqual({
       data: { test: true },
     });
   });
-  it("should allow for the disabling of introspection", async () => {
+  it('should allow for the disabling of introspection', async () => {
     const api = new FinchApi({
       typeDefs: `type Query { test: Boolean! }`,
       resolvers: {
