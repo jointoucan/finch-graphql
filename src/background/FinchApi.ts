@@ -18,8 +18,9 @@ import {
   FinchContext,
   FinchMessageSource,
   FinchContextObj,
+  FinchExecutionResults,
 } from '../types';
-import { addExteneralMessageListener, addMessageListener } from '../browser';
+import { addExternalMessageListener, addMessageListener } from '../browser';
 import { NoIntrospection } from './NoIntrospection';
 
 export class FinchApi {
@@ -39,7 +40,7 @@ export class FinchApi {
     validationRules = [],
     ...options
   }: FinchApiOptions) {
-    this.schema = makeExecutableSchema(options);
+    this.schema = makeExecutableSchema<typeof options['resolvers']>(options);
     if (options.middleware) {
       this.schema = applyMiddleware(this.schema, ...options.middleware);
     }
@@ -62,7 +63,7 @@ export class FinchApi {
       addMessageListener(this.onMessage, attachOptions);
     }
     if (attachExternalMessages) {
-      addExteneralMessageListener(this.onExternalMessage, attachOptions);
+      addExternalMessageListener(this.onExternalMessage, attachOptions);
     }
   }
 
@@ -111,7 +112,7 @@ export class FinchApi {
     const ts = performance.now();
     const shouldExecute = !validationErrors.length;
 
-    const response = await (shouldExecute
+    const response = (await (shouldExecute
       ? graphql(
           this.schema,
           queryStr,
@@ -122,11 +123,11 @@ export class FinchApi {
         )
       : Promise.resolve({
           errors: validationErrors,
-        }));
+        }))) as FinchExecutionResults<Query>;
 
     const timeTaken = Math.round(performance.now() - ts);
 
-    // NOTE: This ensure not outside code breaks this functionality
+    // NOTE: This ensures outside code stop execution of this function.
     try {
       this.onQueryResponse({
         query: documentNode,
@@ -140,7 +141,7 @@ export class FinchApi {
       console.warn(e);
     }
 
-    return response as typeof response & { data?: Query };
+    return response;
   }
 
   onMessage(message: FinchMessage, sender?: browser.runtime.MessageSender) {

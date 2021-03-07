@@ -1,4 +1,4 @@
-import { addMessageListener, addExteneralMessageListener } from './browser';
+import { addMessageListener, addExternalMessageListener } from './browser';
 
 describe('addMessageListener', () => {
   it('should if using the chrome api immediately return true and call sendResponse', () => {
@@ -40,7 +40,7 @@ describe('addMessageListener', () => {
   });
 });
 
-describe('addExteneralMessageListener', () => {
+describe('addExternalMessageListener', () => {
   it('should if using the chrome api immediately return true and call sendResponse', () => {
     expect.assertions(3);
     const sendResponseMock = jest.fn();
@@ -76,6 +76,6 @@ describe('addExteneralMessageListener', () => {
       },
     };
 
-    addExteneralMessageListener(handler, { messageKey: 'foo' });
+    addExternalMessageListener(handler, { messageKey: 'foo' });
   });
 });
