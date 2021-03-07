@@ -3,8 +3,8 @@
 <!--
   Description: [REQUIRED]
   Please include a summary the issue you are seeings. This can contain things like.
-  - Behavior you are seeing
-  - Description of how you thing the problem should be resolved
+  - Behavior you are seeing.
+  - How you think how the behavior should be.
 -->
 
 DESCRIPTION_HERE
