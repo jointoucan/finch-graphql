@@ -1,4 +1,4 @@
-import { DocumentNode, ExecutionResult } from 'graphql';
+import { DocumentNode, ExecutionResult, GraphQLError } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { applyMiddleware } from 'graphql-middleware';
 
@@ -55,4 +55,9 @@ export interface FinchQueryOptions {
   id?: string;
   port?: browser.runtime.Port;
   messageKey?: string;
+}
+
+export interface FinchExecutionResults<Query> {
+  data?: Query;
+  readonly errors?: GraphQLError[];
 }

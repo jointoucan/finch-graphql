@@ -17,10 +17,10 @@ export const addMessageListener = (
       (
         message: { type?: string; [key: string]: any },
         sender: chrome.runtime.MessageSender,
-        sendReponse: (payload: any) => void,
+        sendResponse: (payload: any) => void,
       ) => {
         if (message.type === options.messageKey) {
-          handler(message, sender).then(response => sendReponse(response));
+          handler(message, sender).then(response => sendResponse(response));
           return true;
         }
       },
@@ -30,7 +30,7 @@ export const addMessageListener = (
   }
 };
 
-export const addExteneralMessageListener = (
+export const addExternalMessageListener = (
   handler: (
     message: FinchMessage,
     sender: browser.runtime.MessageSender | chrome.runtime.MessageSender,
@@ -42,10 +42,10 @@ export const addExteneralMessageListener = (
       (
         message: { type?: string; [key: string]: any },
         sender: chrome.runtime.MessageSender,
-        sendReponse: (payload: any) => void,
+        sendResponse: (payload: any) => void,
       ) => {
         if (message.type === options.messageKey) {
-          handler(message, sender).then(response => sendReponse(response));
+          handler(message, sender).then(response => sendResponse(response));
           return true;
         }
       },
@@ -55,17 +55,17 @@ export const addExteneralMessageListener = (
   }
 };
 
-export async function sendMessage<MessageReponse extends {}>(
+export async function sendMessage<MessageResponse extends {}>(
   message: unknown,
-): Promise<MessageReponse>;
-export async function sendMessage<MessageReponse extends {}>(
+): Promise<MessageResponse>;
+export async function sendMessage<MessageResponse extends {}>(
   extensionId: string,
   message: unknown,
-): Promise<MessageReponse>;
-export async function sendMessage<MessageReponse extends {}>(
+): Promise<MessageResponse>;
+export async function sendMessage<MessageResponse extends {}>(
   extensionId: string | unknown,
   message?: unknown,
-): Promise<MessageReponse> {
+): Promise<MessageResponse> {
   const args: [unknown] | [string, unknown] = [extensionId];
   if (typeof message === 'object') {
     args.push(message);
@@ -73,7 +73,7 @@ export async function sendMessage<MessageReponse extends {}>(
 
   if (typeof chrome === 'object') {
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage(...args, (resp: MessageReponse) => {
+      chrome.runtime.sendMessage(...args, (resp: MessageResponse) => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
         }
@@ -83,7 +83,7 @@ export async function sendMessage<MessageReponse extends {}>(
   }
 
   if (typeof browser === 'object') {
-    return browser.runtime.sendMessage(...args) as Promise<MessageReponse>;
+    return browser.runtime.sendMessage(...args) as Promise<MessageResponse>;
   }
 
   return Promise.reject(
