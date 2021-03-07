@@ -40,7 +40,7 @@ export class FinchApi {
     validationRules = [],
     ...options
   }: FinchApiOptions) {
-    this.schema = makeExecutableSchema<typeof options['resolvers']>(options);
+    this.schema = makeExecutableSchema(options);
     if (options.middleware) {
       this.schema = applyMiddleware(this.schema, ...options.middleware);
     }
