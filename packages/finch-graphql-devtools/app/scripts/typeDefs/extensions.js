@@ -12,4 +12,8 @@ export const extensionsSchema = gql`
     extensions: [Extension!]!
     manifest: Extension!
   }
+
+  extend type Mutation {
+    requestManagementPermission: Boolean!
+  }
 `

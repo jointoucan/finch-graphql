@@ -7,6 +7,7 @@ import {
   Select,
   Alert,
   AlertIcon,
+  Button,
 } from '@chakra-ui/react'
 import { useInstalledExtensions } from '../hooks/useInstalledExtensions'
 
@@ -18,7 +19,13 @@ export const SettingsEditor = ({
   onChangeMessageKey,
   onChangeExtensionId,
 }) => {
-  const { extensions, manifest, error } = useInstalledExtensions()
+  const {
+    extensions,
+    manifest,
+    error,
+    requestManagementPermission,
+    refetch,
+  } = useInstalledExtensions()
 
   const codeBlock = `"externally_connectable": {
     "ids": ["${(manifest && manifest.id) || 'extensionId'}"]
@@ -65,54 +72,96 @@ export const SettingsEditor = ({
         />
       </Box>
       <Box flex={1}>
-        <Text pt={3} pb={3}>
-          Next, you will need to select your extension from the list of
-          extensions below. Depending on how you load your extensions for
-          development this may change often.
-        </Text>
-        <Box display="flex" flexWrap="wrap">
-          {extensions.map(({ id, name, version, icon }) => {
-            const isSelected = id === extensionId
-            return (
-              <Box
-                onClick={() => {
-                  onChangeExtensionId(id)
-                }}
-                outline="none"
-                role="button"
-                tabIndex={0}
-                key={id}
-                rounded={8}
-                shadow="md"
-                flex="0"
-                minWidth="300px"
-                mr={2}
-                mb={2}
-                backgroundColor={isSelected ? 'blue.100' : 'white'}
-                p={3}
-                display="flex"
-                alignItems="center"
-                transition="all 0.3s ease"
-                boxShadow={
-                  isSelected
-                    ? `inset 0 0 0 2px #4299e1, ${defaultBoxShadow}`
-                    : `inset 0 0 0 0 #4299e1, ${defaultBoxShadow}`
-                }
-              >
-                <Box as="img" src={icon} width="45px" height="45px" mr={2} />
-                <Box flex="1" overflow="hidden">
-                  <Text color={isSelected ? 'blue.400' : 'grey.300'}>{id}</Text>
-                  <Heading size="xs" whiteSpace="nowrap">
-                    {name}
-                  </Heading>
-                  <Text color={isSelected ? 'blue.400' : 'grey.300'}>
-                    v{version}
-                  </Text>
-                </Box>
-              </Box>
-            )
-          })}
-        </Box>
+        {extensions.length ? (
+          <>
+            <Text pt={3} pb={3}>
+              Next, you will need to select your extension from the list of
+              extensions below. Depending on how you load your extensions for
+              development this may change often.
+            </Text>
+            <Box display="flex" flexWrap="wrap">
+              {extensions.map(({ id, name, version, icon }) => {
+                const isSelected = id === extensionId
+                return (
+                  <Box
+                    onClick={() => {
+                      onChangeExtensionId(id)
+                    }}
+                    outline="none"
+                    role="button"
+                    tabIndex={0}
+                    key={id}
+                    rounded={8}
+                    shadow="md"
+                    flex="0"
+                    minWidth="300px"
+                    mr={2}
+                    mb={2}
+                    backgroundColor={isSelected ? 'blue.100' : 'white'}
+                    p={3}
+                    display="flex"
+                    alignItems="center"
+                    transition="all 0.3s ease"
+                    boxShadow={
+                      isSelected
+                        ? `inset 0 0 0 2px #4299e1, ${defaultBoxShadow}`
+                        : `inset 0 0 0 0 #4299e1, ${defaultBoxShadow}`
+                    }
+                  >
+                    <Box
+                      as="img"
+                      src={icon}
+                      width="45px"
+                      height="45px"
+                      mr={2}
+                    />
+                    <Box flex="1" overflow="hidden">
+                      <Text color={isSelected ? 'blue.400' : 'grey.300'}>
+                        {id}
+                      </Text>
+                      <Heading size="xs" whiteSpace="nowrap">
+                        {name}
+                      </Heading>
+                      <Text color={isSelected ? 'blue.400' : 'grey.300'}>
+                        v{version}
+                      </Text>
+                    </Box>
+                  </Box>
+                )
+              })}
+            </Box>
+          </>
+        ) : (
+          <Box>
+            <Text pb={3}>
+              Looks like Finch GraphiQL does not have access to pull a list of
+              extensions you can manually enter it here.
+            </Text>
+            <Input
+              mb={3}
+              maxWidth="300px"
+              backgroundColor="white"
+              placeholder="Extension ID"
+              id="extensionId"
+              value={extensionId}
+              onChange={onChangeExtensionId}
+            />
+            <Text pb={3}>
+              or you can give Finch GraphiQL access to pull a list of extensions
+              to connect to.
+            </Text>
+            <Button
+              onClick={async () => {
+                await requestManagementPermission({})
+                await refetch()
+              }}
+              colorScheme="blue"
+              color="white"
+            >
+              Add Management Access
+            </Button>
+          </Box>
+        )}
       </Box>
     </Box>
   )
