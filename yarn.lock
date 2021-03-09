@@ -5565,9 +5565,9 @@ jsprim@^1.2.2:
     object.assign "^4.1.2"
 
 kcd-scripts@^8.0.2:
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/kcd-scripts/-/kcd-scripts-8.0.2.tgz#8f54bb7c024b79b59c36f032f8693f3d136f55be"
-  integrity sha512-/4FEo1BRq9Tuvcbkh/0e2OrWun0Tds2wjmUuKVzMVFY4rvuKyllrdnnxj2IqCnKnCEyWMrEG5KY/w2rdgaf48A==
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/kcd-scripts/-/kcd-scripts-8.1.0.tgz#7c5024277417afb1bb3cbc3196c5ae39ca89dced"
+  integrity sha512-2h0QsmoTY1JsnPBtgTBixBzQrGokxMLywG8KE+/ZMeSy84AHTccz0eKpLyBt9BJD5N3iOAnzxDQwbfjEvpgTRQ==
   dependencies:
     "@babel/cli" "^7.13.0"
     "@babel/core" "^7.13.8"
