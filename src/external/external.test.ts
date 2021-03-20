@@ -24,7 +24,7 @@ describe('external document messaging', () => {
       message: 'Finch is not currently listening for messages',
     });
   });
-  it('it should send a message to the browser message if there is a listener', async () => {
+  it('should send a message to the browser message if there is a listener', async () => {
     const query = gql`
       query test {
         foo
@@ -46,7 +46,7 @@ describe('external document messaging', () => {
     expect(resp).toEqual({ data: null });
   });
 
-  it('it should timeout if the request does not respond', async () => {
+  it('should timeout if the request does not respond', async () => {
     const query = gql`
       query test {
         foo
@@ -70,7 +70,7 @@ describe('external document messaging', () => {
       message: 'Finch request has timed out.',
     });
   });
-  it('it should only respond with the correct response', async () => {
+  it('should only respond with the correct response', async () => {
     const query = `
       query foo {
         foo
