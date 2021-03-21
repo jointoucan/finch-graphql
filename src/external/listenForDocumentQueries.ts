@@ -16,11 +16,10 @@ import { FinchRequestEvent, FinchDocumentEventNames } from './types';
  */
 export const listenForDocumentQueries = (options?: FinchQueryOptions) => {
   const onMessage = async (event: FinchRequestEvent) => {
-    const resp = await queryApi(
-      event.detail.query,
-      event.detail.variables,
-      options,
-    );
+    const resp = await queryApi(event.detail.query, event.detail.variables, {
+      ...options,
+      external: true,
+    });
     const responseEvent = createResponseEvent(
       event.detail.requestId,
       resp.data,

@@ -16,11 +16,13 @@ const messageCreator = <Variables extends GenericVariables = {}>(
   query: string | DocumentNode,
   variables: Variables,
   messageKey?: string,
+  external?: boolean,
 ) => {
   return {
     type: messageKey ?? FinchMessageKey.Generic,
     query: isDocumentNode(query) ? query : gql(query),
     variables,
+    external,
   };
 };
 
@@ -33,6 +35,7 @@ const messageCreator = <Variables extends GenericVariables = {}>(
  * @param options set of options for configuring this query.
  * @param options.messageKey a custom message key to send to the extension
  * @param options.id an id of the extension to send the query to.
+ * @param options.external if the call is coming from an external location
  * @returns a promise that resolves a graphQL response.
  */
 export const queryApi = async <
@@ -45,7 +48,7 @@ export const queryApi = async <
 ) => {
   const { id: extensionId, messageKey } = options;
   const args: [string, unknown] | [unknown] = [
-    messageCreator<Variables>(query, variables, messageKey),
+    messageCreator<Variables>(query, variables, messageKey, options.external),
   ];
 
   if (extensionId) {

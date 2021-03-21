@@ -49,12 +49,14 @@ export interface FinchMessage<Variables extends GenericVariables = {}> {
   type?: FinchMessageKey.Generic | string;
   query?: string | DocumentNode;
   variables?: Variables;
+  external?: boolean;
 }
 
 export interface FinchQueryOptions {
   id?: string;
   port?: browser.runtime.Port;
   messageKey?: string;
+  external?: boolean;
 }
 
 export interface FinchExecutionResults<Query> {

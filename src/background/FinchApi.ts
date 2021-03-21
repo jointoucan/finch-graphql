@@ -149,7 +149,9 @@ export class FinchApi {
     if (message.type === messageKey && message.query) {
       const { variables, query } = message;
       return this.query(query, variables ?? {}, {
-        source: FinchMessageSource.Message,
+        source: message.external
+          ? FinchMessageSource.ExternalMessage
+          : FinchMessageSource.Message,
         sender,
       });
     }
