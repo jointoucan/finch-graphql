@@ -7,6 +7,7 @@ const DEFAULT_TIMEOUT = 3000;
 
 interface QueryApiFromDocumentOptions {
   timeout?: number;
+  extensionId: string;
 }
 
 /**
@@ -32,7 +33,11 @@ export const queryApiFromDocument = async <
       new Error('Finch is not currently listening for messages'),
     );
   }
-  const requestEvent = createRequestEvent(query, variables);
+  const requestEvent = createRequestEvent(
+    options?.extensionId,
+    query,
+    variables,
+  );
   const requestId = requestEvent.detail.requestId;
 
   return new Promise((resolve, reject) => {

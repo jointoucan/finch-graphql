@@ -1,10 +1,12 @@
 import { FinchMessage } from './types';
 
-/* 
-  NOTE: chrome apis need to return true the call sendResponse
-  https://developer.chrome.com/docs/extensions/mv2/messaging/#simple
-*/
-
+/**
+ * addMessageListener adds a message event handler
+ * chrome apis need to return true the call sendResponse
+ * https://developer.chrome.com/docs/extensions/mv2/messaging/#simple
+ * @param handler the event handler
+ * @param options some options to configure the message passing
+ */
 export const addMessageListener = (
   handler: (
     message: FinchMessage,
@@ -30,6 +32,12 @@ export const addMessageListener = (
   }
 };
 
+/**
+ * addExternalMessageListener adds an external message event handler
+ * chrome apis need to return true the call sendResponse
+ * @param handler the event handler
+ * @param options some options to configure the message passing
+ */
 export const addExternalMessageListener = (
   handler: (
     message: FinchMessage,
@@ -55,6 +63,10 @@ export const addExternalMessageListener = (
   }
 };
 
+/**
+ * sendMessage to the background process supports both external and
+ * internal messaging
+ */
 export async function sendMessage<MessageResponse extends {}>(
   message: unknown,
 ): Promise<MessageResponse>;
@@ -92,3 +104,14 @@ export async function sendMessage<MessageResponse extends {}>(
     ),
   );
 }
+
+/**
+ * getExtensionId is a method to get the current extension id.
+ * @returns string
+ */
+export const getExtensionId = () => {
+  if (typeof chrome !== 'undefined') {
+    return chrome.runtime.id;
+  }
+  return browser.runtime.id;
+};

@@ -8,6 +8,7 @@ describe('external document messaging', () => {
   let ogChrome = window.chrome;
   beforeAll(() => {
     window.chrome = undefined;
+    Object.assign(browser.runtime, { id: 'foo' });
   });
   afterAll(() => {
     window.chrome = ogChrome;
@@ -19,7 +20,7 @@ describe('external document messaging', () => {
   });
   it('should fail to send if there is no listeners attached', async () => {
     await expect(
-      queryApiFromDocument(`query test { foo }`, {}),
+      queryApiFromDocument(`query test { foo }`, {}, { extensionId: 'foo' }),
     ).rejects.toMatchObject({
       message: 'Finch is not currently listening for messages',
     });
@@ -36,7 +37,9 @@ describe('external document messaging', () => {
     unbindListener = listenForDocumentQueries();
     expect(isListeningOnDocument()).toBe(true);
 
-    const resp = await queryApiFromDocument(query, variables);
+    const resp = await queryApiFromDocument(query, variables, {
+      extensionId: 'foo',
+    });
 
     expect(browser.runtime.sendMessage).toBeCalledWith({
       query: query,
@@ -65,7 +68,10 @@ describe('external document messaging', () => {
     expect(isListeningOnDocument()).toBe(true);
 
     await expect(
-      queryApiFromDocument(query, variables, { timeout: 100 }),
+      queryApiFromDocument(query, variables, {
+        timeout: 100,
+        extensionId: 'foo',
+      }),
     ).rejects.toMatchObject({
       message: 'Finch request has timed out.',
     });
@@ -101,9 +107,11 @@ describe('external document messaging', () => {
     expect(isListeningOnDocument()).toBe(true);
 
     const responses = await Promise.all([
-      queryApiFromDocument(query, variables),
-      queryApiFromDocument(`query bar { foo }`, variables),
-      queryApiFromDocument(query, variables),
+      queryApiFromDocument(query, variables, { extensionId: 'foo' }),
+      queryApiFromDocument(`query bar { foo }`, variables, {
+        extensionId: 'foo',
+      }),
+      queryApiFromDocument(query, variables, { extensionId: 'foo' }),
     ]);
 
     expect(responses).toEqual([

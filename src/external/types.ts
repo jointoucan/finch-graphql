@@ -9,6 +9,7 @@ export interface FinchRequestEventProps {
   query: DocumentNode | string;
   variables?: any;
   requestId: string;
+  extensionId: string;
 }
 
 export type FinchRequestEvent = CustomEvent<FinchRequestEventProps>;

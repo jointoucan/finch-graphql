@@ -54,7 +54,9 @@ export const queryApi = async <
   if (extensionId) {
     args.unshift(extensionId);
     if (isListeningOnDocument()) {
-      return queryApiFromDocument<Query, Variables>(query, variables);
+      return queryApiFromDocument<Query, Variables>(query, variables, {
+        extensionId,
+      });
     }
   }
 

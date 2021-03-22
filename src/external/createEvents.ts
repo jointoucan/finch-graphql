@@ -13,13 +13,14 @@ import {
  * @returns A CustomEvent with the graphQL query added to it, and a requestId
  */
 export const createRequestEvent = (
+  extensionId: string,
   query: DocumentNode | string,
   variables?: any,
 ) => {
   return new CustomEvent<FinchRequestEventProps>(
     FinchDocumentEventNames.Request,
     {
-      detail: { query, variables, requestId: v4() },
+      detail: { query, variables, requestId: v4(), extensionId },
     },
   );
 };

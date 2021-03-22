@@ -1,7 +1,25 @@
+import { GraphQLFormattedError } from 'graphql';
+import { getExtensionId } from '../browser';
 import { queryApi } from '../client';
 import { FinchQueryOptions } from '../types';
 import { createResponseEvent } from './createEvents';
 import { FinchRequestEvent, FinchDocumentEventNames } from './types';
+
+/**
+ * sendResponse a method to send a response through the document.
+ * @param event the finch request event
+ * @param data the data from the graphQL response
+ * @param errors the errors from the graphQL response
+ */
+export const sendResponse = (
+  event: FinchRequestEvent,
+  data: any,
+  errors: Array<GraphQLFormattedError>,
+) => {
+  document.dispatchEvent(
+    createResponseEvent(event.detail.requestId, data, errors),
+  );
+};
 
 /**
  * listenForDocumentQueries binds to document events so websites can
@@ -16,16 +34,14 @@ import { FinchRequestEvent, FinchDocumentEventNames } from './types';
  */
 export const listenForDocumentQueries = (options?: FinchQueryOptions) => {
   const onMessage = async (event: FinchRequestEvent) => {
+    if (event.detail.extensionId !== getExtensionId()) {
+      return true;
+    }
     const resp = await queryApi(event.detail.query, event.detail.variables, {
       ...options,
       external: true,
     });
-    const responseEvent = createResponseEvent(
-      event.detail.requestId,
-      resp.data,
-      resp.errors,
-    );
-    document.dispatchEvent(responseEvent);
+    sendResponse(event, resp.data, resp.errors);
   };
   document.addEventListener(FinchDocumentEventNames.Request, onMessage);
   document.body.setAttribute('data-finch-listener', `${Date.now()}`);
