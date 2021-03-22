@@ -45,6 +45,7 @@ describe('external document messaging', () => {
       query: query,
       variables: variables,
       type: FinchMessageKey.Generic,
+      external: true,
     });
     expect(resp).toEqual({ data: null });
   });
