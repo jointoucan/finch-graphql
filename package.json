@@ -1,63 +1,10 @@
 {
-  "name": "finch-graphql",
-  "version": "0.6.0",
-  "description": "Graphql api for your background script of a web extension",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist/*.js",
-    "dist/*.d.ts",
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
-  "repository": "https://github.com/jointoucan/finch-graphql",
-  "author": "Jacob Lowe",
-  "license": "MIT",
-  "private": false,
-  "scripts": {
-    "build": "tsc",
-    "prepublish": "yarn build",
-    "test": "jest",
-    "lint": "eslint -c ./.eslintrc.js ./src/**/*.ts"
-  },
-  "devDependencies": {
-    "@babel/preset-env": "^7.12.1",
-    "@babel/preset-typescript": "^7.12.1",
-    "@testing-library/react-hooks": "^5.0.0",
-    "@types/chrome": "^0.0.133",
-    "@types/jest": "^26.0.15",
-    "@types/react": "^17.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.15.1",
-    "@typescript-eslint/parser": "^4.15.1",
-    "babel-jest": "^26.6.1",
-    "eslint": "^7.20.0",
-    "eslint-config-prettier": "^8.0.0",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-loader": "^4.0.2",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.3.1",
-    "graphql": "^15.4.0",
-    "graphql-tag": "^2.11.0",
-    "jest": "^26.6.1",
-    "jest-webextension-mock": "^3.7.6",
-    "kcd-scripts": "^8.0.2",
-    "prettier": "^2.2.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "typescript": "^4.0.3",
-    "web-ext-types": "^3.2.1"
-  },
-  "peerDependencies": {
-    "@graphql-tools/schema": "^7.1.2",
-    "graphql": "^15.4.0",
-    "react": "<=16.x"
-  },
   "dependencies": {
-    "@graphql-tools/schema": "^7.1.2",
-    "graphql-middleware": "^6.0.4",
-    "graphql-tag": "^2.11.0",
-    "use-deep-compare-effect": "^1.6.1",
-    "uuid": "^8.3.2"
-  }
+    "lerna": "^4.0.0"
+  },
+  "name": "finch-graphql-packages"
 }
