@@ -83,7 +83,7 @@ module.exports = {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           editUrl:
-            "https://github.com/jointoucan/finch-graphql/edit/master/website/",
+            "https://github.com/jointoucan/finch-graphql/edit/master/packages/finch-docs/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
