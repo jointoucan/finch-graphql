@@ -2,5 +2,8 @@
   "packages": [
     "packages/*"
   ],
+  "nohoist": [
+    "**/html-minifier-terser"
+  ],
   "version": "independent"
 }
