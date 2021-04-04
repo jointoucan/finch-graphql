@@ -6,5 +6,8 @@
   "dependencies": {
     "lerna": "^4.0.0"
   },
-  "name": "finch-graphql-packages"
+  "name": "finch-graphql-packages",
+  "nohoist": [
+    "**/html-minifier-terser"
+  ]
 }
