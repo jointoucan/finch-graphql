@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "Finch GraphiQL Devtools",
+    "description": "The name of the application"
+  },
+  "appShortName": {
+    "message": "Finch GraphiQL",
+    "description": "The short_name (maximum of 12 characters recommended) is a short version of the app's name."
+  },
+  "appDescription": {
+    "message": "Finch GraphiQL devtools is an extension that allows you to query, and inspect a Finch GraphQL background process.",
+    "description": "The description of the application"
+  }
+}
