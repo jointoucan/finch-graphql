@@ -1,8 +1,8 @@
 module.exports = {
   title: "Finch GraphQL",
   tagline: "Communication for modern extensions",
-  url: "https://jointoucan.github.io/finch-graphql-docs/",
-  baseUrl: "/finch-graphql-docs/",
+  url: "https://jointoucan.github.io/finch-graphql/",
+  baseUrl: "/finch-graphql/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
