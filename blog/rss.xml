@@ -2,7 +2,7 @@
 <rss version="2.0">
     <channel>
         <title>Finch GraphQL Blog</title>
-        <link>https://jointoucan.github.io/finch-graphql-docs/blog</link>
+        <link>https://jointoucan.github.io/finch-graphql/blog</link>
         <description>Finch GraphQL Blog</description>
         <lastBuildDate>Sun, 25 Oct 2015 23:29:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
