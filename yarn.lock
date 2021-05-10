@@ -3891,10 +3891,10 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/chrome@^0.0.133":
-  version "0.0.133"
-  resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.133.tgz#9e1d55441584ba2d5274ca84db36427da9c5dc6e"
-  integrity sha512-G8uIUdaCTBILprQvQXBWGXZxjAWbkCkFQit17cdH3zYQEwU8f/etNl8+M7e8MRz9Xj8daHaVpysneMZMx8/ldQ==
+"@types/chrome@^0.0.138":
+  version "0.0.138"
+  resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.138.tgz#a5c17f8dd365504bc5375988f004889834fbe011"
+  integrity sha512-ZA9P/Asjzu3nLFGj5qrTaBewm0IvrcAWiFAurSZn1HKCi/7Nmz5wWreVOgtyof5U/CUPDABlvUM8v4kVoO9x/w==
   dependencies:
     "@types/filesystem" "*"
     "@types/har-format" "*"
