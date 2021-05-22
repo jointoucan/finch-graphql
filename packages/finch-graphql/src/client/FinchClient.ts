@@ -1,6 +1,6 @@
 import { DocumentNode } from 'graphql';
 import gql from 'graphql-tag';
-import { QueryCache, Listener } from '../cache';
+import { QueryCache, Listener } from './cache';
 import { FinchQueryOptions, GenericVariables } from '../types';
 import { isDocumentNode } from '../utils';
 import { queryApi } from './client';
