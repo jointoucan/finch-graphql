@@ -2,9 +2,9 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useQuery } from './useQuery';
 import gql from 'graphql-tag';
-import { FinchMessageKey } from '../types';
+import { FinchMessageKey } from '../../types';
 import { FinchProvider } from './FinchProvider';
-import { FinchClient } from '../client/FinchClient';
+import { FinchClient } from '../FinchClient';
 
 const testDoc = gql`
   query foo {

@@ -19,10 +19,8 @@ export const useQuery = <Query, Variables>(
   const [data, setData] = useState<Query | null>(null);
   const [error, setError] = useState<QueryError | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  console.log('useQuery');
   const makeQuery = useCallback(
     async (argVars?: Variables) => {
-      console.log('hola');
       try {
         const resp = await client.query<Query, Variables>(
           query,
@@ -57,7 +55,6 @@ export const useQuery = <Query, Variables>(
         setData(updatedData);
       },
     );
-    console.log('in effect');
     if (!skip) {
       setLoading(true);
       makeQuery();

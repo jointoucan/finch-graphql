@@ -1,5 +1,5 @@
 import { createElement, createContext, FC, useContext } from 'react';
-import { FinchClient } from '../client/FinchClient';
+import { FinchClient } from '../FinchClient';
 
 interface FinchProviderProps {
   client: FinchClient;
