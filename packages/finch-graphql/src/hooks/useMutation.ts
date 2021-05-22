@@ -1,7 +1,6 @@
-import { queryApi } from '../client';
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useExtension } from './ExtensionProvider';
+import { useFinchClient } from './FinchProvider';
 
 type MutationError = GraphQLFormattedError | Error;
 type Response<T> = { data: T | null; errors?: GraphQLFormattedError[] } | null;
@@ -16,7 +15,7 @@ export const useMutation = <Query, Variables>(
     error?: MutationError;
   },
 ] => {
-  const { id, port, messageKey } = useExtension();
+  const { client } = useFinchClient();
   const mounted = useRef(true);
   const [data, setData] = useState<Query | null>(null);
   const [error, setError] = useState<MutationError | undefined>();
@@ -27,11 +26,7 @@ export const useMutation = <Query, Variables>(
       setLoading(true);
       let resp: Response<Query> | null = null;
       try {
-        resp = await queryApi<Query, Variables>(query, argVars, {
-          id,
-          port,
-          messageKey,
-        });
+        resp = await client.query<Query, Variables>(query, argVars);
         if (resp.data && mounted.current) {
           setData(resp.data);
         }

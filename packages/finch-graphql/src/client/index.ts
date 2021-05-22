@@ -1,0 +1,1 @@
+export { queryApi } from './client';

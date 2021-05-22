@@ -3,7 +3,8 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { useQuery } from './useQuery';
 import gql from 'graphql-tag';
 import { FinchMessageKey } from '../types';
-import { ExtensionProvider } from './ExtensionProvider';
+import { FinchProvider } from './FinchProvider';
+import { FinchClient } from '../client/FinchClient';
 
 const testDoc = gql`
   query foo {
@@ -47,7 +48,15 @@ describe('useQuery', () => {
     chrome.runtime.sendMessage = sendMessageMock;
     chrome.runtime.lastError = new Error('foo');
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
+    const wrapper = renderHook(() => useQuery(testDoc, {}), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({}),
+        });
+      },
+    });
 
     await wrapper.waitForNextUpdate();
 
@@ -63,7 +72,15 @@ describe('useQuery', () => {
       });
     chrome.runtime.sendMessage = sendMessageMock;
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
+    const wrapper = renderHook(() => useQuery(testDoc, {}), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({}),
+        });
+      },
+    });
 
     await wrapper.waitForNextUpdate();
     await act(async () => {
@@ -86,8 +103,11 @@ describe('useQuery', () => {
 
     const wrapper = renderHook(() => useQuery(testDoc, {}), {
       wrapper: ({ children }) => {
-        // @ts-ignore
-        return React.createElement(ExtensionProvider, { children, id: 'foo' });
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({ id: 'foo' }),
+        });
       },
     });
 
@@ -109,10 +129,10 @@ describe('useQuery', () => {
           foo: 'bar',
         },
         wrapper: ({ children }) => {
-          return React.createElement(ExtensionProvider, {
+          return React.createElement(FinchProvider, {
             // @ts-ignore
             children,
-            id: 'foo',
+            client: new FinchClient({ id: 'foo' }),
           });
         },
       },
