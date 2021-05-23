@@ -11,9 +11,6 @@
   position: relative;
   overflow: hidden;
   background-color: #00857c;
-  background-image: url("/finch-graphql/img/background.svg");
-  background-position: center center;
-  background-repeat: no-repeat;
 }
 
 @media screen and (max-width: 966px) {
