@@ -148,4 +148,36 @@ describe('useQuery', () => {
 
     expect(sendMessageMock).toBeCalledTimes(2);
   });
+  it('should update the cache values when the cache values are updated', async () => {
+    const sendMessageMock = jest
+      .fn()
+      .mockImplementation((_, callback) => callback());
+    chrome.runtime.sendMessage = sendMessageMock;
+
+    const wrapper = renderHook(
+      ({ foo }) => useQuery(testDoc, { variables: { foo } }),
+      {
+        initialProps: {
+          foo: 'bar',
+        },
+        wrapper: ({ children }) => {
+          return React.createElement(FinchProvider, {
+            // @ts-ignore
+            children,
+            client: new FinchClient({ id: 'foo' }),
+          });
+        },
+      },
+    );
+
+    await wrapper.waitForNextUpdate();
+
+    act(() => {
+      wrapper.rerender({ foo: 'baz' });
+    });
+
+    await wrapper.waitForNextUpdate();
+
+    expect(sendMessageMock).toBeCalledTimes(2);
+  });
 });

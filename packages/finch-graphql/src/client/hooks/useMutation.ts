@@ -26,7 +26,7 @@ export const useMutation = <Query, Variables>(
       setLoading(true);
       let resp: Response<Query> | null = null;
       try {
-        resp = await client.query<Query, Variables>(query, argVars);
+        resp = await client.mutate<Query, Variables>(query, argVars);
         if (resp.data && mounted.current) {
           setData(resp.data);
         }

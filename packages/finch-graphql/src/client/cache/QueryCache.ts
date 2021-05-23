@@ -9,10 +9,9 @@
  */
 
 import { DocumentNode, print } from 'graphql';
+import { Listener, FinchCache } from './types';
 
 type Cache = Map<string, unknown>;
-
-export type Listener<Query extends unknown> = (updateInfo: Query) => void;
 
 interface ListenerMap {
   [key: string]: Array<Listener<unknown>>;
@@ -26,7 +25,7 @@ const serializeQuery = (doc: DocumentNode, variables: any) => {
   return `${print(doc)}:${JSON.stringify(variables)}`;
 };
 
-export class QueryCache {
+export class QueryCache implements FinchCache {
   cache: Cache;
   listeners: ListenerMap;
 
@@ -53,7 +52,7 @@ export class QueryCache {
     };
   }
 
-  setQueryCache<Query extends unknown>(
+  setCache<Query extends unknown>(
     doc: DocumentNode,
     variables: any,
     result: Query,
@@ -70,7 +69,8 @@ export class QueryCache {
     });
   }
 
-  getCacheKey<Query extends unknown>(key: string) {
+  getCache<Query extends unknown>(doc: DocumentNode, variables: any) {
+    const key = serializeQuery(doc, variables);
     return this.cache.get(key) as Query | undefined;
   }
 }
