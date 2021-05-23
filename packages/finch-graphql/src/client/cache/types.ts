@@ -2,7 +2,7 @@ import { DocumentNode } from 'graphql';
 
 export type Listener<Query extends unknown> = (updateInfo: Query) => void;
 
-export interface CacheConstructor {
+export interface FinchCache {
   setCache<Query extends unknown>(
     doc: DocumentNode,
     variables: any,
