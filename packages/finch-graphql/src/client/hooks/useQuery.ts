@@ -55,6 +55,7 @@ export const useQuery = <Query, Variables>(
         setData(updatedData);
       },
     );
+
     if (!skip) {
       setLoading(true);
       makeQuery();
@@ -70,13 +71,6 @@ export const useQuery = <Query, Variables>(
       mounted.current = false;
     };
   }, []);
-
-  if (!client) {
-    // TODO: add link to docs
-    throw new Error(
-      'Finch requires you to wrap your "useQuery" hooks in a "Finch provider"',
-    );
-  }
 
   return {
     data,

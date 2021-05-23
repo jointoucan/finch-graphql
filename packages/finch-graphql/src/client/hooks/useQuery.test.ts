@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import { FinchMessageKey } from '../../types';
 import { FinchProvider } from './FinchProvider';
 import { FinchClient } from '../FinchClient';
+import { QueryCache } from '../cache';
 
 const testDoc = gql`
   query foo {
@@ -53,7 +54,7 @@ describe('useQuery', () => {
         return React.createElement(FinchProvider, {
           // @ts-ignore
           children,
-          client: new FinchClient({}),
+          client: new FinchClient(),
         });
       },
     });
@@ -77,7 +78,7 @@ describe('useQuery', () => {
         return React.createElement(FinchProvider, {
           // @ts-ignore
           children,
-          client: new FinchClient({}),
+          client: new FinchClient(),
         });
       },
     });
@@ -98,7 +99,7 @@ describe('useQuery', () => {
   it('wrapping it in a provider should allow for external calls', async () => {
     const sendMessageMock = jest
       .fn()
-      .mockImplementation((_, callback) => callback());
+      .mockImplementation((_, _message, callback) => callback());
     chrome.runtime.sendMessage = sendMessageMock;
 
     const wrapper = renderHook(() => useQuery(testDoc, {}), {
@@ -119,7 +120,7 @@ describe('useQuery', () => {
   it('should refetch a query when the variables change', async () => {
     const sendMessageMock = jest
       .fn()
-      .mockImplementation((_, callback) => callback());
+      .mockImplementation((_, _message, callback) => callback());
     chrome.runtime.sendMessage = sendMessageMock;
 
     const wrapper = renderHook(
@@ -151,8 +152,12 @@ describe('useQuery', () => {
   it('should update the cache values when the cache values are updated', async () => {
     const sendMessageMock = jest
       .fn()
-      .mockImplementation((_, callback) => callback());
+      .mockImplementationOnce((_, callback) => callback({ bar: 'baz' }));
     chrome.runtime.sendMessage = sendMessageMock;
+
+    const client = new FinchClient({
+      cache: new QueryCache(),
+    });
 
     const wrapper = renderHook(
       ({ foo }) => useQuery(testDoc, { variables: { foo } }),
@@ -164,7 +169,7 @@ describe('useQuery', () => {
           return React.createElement(FinchProvider, {
             // @ts-ignore
             children,
-            client: new FinchClient({ id: 'foo' }),
+            client,
           });
         },
       },
@@ -172,12 +177,18 @@ describe('useQuery', () => {
 
     await wrapper.waitForNextUpdate();
 
-    act(() => {
-      wrapper.rerender({ foo: 'baz' });
+    // Validate initial data is present
+    expect(wrapper.result.current.data).toEqual({ bar: 'baz' });
+
+    await act(async () => {
+      // Change the response
+      sendMessageMock.mockImplementationOnce((_, callback) =>
+        callback({ bar: 'qux' }),
+      );
+      await client.query(testDoc, { foo: 'bar' });
     });
 
-    await wrapper.waitForNextUpdate();
-
-    expect(sendMessageMock).toBeCalledTimes(2);
+    // Validate new value is present
+    expect(wrapper.result.current.data).toEqual({ bar: 'qux' });
   });
 });

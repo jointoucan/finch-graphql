@@ -28,7 +28,7 @@ export class FinchClient {
    * @param options.id A identifier for the extension to connect to, this is used for external request
    * @param options.messageKey If there is a custom message key this is where you would pass it.
    */
-  constructor(options: FinchClientOptions) {
+  constructor(options: FinchClientOptions = {}) {
     this.cache = options.cache;
     this.id = options.id;
     this.messageKey = options.messageKey;

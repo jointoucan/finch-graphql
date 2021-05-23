@@ -1,13 +1,3 @@
-/**
- * QueryCache will be a client that will cache queries
- * this makes it simple to be able to share information between queries without
- * having to refetch information in other hooks.
- *
- * - We will need to serialize queries.
- * - A way to turn on this, without it being on by default.
- * - A way to notify hooks that something has updated.
- */
-
 import { DocumentNode, print } from 'graphql';
 import { Listener, FinchCache } from './types';
 
@@ -21,16 +11,36 @@ interface QueryCacheOptions {
   hydrate?: Cache;
 }
 
-const serializeQuery = (doc: DocumentNode, variables: any) => {
-  return `${print(doc)}:${JSON.stringify(variables)}`;
-};
-
+/**
+ * QueryCache is a class that caches queries based on serialization
+ * of the query and variable. This implements FinchCache which has getters
+ * setters and a way to subscribe to cache updates.
+ * @implements FinchCache
+ */
 export class QueryCache implements FinchCache {
   cache: Cache;
   listeners: ListenerMap;
 
+  /**
+   * serializeQuery is a static method on the the QueryCache class that allow
+   * external programs to serialize queries for cache hydration.
+   * @param doc GraphQL query
+   * @param variables Variable for the query
+   * @returns A string if of the serialized query
+   */
+  static serializeQuery(doc: DocumentNode, variables: any) {
+    return `${print(doc)}:${JSON.stringify(variables)}`;
+  }
+
+  /**
+   * QueryCache constructor has the ability to hydrate the cache
+   * this means that if we are able to preload and info we can pass
+   * it directly to constructor
+   * @param options.hydrate A Map with the serialized query cache.
+   */
   constructor(options: QueryCacheOptions = {}) {
     this.cache = options.hydrate ?? new Map();
+    this.listeners = {};
   }
 
   subscribe<Query extends unknown>(
@@ -38,7 +48,7 @@ export class QueryCache implements FinchCache {
     variables: any,
     listener: Listener<Query>,
   ) {
-    const key = serializeQuery(doc, variables);
+    const key = QueryCache.serializeQuery(doc, variables);
     if (typeof this.listeners[key] === 'undefined') {
       this.listeners[key] = [];
     }
@@ -57,20 +67,20 @@ export class QueryCache implements FinchCache {
     variables: any,
     result: Query,
   ) {
-    const key = serializeQuery(doc, variables);
+    const key = QueryCache.serializeQuery(doc, variables);
     this.setCacheKey<Query>(key, result);
   }
 
+  getCache<Query extends unknown>(doc: DocumentNode, variables: any) {
+    const key = QueryCache.serializeQuery(doc, variables);
+    return this.cache.get(key) as Query | undefined;
+  }
+
   private setCacheKey<Query extends unknown>(key: string, value: Query) {
-    const listeners = this.listeners[key];
+    const listeners = this.listeners[key] ?? [];
     this.cache.set(key, value);
     listeners.forEach(fn => {
       fn(value);
     });
-  }
-
-  getCache<Query extends unknown>(doc: DocumentNode, variables: any) {
-    const key = serializeQuery(doc, variables);
-    return this.cache.get(key) as Query | undefined;
   }
 }
