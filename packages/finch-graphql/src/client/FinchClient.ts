@@ -99,10 +99,10 @@ export class FinchClient {
     variables: unknown,
     listener: Listener<Query>,
   ) {
-    const documentNode = isDocumentNode(query) ? query : gql(query);
     if (!this.cache) {
       return () => {};
     }
+    const documentNode = isDocumentNode(query) ? query : gql(query);
     return this.cache.subscribe<Query>(documentNode, variables, listener);
   }
 }
