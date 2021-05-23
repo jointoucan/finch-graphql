@@ -1,9 +1,10 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import gql from 'graphql-tag';
-import { FinchMessageKey } from '../types';
-import { ExtensionProvider } from './ExtensionProvider';
+import { FinchMessageKey } from '../../types';
+import { FinchProvider } from './FinchProvider';
 import { useMutation } from './useMutation';
+import { FinchClient } from '../FinchClient';
 
 const testDoc = gql`
   mutation foo {
@@ -65,8 +66,11 @@ describe('useMutation', () => {
 
     const wrapper = renderHook(() => useMutation(testDoc), {
       wrapper: ({ children }) => {
-        // @ts-ignore
-        return React.createElement(ExtensionProvider, { children, id: 'foo' });
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({ id: 'foo' }),
+        });
       },
     });
 

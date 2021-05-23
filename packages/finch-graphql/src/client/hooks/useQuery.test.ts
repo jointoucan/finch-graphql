@@ -2,8 +2,10 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useQuery } from './useQuery';
 import gql from 'graphql-tag';
-import { FinchMessageKey } from '../types';
-import { ExtensionProvider } from './ExtensionProvider';
+import { FinchMessageKey } from '../../types';
+import { FinchProvider } from './FinchProvider';
+import { FinchClient } from '../FinchClient';
+import { QueryCache } from '../cache';
 
 const testDoc = gql`
   query foo {
@@ -47,7 +49,15 @@ describe('useQuery', () => {
     chrome.runtime.sendMessage = sendMessageMock;
     chrome.runtime.lastError = new Error('foo');
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
+    const wrapper = renderHook(() => useQuery(testDoc, {}), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient(),
+        });
+      },
+    });
 
     await wrapper.waitForNextUpdate();
 
@@ -63,7 +73,15 @@ describe('useQuery', () => {
       });
     chrome.runtime.sendMessage = sendMessageMock;
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
+    const wrapper = renderHook(() => useQuery(testDoc, {}), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient(),
+        });
+      },
+    });
 
     await wrapper.waitForNextUpdate();
     await act(async () => {
@@ -81,13 +99,16 @@ describe('useQuery', () => {
   it('wrapping it in a provider should allow for external calls', async () => {
     const sendMessageMock = jest
       .fn()
-      .mockImplementation((_, callback) => callback());
+      .mockImplementation((_, _message, callback) => callback());
     chrome.runtime.sendMessage = sendMessageMock;
 
     const wrapper = renderHook(() => useQuery(testDoc, {}), {
       wrapper: ({ children }) => {
-        // @ts-ignore
-        return React.createElement(ExtensionProvider, { children, id: 'foo' });
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({ id: 'foo' }),
+        });
       },
     });
 
@@ -99,7 +120,7 @@ describe('useQuery', () => {
   it('should refetch a query when the variables change', async () => {
     const sendMessageMock = jest
       .fn()
-      .mockImplementation((_, callback) => callback());
+      .mockImplementation((_, _message, callback) => callback());
     chrome.runtime.sendMessage = sendMessageMock;
 
     const wrapper = renderHook(
@@ -109,10 +130,10 @@ describe('useQuery', () => {
           foo: 'bar',
         },
         wrapper: ({ children }) => {
-          return React.createElement(ExtensionProvider, {
+          return React.createElement(FinchProvider, {
             // @ts-ignore
             children,
-            id: 'foo',
+            client: new FinchClient({ id: 'foo' }),
           });
         },
       },
@@ -127,5 +148,47 @@ describe('useQuery', () => {
     await wrapper.waitForNextUpdate();
 
     expect(sendMessageMock).toBeCalledTimes(2);
+  });
+  it('should update the cache values when the cache values are updated', async () => {
+    const sendMessageMock = jest
+      .fn()
+      .mockImplementationOnce((_, callback) => callback({ bar: 'baz' }));
+    chrome.runtime.sendMessage = sendMessageMock;
+
+    const client = new FinchClient({
+      cache: new QueryCache(),
+    });
+
+    const wrapper = renderHook(
+      ({ foo }) => useQuery(testDoc, { variables: { foo } }),
+      {
+        initialProps: {
+          foo: 'bar',
+        },
+        wrapper: ({ children }) => {
+          return React.createElement(FinchProvider, {
+            // @ts-ignore
+            children,
+            client,
+          });
+        },
+      },
+    );
+
+    await wrapper.waitForNextUpdate();
+
+    // Validate initial data is present
+    expect(wrapper.result.current.data).toEqual({ bar: 'baz' });
+
+    await act(async () => {
+      // Change the response
+      sendMessageMock.mockImplementationOnce((_, callback) =>
+        callback({ bar: 'qux' }),
+      );
+      await client.query(testDoc, { foo: 'bar' });
+    });
+
+    // Validate new value is present
+    expect(wrapper.result.current.data).toEqual({ bar: 'qux' });
   });
 });

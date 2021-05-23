@@ -5,7 +5,7 @@ module.exports = {
   baseUrl: "/finch-graphql/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.svg",
   organizationName: "jointoucan", // Usually your GitHub org/user name.
   projectName: "finch-graphql", // Usually your repo name.
   themeConfig: {

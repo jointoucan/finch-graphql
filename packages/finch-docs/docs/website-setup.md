@@ -52,31 +52,34 @@ Now you should be able to message to the background script from any browser.
 
 ### Setting up website
 
-Your website will need to have `finch-graphql` installed to be able to communicate with the extension. Once install you can already start querying the Finch.
+Your website will need to have `finch-graphql` installed to be able to communicate with the extension. Once installed you can now create a client and query the extension.
+
+> You will need to know the ID of your extension, on all platforms, to be able to query the extension externally. You can get this info by running something like `browser.runtime.id`.
 
 ```typescript
-import { queryApi } from "finch-graphql";
+import { FinchClient } from "finch-graphql";
 
 const queryDoc = `query test { foo }`;
 const variables = {};
+const client = new FinchClient({ id: "<your extension id>" });
 
-const resp = await queryApi(queryDoc, variables, {
-  extensionId: "<your extension id>",
-});
+const resp = await client.query(queryDoc, variables);
 ```
 
 #### Usage with React
 
-When using the React hooks you need to be able to setup the `ExtensionProvider` with the extension id.
+When using the React hooks you need to be able to setup the `FinchProvider` with the extension id.
 
 ```typescript
-import { ExtensionProvider } from "finch-graphql";
+import { FinchProvider, FinchClient } from "finch-graphql";
+
+const client = new FinchClient({ id: "<your extension id>" });
 
 const MyApp = () => {
   return (
-    <ExtensionProvider id="<your extension id>">
+    <FinchProvider client={client}>
       {/* components with extension queries*/}
-    </ExtensionProvider>
+    </FinchProvider>
   );
 };
 ```

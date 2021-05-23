@@ -1,9 +1,9 @@
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import gql from 'graphql-tag';
-import { sendMessage } from './browser';
-import { isListeningOnDocument, queryApiFromDocument } from './external';
-import { GenericVariables, FinchMessageKey, FinchQueryOptions } from './types';
-import { isDocumentNode } from './utils';
+import { sendMessage } from '../browser';
+import { isListeningOnDocument, queryApiFromDocument } from '../external';
+import { GenericVariables, FinchMessageKey, FinchQueryOptions } from '../types';
+import { isDocumentNode } from '../utils';
 
 /**
  * messageCreator is a function that create a finch message to send to the background process

@@ -1,8 +1,7 @@
-import { queryApi } from '../client';
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useExtension } from './ExtensionProvider';
 import useDeepCompareEffect from 'use-deep-compare-effect';
+import { useFinchClient } from './FinchProvider';
 
 interface BackgroundQueryOptions<Variables> {
   variables?: Variables;
@@ -15,20 +14,18 @@ export const useQuery = <Query, Variables>(
   query: DocumentNode,
   { skip, variables }: BackgroundQueryOptions<Variables> = {},
 ) => {
-  const { id, messageKey } = useExtension();
+  const { client } = useFinchClient();
   const mounted = useRef(true);
   const [data, setData] = useState<Query | null>(null);
   const [error, setError] = useState<QueryError | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
   const makeQuery = useCallback(
     async (argVars?: Variables) => {
       try {
-        const resp = await queryApi<Query, Variables>(
+        const resp = await client.query<Query, Variables>(
           query,
           // @ts-ignore variables are kinda weird
           argVars ?? variables ?? {},
-          { id, messageKey },
         );
 
         if (resp.data && mounted.current) {
@@ -51,10 +48,21 @@ export const useQuery = <Query, Variables>(
   );
 
   useDeepCompareEffect(() => {
+    const unsubscribe = client.subscribe<Query>(
+      query,
+      variables,
+      updatedData => {
+        setData(updatedData);
+      },
+    );
+
     if (!skip) {
       setLoading(true);
       makeQuery();
     }
+    return () => {
+      unsubscribe();
+    };
   }, [query, skip, variables]);
 
   useEffect(() => {
