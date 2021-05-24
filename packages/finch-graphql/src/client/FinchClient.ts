@@ -56,8 +56,8 @@ export class FinchClient {
       ...options,
     });
 
-    if (this.cache) {
-      this.cache.setCache(documentNode, variables, result);
+    if (this.cache && result?.data) {
+      this.cache.setCache(documentNode, variables, result.data);
     }
     return result;
   }
