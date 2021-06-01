@@ -7,6 +7,7 @@ import { SettingsEditor } from './SettingsEditor'
 import { StorageKey, DefaultQuery } from '../constants'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { Theme } from './Theme'
+import { MessagesViewer } from './MessageViewer'
 
 export const graphQLFetcher = ({ messageKey, extensionId }) => async ({
   query,
@@ -39,13 +40,19 @@ export const DevtoolsApp = () => {
         colorScheme="blue"
         onChange={index => setTabIndex(index)}
         defaultIndex={tabIndex}
+        display="flex"
+        flexDirection="column"
+        height="100%"
       >
         <Header />
-        <TabPanels>
-          <TabPanel p="0">
+        <TabPanels display="flex" flexDirection="column" height="100%">
+          <TabPanel p="0" height="100%">
             <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
           </TabPanel>
-          <TabPanel p="0">
+          <TabPanel p="0" height="100%">
+            <MessagesViewer extensionId={extensionId} messageKey={messageKey} />
+          </TabPanel>
+          <TabPanel p="0" height="100%">
             <SettingsEditor
               extensionId={extensionId}
               onChangeExtensionId={id => {
