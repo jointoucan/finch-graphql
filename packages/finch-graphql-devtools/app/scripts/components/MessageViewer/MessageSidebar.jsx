@@ -58,7 +58,6 @@ export const renderListItem = ({ messages, selectQuery, selectedQuery }) => ({
 
 export const MessagesSidebar = ({ messages, selectQuery, selectedQuery }) => {
   const renderer = renderListItem({ messages, selectQuery, selectedQuery })
-  console.log({ messages, selectQuery })
 
   return (
     <Box flex={1} maxWidth="250px" overflow="scroll">
