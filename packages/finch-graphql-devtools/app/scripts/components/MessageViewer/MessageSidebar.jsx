@@ -85,56 +85,6 @@ export const MessagesSidebar = ({ messages, selectQuery, selectedQuery }) => {
             rowHeight={41}
           />
         )}
-        {/* {messages.map(({ operationName, response, timeTaken }, i) => {
-          const hasErrors =
-            response && response.errors && response.errors.length
-          return (
-            <React.Fragment key={`message-${i}`}>
-              <Box
-                py={2}
-                onClick={() => {
-                  selectQuery(i)
-                }}
-                cursor="pointer"
-                display="flex"
-                flexDirection="column"
-                backgroundColor={selectedQuery === i ? 'teal.100' : 'white'}
-              >
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  px={4}
-                >
-                  <Tag
-                    backgroundColor={hasErrors ? 'red.200' : 'teal.200'}
-                    mr={2}
-                  >
-                    {hasErrors ? 'ERROR' : 'OK'}
-                  </Tag>
-                  <Text
-                    size="sm"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    whiteSpace="nowrap"
-                    flex={1}
-                  >
-                    {operationName}
-                  </Text>
-                  <Text
-                    size="sm"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    whiteSpace="nowrap"
-                  >
-                    {timeTaken}ms
-                  </Text>
-                </Box>
-              </Box>
-              <Divider />
-            </React.Fragment>
-          )
-        })} */}
       </AutoSizer>
     </Box>
   )
