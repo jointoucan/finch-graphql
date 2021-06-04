@@ -1,6 +1,6 @@
 {
   "name": "finch-graphql-devtools",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Finch GraphQL devtools is an extension that will allow you to query a Finch GraphQL background process to be able to debug the schema, query, and mutate data in the extension.",
   "scripts": {
     "dev": "webextension-toolbox dev",
