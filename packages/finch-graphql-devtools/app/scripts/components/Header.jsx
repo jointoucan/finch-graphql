@@ -9,6 +9,8 @@ export const Header = () => {
       display="flex"
       flexDirection="row"
       backgroundColor="white"
+      position="sticky"
+      top="0"
     >
       <TabList flex="1">
         <Box display="flex" alignItems="center" px={3}>
@@ -24,6 +26,7 @@ export const Header = () => {
             Graph<em>i</em>QL
           </span>
         </Tab>
+        <Tab>Messages</Tab>
         <Tab>Settings</Tab>
         <Box
           flex="1"

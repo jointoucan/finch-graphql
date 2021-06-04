@@ -152,7 +152,9 @@ describe('useQuery', () => {
   it('should update the cache values when the cache values are updated', async () => {
     const sendMessageMock = jest
       .fn()
-      .mockImplementationOnce((_, callback) => callback({ bar: 'baz' }));
+      .mockImplementationOnce((_, callback) =>
+        callback({ data: { bar: 'baz' } }),
+      );
     chrome.runtime.sendMessage = sendMessageMock;
 
     const client = new FinchClient({
@@ -183,7 +185,7 @@ describe('useQuery', () => {
     await act(async () => {
       // Change the response
       sendMessageMock.mockImplementationOnce((_, callback) =>
-        callback({ bar: 'qux' }),
+        callback({ data: { bar: 'qux' } }),
       );
       await client.query(testDoc, { foo: 'bar' });
     });

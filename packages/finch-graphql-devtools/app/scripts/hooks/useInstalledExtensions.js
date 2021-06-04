@@ -28,8 +28,6 @@ export const useInstalledExtensions = () => {
     RequestManagementPermissionDoc,
   )
 
-  console.log(data, error)
-
   return {
     extensions: (data && data.extensions) || [],
     loading,
