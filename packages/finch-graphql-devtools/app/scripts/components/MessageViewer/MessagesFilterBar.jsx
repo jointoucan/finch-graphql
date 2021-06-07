@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Box, Button, Flex, Input, Switch, Text } from '@chakra-ui/react'
+import React from 'react'
+import { Box, Button, Input, Switch, Text } from '@chakra-ui/react'
 
 export const MessagesFilterBar = ({
   onClearMessage,
@@ -19,6 +19,17 @@ export const MessagesFilterBar = ({
       position="sticky"
       top="0"
     >
+      <Input
+        mr={2}
+        size="sm"
+        variant="outline"
+        value={filterString}
+        placeholder="Filter messages"
+        onChange={onFilterStringChange}
+        backgroundColor="white"
+        type="search"
+        width="250px"
+      />
       <Switch
         mr={2}
         isChecked={currentTabOnly}
@@ -27,17 +38,13 @@ export const MessagesFilterBar = ({
       <Text pr={2} whiteSpace="nowrap">
         Only current tab
       </Text>
-      <Input
-        mr={2}
-        size="sm"
-        variant="filled"
-        value={filterString}
-        placeholder="Filter messages"
-        onChange={onFilterStringChange}
-        type="search"
-      />
       <Box flex="1" />
-      <Button size="xs" onClick={onClearMessage}>
+      <Button
+        size="xs"
+        variant="ghost"
+        onClick={onClearMessage}
+        colorScheme="grey"
+      >
         Clear messages
       </Button>
     </Box>

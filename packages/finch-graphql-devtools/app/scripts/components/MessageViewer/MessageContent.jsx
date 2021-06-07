@@ -50,7 +50,7 @@ export const MessageContent = ({ message }) => {
   const hasErrors =
     message && message.response.errors && message.response.errors.length
   return (
-    <Box flex={1} display="flex" flexDirection="column">
+    <Box flex={1} display="flex" flexDirection="column" maxWidth="70vw">
       {message && (
         <Box flex="1" display="flex" flexDirection="column">
           <Box display="flex" flexDirection="column" pl={4} pt={6} pb={4}>

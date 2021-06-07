@@ -36,7 +36,7 @@ export const MessagesViewer = ({
       variables: safeParse(props.variables),
       response: safeParse(props.response),
       context: safeParse(props.context),
-      id: `${props.operationName}:${i}`,
+      id: `${props.operationName}:${i + messages.length}`,
     }))
     setMessages(existingMessages => [...existingMessages, ...parsedMessages])
   }

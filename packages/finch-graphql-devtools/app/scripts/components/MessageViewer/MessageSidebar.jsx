@@ -60,7 +60,7 @@ export const MessagesSidebar = ({ messages, selectQuery, selectedQuery }) => {
   const renderer = renderListItem({ messages, selectQuery, selectedQuery })
 
   return (
-    <Box flex={1} maxWidth="250px" overflow="scroll">
+    <Box flex={1} maxWidth="30vw" overflow="scroll">
       <Box zIndex={2} position="sticky" top="0" backgroundColor="white">
         <Box
           px={4}
