@@ -6,6 +6,8 @@ import { EnableMessagesDoc, MessagePullQueryDoc } from './graphql'
 import { safeParse } from './helpers'
 import { MessageContent } from './MessageContent'
 import { MessagesSidebar } from './MessageSidebar'
+import { MessagesFilterBar } from './MessagesFilterBar'
+import { useLocalStorage } from '../../hooks/useLocalStorage'
 
 const TIMEOUT_SPEED = 1000
 
@@ -14,20 +16,54 @@ export const MessagesViewer = ({
   messageKey,
   timeoutSpeed = TIMEOUT_SPEED,
 }) => {
+  const [currentTabFilter, setCurrentTabFilter] = useLocalStorage(
+    'messages:currentTabFilter',
+    false,
+  )
+  const [filterString, setFilterString] = useLocalStorage(
+    'messages:filterString',
+    '',
+  )
   const [messages, setMessages] = useState([])
   const [selectedQuery, selectQuery] = useState(null)
+  const [currentTabId] = useState(() => browser.devtools.inspectedWindow.tabId)
 
-  const selectedQueryMessage = messages[selectedQuery]
+  const selectedQueryMessage = messages.find(({ id }) => selectedQuery === id)
 
   const appendMessages = newMessages => {
-    const parsedMessages = newMessages.map(props => ({
+    const parsedMessages = newMessages.map((props, i) => ({
       ...props,
       variables: safeParse(props.variables),
       response: safeParse(props.response),
       context: safeParse(props.context),
+      id: `${props.operationName}:${i + messages.length}`,
     }))
     setMessages(existingMessages => [...existingMessages, ...parsedMessages])
   }
+
+  const filteredMessages = messages
+    .filter(({ context }) => {
+      if (
+        currentTabFilter &&
+        context.sender &&
+        context.sender.tab &&
+        context.sender.tab.id === currentTabId
+      ) {
+        return true
+      } else if (!currentTabFilter) {
+        return true
+      }
+      return false
+    })
+    .filter(({ operationName }) => {
+      if (filterString) {
+        if (operationName && operationName.includes(filterString)) {
+          return true
+        }
+        return false
+      }
+      return true
+    })
 
   useEffect(() => {
     let timer = 0
@@ -62,14 +98,34 @@ export const MessagesViewer = ({
   }, [])
 
   return (
-    <Box display="flex" height="100%" backgroundColor="white">
-      <MessagesSidebar
-        messages={messages}
-        selectedQuery={selectedQuery}
-        selectQuery={selectQuery}
+    <Box
+      display="flex"
+      height="100%"
+      flexDirection="column"
+      backgroundColor="white"
+    >
+      <MessagesFilterBar
+        onClearMessage={() => {
+          setMessages([])
+        }}
+        currentTabOnly={currentTabFilter}
+        onToggleCurrentTabFilter={() => {
+          setCurrentTabFilter(!currentTabFilter)
+        }}
+        filterString={filterString}
+        onFilterStringChange={e => {
+          setFilterString(e.currentTarget.value)
+        }}
       />
-      <Box backgroundColor="grey.100" pr={0.2} flex={0} zIndex={2} />
-      <MessageContent message={selectedQueryMessage} />
+      <Box display="flex" flex="1" backgroundColor="white">
+        <MessagesSidebar
+          messages={filteredMessages}
+          selectedQuery={selectedQuery}
+          selectQuery={selectQuery}
+        />
+        <Box backgroundColor="grey.100" pr={0.2} flex={0} zIndex={2} />
+        <MessageContent message={selectedQueryMessage} />
+      </Box>
     </Box>
   )
 }

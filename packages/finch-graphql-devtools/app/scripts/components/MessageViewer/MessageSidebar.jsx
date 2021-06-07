@@ -13,7 +13,7 @@ export const renderListItem = ({ messages, selectQuery, selectedQuery }) => ({
     return null
   }
 
-  const { response, operationName, timeTaken } = message
+  const { response, operationName, timeTaken, id } = message
 
   const hasErrors = response && response.errors && response.errors.length
   return (
@@ -21,12 +21,12 @@ export const renderListItem = ({ messages, selectQuery, selectedQuery }) => ({
       <Box
         py={2}
         onClick={() => {
-          selectQuery(index)
+          selectQuery(id)
         }}
         cursor="pointer"
         display="flex"
         flexDirection="column"
-        backgroundColor={selectedQuery === index ? 'teal.100' : 'white'}
+        backgroundColor={selectedQuery === id ? 'teal.100' : 'white'}
       >
         <Box display="flex" flexDirection="row" alignItems="center" px={4}>
           <Tag backgroundColor={hasErrors ? 'red.200' : 'teal.200'} mr={2}>
@@ -60,7 +60,7 @@ export const MessagesSidebar = ({ messages, selectQuery, selectedQuery }) => {
   const renderer = renderListItem({ messages, selectQuery, selectedQuery })
 
   return (
-    <Box flex={1} maxWidth="250px" overflow="scroll">
+    <Box flex={1} maxWidth="30vw" overflow="scroll">
       <Box zIndex={2} position="sticky" top="0" backgroundColor="white">
         <Box
           px={4}
