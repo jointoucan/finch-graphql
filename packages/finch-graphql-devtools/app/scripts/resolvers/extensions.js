@@ -27,7 +27,13 @@ export const extensionResolvers = {
   },
   Mutation: {
     requestManagementPermission: async () => {
-      return browser.permissions.request({ permissions: ['management'] })
+      const resp = await browser.permissions.request({
+        permissions: ['management'],
+      })
+      if (resp) {
+        browser.runtime.reload()
+      }
+      return true
     },
   },
 }
