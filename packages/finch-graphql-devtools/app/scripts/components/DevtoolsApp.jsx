@@ -56,7 +56,11 @@ export const DevtoolsApp = () => {
             <SettingsEditor
               extensionId={extensionId}
               onChangeExtensionId={id => {
-                setExtensionId(id)
+                if (typeof id === 'string') {
+                  setExtensionId(id)
+                } else {
+                  setExtensionId(id.target.value)
+                }
               }}
               messageKey={messageKey}
               onChangeMessageKey={e => {

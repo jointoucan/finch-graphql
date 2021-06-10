@@ -153,7 +153,9 @@ export const SettingsEditor = ({
             <Button
               onClick={async () => {
                 await requestManagementPermission({})
-                await refetch()
+                setTimeout(() => {
+                  window.location.reload()
+                }, 300)
               }}
               colorScheme="blue"
               color="white"

@@ -8,6 +8,7 @@ import { MessageContent } from './MessageContent'
 import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
+import { v4 } from 'uuid'
 
 const TIMEOUT_SPEED = 1000
 
@@ -36,7 +37,7 @@ export const MessagesViewer = ({
       variables: safeParse(props.variables),
       response: safeParse(props.response),
       context: safeParse(props.context),
-      id: `${props.operationName}:${i + messages.length}`,
+      id: v4(),
     }))
     setMessages(existingMessages => [...existingMessages, ...parsedMessages])
   }
