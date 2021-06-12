@@ -14,7 +14,52 @@ jobs:
         run: npm install yarn --global
       - name: Yarn install
         run: yarn
+      - uses: actions/cache@v2.1.6
+        id: restore-build
+        with:
+          path: ./*
+          key: ${{ github.sha }}
       - name: Lint Code
         run: yarn workspace finch-graphql lint
       - name: Test Code
         run: yarn workspace finch-graphql test
+      - name: Test Build
+        run: yarn build
+  testCore:
+    name: Test finch-graphql library
+    needs: [installDependencies]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup container
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+      - uses: actions/cache@v2.1.6
+        id: restore-build
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - name: Lint Code
+        run: yarn workspace finch-graphql lint
+      - name: Test Code
+        run: yarn workspace finch-graphql test
+      - name: Test Build
+        run: yarn build
+  testDevtools:
+    name: Test devtools extension
+    needs: [installDependencies]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup container
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+      - uses: actions/cache@v2.1.6
+        id: restore-build
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+      - name: Test compile
+        run: yarn compile
