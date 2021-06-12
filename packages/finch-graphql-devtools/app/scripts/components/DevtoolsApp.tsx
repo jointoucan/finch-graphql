@@ -9,10 +9,13 @@ import { useLocalStorage } from '../hooks/useLocalStorage'
 import { Theme } from './Theme'
 import { MessagesViewer } from './MessageViewer'
 
-export const graphQLFetcher = ({ messageKey, extensionId }): Fetcher => async ({
-  query,
-  variables,
-}) => {
+export const graphQLFetcher = ({
+  messageKey,
+  extensionId,
+}: {
+  messageKey: string
+  extensionId: string
+}): Fetcher => async ({ query, variables }) => {
   return queryApi(query, variables || {}, {
     messageKey,
     id: extensionId,
@@ -24,7 +27,7 @@ export const DevtoolsApp = () => {
     StorageKey.ExtensionId,
     '',
   )
-  const [messageKey, setMessageKey] = useLocalStorage(
+  const [messageKey, setMessageKey] = useLocalStorage<string>(
     StorageKey.MessageKey,
     FinchMessageKey.Generic,
   )

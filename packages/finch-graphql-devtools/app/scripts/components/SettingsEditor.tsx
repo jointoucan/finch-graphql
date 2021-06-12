@@ -13,7 +13,7 @@ import { useInstalledExtensions } from '../hooks/useInstalledExtensions'
 interface SettingsEditorProps {
   extensionId?: string
   messageKey: string
-  onChangeMessageKey: (messageKey: string) => void
+  onChangeMessageKey: (e: ChangeEvent<HTMLInputElement>) => void
   onChangeExtensionId: (e: ChangeEvent<HTMLInputElement> | string) => void
 }
 

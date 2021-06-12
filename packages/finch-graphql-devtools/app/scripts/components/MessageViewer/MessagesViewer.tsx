@@ -9,6 +9,7 @@ import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { v4 } from 'uuid'
+import { FinchDevtoolsQuery, FinchMessage } from './types'
 
 const TIMEOUT_SPEED = 1000
 
@@ -37,7 +38,7 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
 
   const selectedQueryMessage = messages.find(({ id }) => selectedQuery === id)
 
-  const appendMessages = newMessages => {
+  const appendMessages = (newMessages: FinchMessage[]) => {
     const parsedMessages = newMessages.map((props, i) => ({
       ...props,
       variables: safeParse(props.variables),
@@ -77,7 +78,7 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
 
     const runQuery = async () => {
       try {
-        const resp = await queryApi(
+        const resp = await queryApi<FinchDevtoolsQuery>(
           MessagePullQueryDoc,
           {},
           { id: extensionId, messageKey },
@@ -95,10 +96,10 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       } catch (e) {
         console.error(e)
       }
-      timer = setTimeout(runQuery, timeoutSpeed)
+      timer = window.setTimeout(runQuery, timeoutSpeed)
     }
 
-    timer = setTimeout(runQuery, timeoutSpeed)
+    timer = window.setTimeout(runQuery, timeoutSpeed)
     return () => {
       clearInterval(timer)
     }

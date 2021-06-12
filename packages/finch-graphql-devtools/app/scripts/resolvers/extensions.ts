@@ -10,9 +10,7 @@ export const extensionResolvers = {
             ...extension,
             icon:
               ((extension.icons || []).find(icon => icon.size === 128) || {})
-                .url ||
-              extension.icon ||
-              browser.runtime.getURL('images/no-icon.png'),
+                .url || browser.runtime.getURL('images/no-icon.png'),
           }))
 
         return extensions

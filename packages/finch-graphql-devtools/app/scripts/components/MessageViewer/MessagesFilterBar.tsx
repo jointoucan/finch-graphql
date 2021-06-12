@@ -1,7 +1,15 @@
 import React from 'react'
 import { Box, Button, Input, Switch, Text } from '@chakra-ui/react'
 
-export const MessagesFilterBar = ({
+interface MessagesFilterBarProps {
+  onClearMessage: () => void
+  currentTabOnly: boolean
+  onToggleCurrentTabFilter: () => void
+  filterString: string
+  onFilterStringChange: React.ChangeEventHandler<HTMLInputElement>
+}
+
+export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
   onClearMessage,
   currentTabOnly,
   onToggleCurrentTabFilter,
