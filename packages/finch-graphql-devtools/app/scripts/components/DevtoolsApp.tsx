@@ -1,7 +1,7 @@
 import { queryApi, FinchMessageKey } from 'finch-graphql'
 import React, { useMemo } from 'react'
 import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react'
-import GraphiQL from 'graphiql'
+import GraphiQL, { Fetcher } from 'graphiql'
 import { Header } from './Header'
 import { SettingsEditor } from './SettingsEditor'
 import { StorageKey, DefaultQuery } from '../constants'
@@ -9,10 +9,13 @@ import { useLocalStorage } from '../hooks/useLocalStorage'
 import { Theme } from './Theme'
 import { MessagesViewer } from './MessageViewer'
 
-export const graphQLFetcher = ({ messageKey, extensionId }) => async ({
-  query,
-  variables,
-}) => {
+export const graphQLFetcher = ({
+  messageKey,
+  extensionId,
+}: {
+  messageKey: string
+  extensionId: string
+}): Fetcher => async ({ query, variables }) => {
   return queryApi(query, variables || {}, {
     messageKey,
     id: extensionId,
@@ -24,7 +27,7 @@ export const DevtoolsApp = () => {
     StorageKey.ExtensionId,
     '',
   )
-  const [messageKey, setMessageKey] = useLocalStorage(
+  const [messageKey, setMessageKey] = useLocalStorage<string>(
     StorageKey.MessageKey,
     FinchMessageKey.Generic,
   )

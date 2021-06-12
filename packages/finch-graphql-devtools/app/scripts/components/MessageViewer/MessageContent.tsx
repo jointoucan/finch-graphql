@@ -12,8 +12,18 @@ import {
 } from '@chakra-ui/react'
 import { Code } from '../Code'
 import { formatJSON } from './helpers'
+import { FinchMessageParsed } from './types'
 
-export const MessageAccordionItem = ({ children, title, index }) => {
+interface MessageAccordionItem {
+  title: string
+  index: number
+}
+
+export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
+  children,
+  title,
+  index,
+}) => {
   const { index: selectedIndex } = useAccordionContext()
   const isOpen = index === selectedIndex
 
@@ -46,7 +56,9 @@ export const MessageAccordionItem = ({ children, title, index }) => {
   )
 }
 
-export const MessageContent = ({ message }) => {
+export const MessageContent: React.FC<{ message: FinchMessageParsed }> = ({
+  message,
+}) => {
   const hasErrors =
     message && message.response.errors && message.response.errors.length
   return (
@@ -72,17 +84,17 @@ export const MessageContent = ({ message }) => {
           </Box>
           <Accordion allowToggle flex="1" display="flex" flexDirection="column">
             <MessageAccordionItem title="Query" index={0}>
-              <Code code={message.rawQuery} mode="graphql" />
+              <Code code={message.rawQuery} />
             </MessageAccordionItem>
             <MessageAccordionItem title="Variables" index={1}>
-              <Code code={formatJSON(message.variables)} mode="javascript" />
+              <Code code={formatJSON(message.variables)} />
             </MessageAccordionItem>
 
             <MessageAccordionItem title="Response" index={2}>
-              <Code code={formatJSON(message.response)} mode="javascript" />
+              <Code code={formatJSON(message.response)} />
             </MessageAccordionItem>
             <MessageAccordionItem title="Context" index={3}>
-              <Code code={formatJSON(message.context)} mode="javascript" />
+              <Code code={formatJSON(message.context)} />
             </MessageAccordionItem>
           </Accordion>
         </Box>

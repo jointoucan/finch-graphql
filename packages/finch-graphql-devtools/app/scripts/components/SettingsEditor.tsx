@@ -1,19 +1,25 @@
-import React from 'react'
+import React, { ChangeEvent } from 'react'
 import {
   Box,
   Input,
   Text,
   Heading,
-  Select,
   Alert,
   AlertIcon,
   Button,
 } from '@chakra-ui/react'
 import { useInstalledExtensions } from '../hooks/useInstalledExtensions'
 
+interface SettingsEditorProps {
+  extensionId?: string
+  messageKey: string
+  onChangeMessageKey: (e: ChangeEvent<HTMLInputElement>) => void
+  onChangeExtensionId: (e: ChangeEvent<HTMLInputElement> | string) => void
+}
+
 const defaultBoxShadow = '0 2px 2px -1px rgb(0 0 0 / 26%)'
 
-export const SettingsEditor = ({
+export const SettingsEditor: React.FC<SettingsEditorProps> = ({
   extensionId,
   messageKey,
   onChangeMessageKey,
@@ -24,7 +30,6 @@ export const SettingsEditor = ({
     manifest,
     error,
     requestManagementPermission,
-    refetch,
   } = useInstalledExtensions()
 
   const codeBlock = `"externally_connectable": {

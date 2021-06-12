@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Box } from '@chakra-ui/react'
 
-export const Code = ({ code }) => {
+export const Code: FC<{ code: string }> = ({ code }) => {
   return (
     <Box as="pre" p={4} rounded={8} mb={3} overflow="scroll">
       <Box

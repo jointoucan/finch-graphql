@@ -2,13 +2,14 @@
   "compilerOptions": {
     "jsx": "react",
     "esModuleInterop": true,
+    "composite": true,
     "module": "commonjs",
     "outDir": "dist",
     "declaration": true,
     "downlevelIteration": true,
     "lib": ["es2019", "dom"],
     "rootDir": "src",
-    "typeRoots": ["../../node_modules/@types", "../../node_modules/web-ext-types"],
+    "typeRoots": ["../../node_modules/@types"]
   },
   "dir": "src",
   "include": ["./src"],

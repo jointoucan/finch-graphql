@@ -1,0 +1,17 @@
+query getExtensions {
+  extensions {
+    id
+    name
+    version
+    icon
+  }
+  manifest {
+    id
+    name
+    version
+  }
+}
+
+mutation requestManagementPermission {
+  requestManagementPermission
+}

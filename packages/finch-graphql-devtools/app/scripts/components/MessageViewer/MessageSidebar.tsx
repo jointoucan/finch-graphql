@@ -1,12 +1,19 @@
 import React from 'react'
 import { Box, Text, Heading, Tag, Divider } from '@chakra-ui/react'
-import { AutoSizer, List } from 'react-virtualized'
+import { AutoSizer, List, ListRowRenderer } from 'react-virtualized'
+import { FinchMessageParsed } from './types'
 
-export const renderListItem = ({ messages, selectQuery, selectedQuery }) => ({
-  index,
-  key,
-  style,
-}) => {
+interface MessageSidebarProp {
+  messages: FinchMessageParsed[]
+  selectQuery: (id: string) => void
+  selectedQuery: string
+}
+
+export const renderListItem = ({
+  messages,
+  selectQuery,
+  selectedQuery,
+}: MessageSidebarProp): ListRowRenderer => ({ index, key, style }) => {
   const message = messages[index]
 
   if (!message) {
@@ -56,7 +63,11 @@ export const renderListItem = ({ messages, selectQuery, selectedQuery }) => ({
   )
 }
 
-export const MessagesSidebar = ({ messages, selectQuery, selectedQuery }) => {
+export const MessagesSidebar: React.FC<MessageSidebarProp> = ({
+  messages,
+  selectQuery,
+  selectedQuery,
+}) => {
   const renderer = renderListItem({ messages, selectQuery, selectedQuery })
 
   return (

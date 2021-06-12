@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const extensionsSchema = gql`
+export default gql`
   type Extension {
     name: String!
     version: String!

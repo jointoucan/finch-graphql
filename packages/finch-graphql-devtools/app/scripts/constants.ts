@@ -13,10 +13,10 @@ export const DefaultQuery = `
 # First you will need to connect you extension to Finch GraphiQL.
 # To do this head over to the setting tab and insert the extensionID
 # of your extension into the field. If you have a custom message key
-# pass that into the message key feild. 
+# pass that into the message key felid. 
 #
 # If you have not yet you will need to setup externally connects in
-# you extention, the Finch GraphiQL extensionID needs to be put into
+# you extension, the Finch GraphiQL extensionID needs to be put into
 # the "ids" section.
 #
 # https://developer.chrome.com/docs/extensions/mv2/manifest/externally_connectable/

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "commonjs",
+    "outDir": "dist",
+    "declaration": true,
+    "downlevelIteration": true,
+    "noImplicitAny": true,
+    "noEmit": true,
+    "lib": ["es2019", "dom"],
+    "rootDir": "app/scripts",
+    "typeRoots": ["../../node_modules/@types"]
+  },
+  "dir": "app/scripts",
+  "include": ["app/scripts"],
+  "exclude": [
+    "**/node_modules",
+    "node_modules",
+    "dist",
+    "app/scripts/**/*.test.ts"
+  ]
+}

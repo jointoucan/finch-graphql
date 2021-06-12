@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { extensionsSchema } from './extensions'
+import extensionsSchema from './schemas/extensions'
 
 export const initialSchema = gql`
   schema {
