@@ -1,6 +1,5 @@
-import React from 'react'
 import { Image } from './Image'
-import { Tabs, TabList, Tab, Box, Button } from '@chakra-ui/react'
+import { TabList, Tab, Box, Button } from '@chakra-ui/react'
 
 export const Header = () => {
   return (

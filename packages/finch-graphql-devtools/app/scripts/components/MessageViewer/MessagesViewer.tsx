@@ -12,7 +12,13 @@ import { v4 } from 'uuid'
 
 const TIMEOUT_SPEED = 1000
 
-export const MessagesViewer = ({
+interface MessageViewerProps {
+  extensionId: string
+  messageKey: string
+  timeoutSpeed?: number
+}
+
+export const MessagesViewer: React.FC<MessageViewerProps> = ({
   extensionId,
   messageKey,
   timeoutSpeed = TIMEOUT_SPEED,

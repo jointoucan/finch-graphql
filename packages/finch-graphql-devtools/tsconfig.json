@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "outDir": "dist",
+    "declaration": true,
+    "downlevelIteration": true,
+    "noImplicitAny": true,
+    "lib": ["es2019", "dom"],
+    "rootDir": "app/scripts",
+    "typeRoots": [
+      "../../node_modules/@types",
+      "../../node_modules/web-ext-types"
+    ]
+  },
+  "dir": "app",
+  "include": ["./app/scripts"],
+  "exclude": ["node_modules", "dist", "app/scripts/**/*.test.ts"]
+}

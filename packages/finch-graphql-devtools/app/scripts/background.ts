@@ -1,6 +1,6 @@
-const { FinchApi } = require('finch-graphql')
-const { resolvers } = require('./resolvers')
-const { typeDefs } = require('./typeDefs')
+import { FinchApi } from 'finch-graphql'
+import { resolvers } from './resolvers'
+import { typeDefs } from './typeDefs'
 
 new FinchApi({
   typeDefs: typeDefs,
