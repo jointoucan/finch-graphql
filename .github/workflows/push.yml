@@ -2,7 +2,7 @@ on: push
 name: Test Workflow
 jobs:
   installDependencies:
-    name: Lint & Test
+    name: Install dependencies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -19,12 +19,6 @@ jobs:
         with:
           path: ./*
           key: ${{ github.sha }}
-      - name: Lint Code
-        run: yarn workspace finch-graphql lint
-      - name: Test Code
-        run: yarn workspace finch-graphql test
-      - name: Test Build
-        run: yarn build
   testCore:
     name: Test finch-graphql library
     needs: [installDependencies]
