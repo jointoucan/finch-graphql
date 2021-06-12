@@ -21,13 +21,37 @@ export type Extension = {
   icon: Scalars['String'];
 };
 
+export type FinchDevtools = {
+  __typename?: 'FinchDevtools';
+  enabled: Scalars['Boolean'];
+  messages: Array<FinchMessage>;
+};
+
+export type FinchMessage = {
+  __typename?: 'FinchMessage';
+  operationName?: Maybe<Scalars['String']>;
+  rawQuery: Scalars['String'];
+  variables?: Maybe<Scalars['String']>;
+  initializedAt: Scalars['Float'];
+  timeTaken: Scalars['Float'];
+  response: Scalars['String'];
+  context: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  _enableFinchDevtools: Scalars['Boolean'];
   requestManagementPermission: Scalars['Boolean'];
+};
+
+
+export type Mutation_EnableFinchDevtoolsArgs = {
+  enabled: Scalars['Boolean'];
 };
 
 export type Query = {
   __typename?: 'Query';
+  _finchDevtools?: Maybe<FinchDevtools>;
   extensions: Array<Extension>;
   manifest: Extension;
 };
@@ -54,6 +78,29 @@ export type RequestManagementPermissionMutation = (
   & Pick<Mutation, 'requestManagementPermission'>
 );
 
+export type GetMessagesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMessagesQuery = (
+  { __typename?: 'Query' }
+  & { _finchDevtools?: Maybe<(
+    { __typename?: 'FinchDevtools' }
+    & Pick<FinchDevtools, 'enabled'>
+    & { messages: Array<(
+      { __typename?: 'FinchMessage' }
+      & Pick<FinchMessage, 'operationName' | 'rawQuery' | 'variables' | 'initializedAt' | 'timeTaken' | 'response' | 'context'>
+    )> }
+  )> }
+);
+
+export type EnableMessagesMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EnableMessagesMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, '_enableFinchDevtools'>
+);
+
 
 export const GetExtensions = gql`
     query getExtensions {
@@ -73,6 +120,27 @@ export const GetExtensions = gql`
 export const RequestManagementPermission = gql`
     mutation requestManagementPermission {
   requestManagementPermission
+}
+    `;
+export const GetMessages = gql`
+    query getMessages {
+  _finchDevtools {
+    enabled
+    messages {
+      operationName
+      rawQuery
+      variables
+      initializedAt
+      timeTaken
+      response
+      context
+    }
+  }
+}
+    `;
+export const EnableMessages = gql`
+    mutation enableMessages {
+  _enableFinchDevtools(enabled: true)
 }
     `;
 
@@ -101,3 +169,29 @@ export const RequestManagementPermissionDocument = gql`
 }
     `;
 export const useRequestManagementPermissionMutation = () => useMutation<RequestManagementPermissionMutation, RequestManagementPermissionMutationVariables>(RequestManagementPermissionDocument);
+export const GetMessagesDocument = gql`
+    query getMessages {
+  _finchDevtools {
+    enabled
+    messages {
+      operationName
+      rawQuery
+      variables
+      initializedAt
+      timeTaken
+      response
+      context
+    }
+  }
+}
+    `;
+export const useGetMessagesQuery = (config?: {
+        variables?: GetMessagesQueryVariables;
+        skip?: Boolean;
+      }) => useQuery<GetMessagesQuery, GetMessagesQueryVariables>(GetMessagesDocument, config);
+export const EnableMessagesDocument = gql`
+    mutation enableMessages {
+  _enableFinchDevtools(enabled: true)
+}
+    `;
+export const useEnableMessagesMutation = () => useMutation<EnableMessagesMutation, EnableMessagesMutationVariables>(EnableMessagesDocument);

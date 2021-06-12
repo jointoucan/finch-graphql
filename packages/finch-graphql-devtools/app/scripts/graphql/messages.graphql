@@ -1,0 +1,18 @@
+query getMessages {
+  _finchDevtools {
+    enabled
+    messages {
+      operationName
+      rawQuery
+      variables
+      initializedAt
+      timeTaken
+      response
+      context
+    }
+  }
+}
+
+mutation enableMessages {
+  _enableFinchDevtools(enabled: true)
+}

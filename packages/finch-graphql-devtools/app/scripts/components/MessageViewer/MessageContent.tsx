@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { Code } from '../Code'
 import { formatJSON } from './helpers'
-import { ParsedFinchMessage } from './types'
+import { FinchMessageParsed } from './types'
 
 interface MessageAccordionItem {
   title: string
@@ -56,7 +56,7 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
   )
 }
 
-export const MessageContent: React.FC<{ message: ParsedFinchMessage }> = ({
+export const MessageContent: React.FC<{ message: FinchMessageParsed }> = ({
   message,
 }) => {
   const hasErrors =

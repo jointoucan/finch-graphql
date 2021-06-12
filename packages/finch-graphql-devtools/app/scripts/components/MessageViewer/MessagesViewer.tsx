@@ -2,14 +2,21 @@ import React, { useState } from 'react'
 import { Box } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { queryApi } from 'finch-graphql'
-import { EnableMessagesDoc, MessagePullQueryDoc } from './graphql'
 import { safeParse } from './helpers'
 import { MessageContent } from './MessageContent'
 import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { v4 } from 'uuid'
-import { FinchDevtoolsQuery, FinchMessage } from './types'
+import {
+  GetMessagesQuery,
+  GetMessagesDocument,
+  GetMessagesQueryVariables,
+  EnableMessagesMutation,
+  EnableMessagesDocument,
+  EnableMessagesMutationVariables,
+} from '../../schema'
+import { FinchMessage } from './types'
 
 const TIMEOUT_SPEED = 1000
 
@@ -78,13 +85,15 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
 
     const runQuery = async () => {
       try {
-        const resp = await queryApi<FinchDevtoolsQuery>(
-          MessagePullQueryDoc,
-          {},
-          { id: extensionId, messageKey },
-        )
+        const resp = await queryApi<
+          GetMessagesQuery,
+          GetMessagesQueryVariables
+        >(GetMessagesDocument, {}, { id: extensionId, messageKey })
         if (resp && !resp.data._finchDevtools.enabled) {
-          await queryApi(EnableMessagesDoc, {}, { id: extensionId, messageKey })
+          await queryApi<
+            EnableMessagesMutation,
+            EnableMessagesMutationVariables
+          >(EnableMessagesDocument, {}, { id: extensionId, messageKey })
         }
         if (
           resp &&
