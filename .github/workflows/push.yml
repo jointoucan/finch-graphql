@@ -39,7 +39,7 @@ jobs:
       - name: Test Code
         run: yarn workspace finch-graphql test
       - name: Test Build
-        run: yarn build
+        run: yarn workspace finch-graphql build
   testDevtools:
     name: Test devtools extension
     needs: [installDependencies]
@@ -56,4 +56,4 @@ jobs:
           path: ./*
           key: ${{ github.sha }}
       - name: Test compile
-        run: yarn compile
+        run: yarn workspace finch-graphql-devtools compile
