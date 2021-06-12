@@ -55,5 +55,7 @@ jobs:
         with:
           path: ./*
           key: ${{ github.sha }}
+      - name: Yarn relink packages
+        run: yarn # This should be quick
       - name: Test compile
         run: yarn workspace finch-graphql-devtools compile
