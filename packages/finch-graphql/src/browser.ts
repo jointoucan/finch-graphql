@@ -115,3 +115,44 @@ export const getExtensionId = () => {
   }
   return browser.runtime.id;
 };
+
+/**
+ * onConnectExternal is a proxy for external port connection listeners
+ */
+export const onConnectExternal = (
+  callback: (port: browser.runtime.Port | chrome.runtime.Port) => void,
+) => {
+  try {
+    if (
+      typeof chrome !== 'undefined' &&
+      typeof chrome.runtime.onConnectExternal !== 'undefined'
+    ) {
+      return chrome.runtime.onConnectExternal.addListener(callback);
+    }
+    return browser.runtime.onConnectExternal.addListener(callback);
+  } catch (e) {
+    console.warn(`Unable to listen to external port connections:`, e.message);
+  }
+};
+
+/**
+ * removeConnectExternalListener is a proxy for external port connection listeners
+ */
+export const removeConnectExternalListener = (
+  callback: (port: browser.runtime.Port | chrome.runtime.Port) => void,
+) => {
+  try {
+    if (
+      typeof chrome !== 'undefined' &&
+      typeof chrome.runtime.onConnectExternal !== 'undefined'
+    ) {
+      return chrome.runtime.onConnectExternal.removeListener(callback);
+    }
+    return browser.runtime.onConnectExternal.removeListener(callback);
+  } catch (e) {
+    console.warn(
+      `Unable to remove listener to external port connections:`,
+      e.message,
+    );
+  }
+};

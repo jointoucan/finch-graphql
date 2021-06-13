@@ -12,7 +12,8 @@ import {
 } from '@chakra-ui/react'
 import { Code } from '../Code'
 import { formatJSON } from './helpers'
-import { FinchMessageParsed } from './types'
+import { FinchMessage } from 'finch-graphql/dist/background/types'
+import { print } from 'graphql'
 
 interface MessageAccordionItem {
   title: string
@@ -56,7 +57,7 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
   )
 }
 
-export const MessageContent: React.FC<{ message: FinchMessageParsed }> = ({
+export const MessageContent: React.FC<{ message: FinchMessage }> = ({
   message,
 }) => {
   const hasErrors =
@@ -84,7 +85,7 @@ export const MessageContent: React.FC<{ message: FinchMessageParsed }> = ({
           </Box>
           <Accordion allowToggle flex="1" display="flex" flexDirection="column">
             <MessageAccordionItem title="Query" index={0}>
-              <Code code={message.rawQuery} />
+              <Code code={print(message.query)} />
             </MessageAccordionItem>
             <MessageAccordionItem title="Variables" index={1}>
               <Code code={formatJSON(message.variables)} />

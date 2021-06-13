@@ -22,6 +22,7 @@ import {
 } from '../types';
 import { addExternalMessageListener, addMessageListener } from '../browser';
 import { NoIntrospection } from './NoIntrospection';
+import { FinchDevtools } from './FinchDevtools';
 
 export class FinchApi {
   schema: GraphQLSchema;
@@ -30,6 +31,7 @@ export class FinchApi {
   messageKey?: string;
   disableIntrospection: boolean;
   rules: any[];
+  devtools: FinchDevtools;
   constructor({
     context,
     attachMessages,
@@ -38,6 +40,7 @@ export class FinchApi {
     onQueryResponse = () => {},
     disableIntrospection,
     validationRules = [],
+    disableDevtools = false,
     ...options
   }: FinchApiOptions) {
     this.schema = makeExecutableSchema(options);
@@ -50,6 +53,7 @@ export class FinchApi {
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
     this.rules = validationRules;
+    this.devtools = new FinchDevtools({ autoListen: !disableDevtools });
 
     if (disableIntrospection) {
       this.rules.unshift(NoIntrospection);
@@ -130,6 +134,19 @@ export class FinchApi {
     // NOTE: This ensures outside code stop execution of this function.
     try {
       this.onQueryResponse({
+        query: documentNode,
+        variables,
+        context,
+        timeTaken,
+        operationName,
+        response,
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+    // Send to devtools
+    try {
+      this.devtools.onResponse({
         query: documentNode,
         variables,
         context,

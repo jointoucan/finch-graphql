@@ -1,10 +1,10 @@
 import React from 'react'
 import { Box, Text, Heading, Tag, Divider } from '@chakra-ui/react'
 import { AutoSizer, List, ListRowRenderer } from 'react-virtualized'
-import { FinchMessageParsed } from './types'
+import { FinchMessage } from 'finch-graphql/dist/background/types'
 
 interface MessageSidebarProp {
-  messages: FinchMessageParsed[]
+  messages: FinchMessage[]
   selectQuery: (id: string) => void
   selectedQuery: string
 }

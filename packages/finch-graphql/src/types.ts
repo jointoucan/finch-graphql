@@ -43,6 +43,7 @@ export type FinchApiOptions = {
   disableIntrospection?: boolean;
   validationRules?: Array<any>;
   middleware?: Array<Parameters<typeof applyMiddleware>[1]>;
+  disableDevtools?: boolean;
 } & MakeExecSchemaOptions;
 
 export interface FinchMessage<Variables extends GenericVariables = {}> {
