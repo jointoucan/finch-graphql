@@ -9,7 +9,6 @@
     "declaration": true,
     "downlevelIteration": true,
     "noImplicitAny": true,
-    "noEmit": true,
     "lib": ["es2019", "dom"],
     "rootDir": "app/scripts",
     "typeRoots": ["../../node_modules/@types"]

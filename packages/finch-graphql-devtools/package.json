@@ -6,7 +6,7 @@
     "dev": "webextension-toolbox dev",
     "build": "webextension-toolbox build",
     "codegen": "graphql-codegen -c ./codegen.yml",
-    "compile": "tsc"
+    "compile": "tsc --noEmit"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.21.5",
@@ -16,8 +16,9 @@
     "@types/firefox-webext-browser": "^82.0.0",
     "@types/uuid": "^8.3.0",
     "typescript": "^4.3.2",
-    "webextension-toolbox": "latest",
-    "webextension-toolbox-typescript": "^1.0.3"
+    "webextension-toolbox": "3.0.0",
+    "webextension-toolbox-typescript": "^1.0.3",
+    "webpack": "4"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.13",
