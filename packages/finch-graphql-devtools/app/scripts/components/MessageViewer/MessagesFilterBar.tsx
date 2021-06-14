@@ -1,5 +1,6 @@
 import React from 'react'
-import { Box, Button, Input, Switch, Text } from '@chakra-ui/react'
+import { Box, Button, Input, Switch, Text, IconButton } from '@chakra-ui/react'
+import { NotAllowedIcon } from '@chakra-ui/icons'
 
 interface MessagesFilterBarProps {
   onClearMessage: () => void
@@ -26,9 +27,19 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
       pl={3}
       position="sticky"
       top="0"
+      borderBottomWidth="1px"
+      borderBottomColor="gray.200"
     >
+      <IconButton
+        size="sm"
+        onClick={onClearMessage}
+        aria-label="Clear Messages"
+        icon={<NotAllowedIcon />}
+        variant="outline"
+        borderColor="grey.200"
+      />
+      <Box width="1px" height="25px" backgroundColor="grey.200" mx={2} />
       <Input
-        mr={2}
         size="sm"
         variant="outline"
         value={filterString}
@@ -37,7 +48,10 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
         backgroundColor="white"
         type="search"
         width="250px"
+        borderRadius="8px"
       />
+      <Box width="1px" height="25px" backgroundColor="grey.200" mx={2} />
+
       <Switch
         mr={2}
         isChecked={currentTabOnly}
@@ -47,14 +61,6 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
         Only current tab
       </Text>
       <Box flex="1" />
-      <Button
-        size="xs"
-        variant="ghost"
-        onClick={onClearMessage}
-        colorScheme="grey"
-      >
-        Clear messages
-      </Button>
     </Box>
   )
 }

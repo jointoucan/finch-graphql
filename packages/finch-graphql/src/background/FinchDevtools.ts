@@ -1,6 +1,11 @@
-import { v4 } from 'uuid';
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import { onConnectExternal, removeConnectExternalListener } from '../browser';
-import { FinchMessage, MessageMeta } from './types';
+import { FinchContextObj } from '../types';
+import {
+  FinchStartMessage,
+  FinchResponseMessage,
+  FinchDevToolsMessageType,
+} from './types';
 
 export class FinchDevtools {
   static portName = '_finchDevtools';
@@ -46,25 +51,45 @@ export class FinchDevtools {
     });
   }
 
-  onResponse = async ({
+  onStart({
+    id,
     query,
     operationName,
-    timeTaken,
-    response,
     variables,
     context,
-  }: MessageMeta) => {
-    if (operationName !== 'getMessages' && operationName !== 'enableMessages') {
-      this.broadcast<FinchMessage>({
-        id: v4(),
-        query,
-        operationName: operationName ?? 'unknown',
-        timeTaken,
-        initializedAt: Date.now() - timeTaken,
-        response,
-        variables,
-        context,
-      });
-    }
+  }: {
+    id: string;
+    query: DocumentNode;
+    operationName: string;
+    variables: unknown;
+    context: FinchContextObj;
+  }) {
+    this.broadcast<FinchStartMessage>({
+      type: FinchDevToolsMessageType.Start,
+      id,
+      query,
+      operationName: operationName ?? 'unknown',
+      initializedAt: Date.now(),
+      variables,
+      context,
+    });
+    return id;
+  }
+
+  onResponse = async ({
+    id,
+    timeTaken,
+    response,
+  }: {
+    id: string;
+    timeTaken: number;
+    response: { data?: unknown; errors?: GraphQLFormattedError[] };
+  }) => {
+    this.broadcast<FinchResponseMessage>({
+      type: FinchDevToolsMessageType.Response,
+      id,
+      timeTaken,
+      response,
+    });
   };
 }

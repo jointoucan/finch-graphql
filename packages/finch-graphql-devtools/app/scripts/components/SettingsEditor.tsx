@@ -37,7 +37,7 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
 }`
 
   return (
-    <Box py={4} px={5} display="flex">
+    <Box py={4} px={5} display="flex" backgroundColor="white">
       <Box flex={1} pr={6} maxWidth="400px">
         {error && (
           <Alert status="error" rounded={8}>
@@ -110,7 +110,7 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
                     boxShadow={
                       isSelected
                         ? `inset 0 0 0 2px #4299e1, ${defaultBoxShadow}`
-                        : `inset 0 0 0 0 #4299e1, ${defaultBoxShadow}`
+                        : `inset 0 0 0 1px #e2e8f0, ${defaultBoxShadow}`
                     }
                   >
                     <Box

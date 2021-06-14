@@ -1,10 +1,11 @@
 import React from 'react'
 import { Box, Text, Heading, Tag, Divider } from '@chakra-ui/react'
 import { AutoSizer, List, ListRowRenderer } from 'react-virtualized'
-import { FinchMessage } from 'finch-graphql/dist/background/types'
+import { FinchDevtoolsMessage } from './types'
+import { getMessageTagInfo } from './helpers'
 
 interface MessageSidebarProp {
-  messages: FinchMessage[]
+  messages: FinchDevtoolsMessage[]
   selectQuery: (id: string) => void
   selectedQuery: string
 }
@@ -21,8 +22,8 @@ export const renderListItem = ({
   }
 
   const { response, operationName, timeTaken, id } = message
+  const tag = getMessageTagInfo(message)
 
-  const hasErrors = response && response.errors && response.errors.length
   return (
     <Box style={style} key={key}>
       <Box
@@ -33,11 +34,11 @@ export const renderListItem = ({
         cursor="pointer"
         display="flex"
         flexDirection="column"
-        backgroundColor={selectedQuery === id ? 'teal.100' : 'white'}
+        backgroundColor={selectedQuery === id ? 'blue.100' : 'white'}
       >
         <Box display="flex" flexDirection="row" alignItems="center" px={4}>
-          <Tag backgroundColor={hasErrors ? 'red.200' : 'teal.200'} mr={2}>
-            {hasErrors ? 'ERROR' : 'OK'}
+          <Tag backgroundColor={tag.color} mr={2}>
+            {tag.label}
           </Tag>
           <Text
             size="sm"

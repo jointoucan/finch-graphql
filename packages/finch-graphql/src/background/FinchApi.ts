@@ -23,6 +23,7 @@ import {
 import { addExternalMessageListener, addMessageListener } from '../browser';
 import { NoIntrospection } from './NoIntrospection';
 import { FinchDevtools } from './FinchDevtools';
+import { v4 } from 'uuid';
 
 export class FinchApi {
   schema: GraphQLSchema;
@@ -94,6 +95,7 @@ export class FinchApi {
     variables?: Variables,
     baseContext?: FinchContextObj,
   ) {
+    const id = v4();
     const context = this.getContext(baseContext);
     const documentNode = isDocumentNode(query) ? query : gql(query);
     const queryStr = isDocumentNode(query)
@@ -106,6 +108,19 @@ export class FinchApi {
     );
     if (operationDef && 'name' in operationDef) {
       operationName = operationDef?.name?.value ?? undefined;
+    }
+
+    // Send initial query to devtools
+    try {
+      this.devtools.onStart({
+        id,
+        query: documentNode,
+        variables,
+        context,
+        operationName,
+      });
+    } catch (e) {
+      console.warn(e);
     }
 
     let validationErrors: readonly GraphQLError[] = [];
@@ -144,14 +159,12 @@ export class FinchApi {
     } catch (e) {
       console.warn(e);
     }
-    // Send to devtools
+
+    // Send response to devtools
     try {
       this.devtools.onResponse({
-        query: documentNode,
-        variables,
-        context,
+        id,
         timeTaken,
-        operationName,
         response,
       });
     } catch (e) {

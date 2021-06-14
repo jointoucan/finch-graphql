@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import { Box } from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { FinchDevtools } from 'finch-graphql'
+import { FinchDevtools, FinchDevToolsMessageType } from 'finch-graphql'
 import { MessageContent } from './MessageContent'
 import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
-import { FinchMessage } from 'finch-graphql/dist/background/types'
-// import { FinchMessage } from './types'
+import { FinchDevtoolsMessage } from './types'
 
 const TIMEOUT_SPEED = 1000
 
@@ -30,7 +29,7 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
     'messages:filterString',
     '',
   )
-  const [messages, setMessages] = useState<FinchMessage[]>([])
+  const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
   const [selectedQuery, selectQuery] = useState(null)
   const [currentTabId] = useState(() => browser.devtools.inspectedWindow.tabId)
 
@@ -65,8 +64,27 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       name: FinchDevtools.portName,
     })
 
-    port.onMessage.addListener((message: FinchMessage) => {
-      setMessages(messages => [...messages, message])
+    port.onMessage.addListener((message: FinchDevtoolsMessage) => {
+      console.log(message)
+      switch (message.type) {
+        case FinchDevToolsMessageType.Start:
+          setMessages(messages => [...messages, message])
+        case FinchDevToolsMessageType.Response:
+          setMessages(messages => {
+            const foundMessage = messages.find(
+              existingMessage => existingMessage.id === message.id,
+            )
+            if (!foundMessage) {
+              return messages
+            }
+            const index = messages.indexOf(foundMessage)
+            return [
+              ...messages.slice(0, index),
+              { ...foundMessage, ...message },
+              ...messages.slice(index + 1),
+            ]
+          })
+      }
     })
     return () => port.disconnect()
   }, [])

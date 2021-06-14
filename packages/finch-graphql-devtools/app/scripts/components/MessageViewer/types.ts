@@ -1,8 +1,8 @@
 import { GetMessagesQuery } from '../../schema'
+import {
+  FinchResponseMessage,
+  FinchStartMessage,
+} from 'finch-graphql/dist/background/types'
 
-export type FinchMessage = GetMessagesQuery['_finchDevtools']['messages'][number]
-
-export type FinchMessageParsed = Pick<
-  FinchMessage,
-  'initializedAt' | 'operationName' | 'rawQuery' | 'timeTaken'
-> & { response: any; variables: any; context: any; id: string }
+export type FinchDevtoolsMessage = FinchStartMessage &
+  Partial<FinchResponseMessage>
