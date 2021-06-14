@@ -1,94 +1,95 @@
-import { DocumentNode, print } from 'graphql';
-import gql from 'graphql-tag';
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
+import { onConnectExternal, removeConnectExternalListener } from '../browser';
 import { FinchContextObj } from '../types';
+import {
+  FinchStartMessage,
+  FinchResponseMessage,
+  FinchDevToolsMessageType,
+} from './types';
 
-interface MessageMeta {
-  query: DocumentNode;
-  operationName: string | undefined;
-  context: FinchContextObj;
-  timeTaken: number;
-  response: any;
-  variables: any;
-}
+export class FinchDevtools {
+  static portName = '_finchDevtools';
+  private connections: (browser.runtime.Port | chrome.runtime.Port)[] = [];
+  private unbind: () => void = () => {};
 
-interface MessageCache {
-  operationName: String;
-  rawQuery: string;
-  variables: string;
-  initializedAt: number;
-  timeTaken: number;
-  response: string;
-  context: string;
-}
+  constructor(options: { autoListen: boolean } = { autoListen: true }) {
+    if (options.autoListen) {
+      this.listenForConnections();
+    }
+  }
 
-let requests: Array<MessageCache> = [];
-let enabled: boolean = false;
+  public listenForConnections() {
+    // Remove existing listeners if called twice
+    this.unbind();
 
-export const finchDevtoolsOnResponse = async ({
-  query,
-  operationName,
-  timeTaken,
-  response,
-  variables,
-  context,
-}: MessageMeta) => {
-  if (
-    enabled &&
-    operationName !== 'getMessages' &&
-    operationName !== 'enableMessages'
-  ) {
-    requests.push({
-      rawQuery: print(query),
-      operationName: operationName ?? 'unknown',
-      timeTaken,
-      initializedAt: Date.now() - timeTaken,
-      response: JSON.stringify(response),
-      variables: JSON.stringify(variables),
-      context: JSON.stringify(context),
+    const onAddConnection = port => {
+      if (port.name !== FinchDevtools.portName) {
+        return;
+      }
+      this.connections.push(port);
+      port.onDisconnect.addListener(() => {
+        const portIndex = this.connections.indexOf(port);
+        if (portIndex === -1) {
+          return;
+        }
+        this.connections.splice(portIndex, 1);
+      });
+    };
+    onConnectExternal(onAddConnection);
+    this.unbind = () => {
+      removeConnectExternalListener(onAddConnection);
+    };
+  }
+
+  public stopListeningForConnections() {
+    this.unbind();
+  }
+
+  broadcast<T extends {}>(message: T) {
+    this.connections.forEach(port => {
+      port.postMessage(message);
     });
   }
-};
 
-export const finchDevtoolsResolvers = {
-  Query: {
-    _finchDevtools: () => {
-      const currentRequests = [...requests];
-      requests = [];
-      return {
-        enabled,
-        messages: currentRequests,
-      };
-    },
-  },
-  Mutation: {
-    _enableFinchDevtools: () => {
-      enabled = true;
-      return true;
-    },
-  },
-};
-
-export const finchDevtoolsSchema = gql`
-  type FinchMessage {
-    operationName: String
-    rawQuery: String!
-    variables: String
-    initializedAt: Float!
-    timeTaken: Float!
-    response: String!
-    context: String!
+  onStart({
+    id,
+    query,
+    operationName,
+    variables,
+    context,
+  }: {
+    id: string;
+    query: DocumentNode;
+    operationName: string;
+    variables: unknown;
+    context: FinchContextObj;
+  }) {
+    this.broadcast<FinchStartMessage>({
+      type: FinchDevToolsMessageType.Start,
+      id,
+      query,
+      operationName: operationName ?? 'unknown',
+      initializedAt: Date.now(),
+      variables,
+      context,
+    });
+    return id;
   }
 
-  type FinchDevtools {
-    enabled: Boolean!
-    messages: [FinchMessage!]!
-  }
-
-  extend type Query {
-    _finchDevtools: FinchDevtools
-  }
-
-  extend type Mutation {
-    _enableFinchDevtools(enabled: Boolean!): Boolean!
-  }
-`;
+  onResponse = async ({
+    id,
+    timeTaken,
+    response,
+  }: {
+    id: string;
+    timeTaken: number;
+    response: { data?: unknown; errors?: GraphQLFormattedError[] };
+  }) => {
+    this.broadcast<FinchResponseMessage>({
+      type: FinchDevToolsMessageType.Response,
+      id,
+      timeTaken,
+      response,
+    });
+  };
+}

@@ -22,6 +22,8 @@ import {
 } from '../types';
 import { addExternalMessageListener, addMessageListener } from '../browser';
 import { NoIntrospection } from './NoIntrospection';
+import { FinchDevtools } from './FinchDevtools';
+import { v4 } from 'uuid';
 
 export class FinchApi {
   schema: GraphQLSchema;
@@ -30,6 +32,7 @@ export class FinchApi {
   messageKey?: string;
   disableIntrospection: boolean;
   rules: any[];
+  devtools: FinchDevtools;
   constructor({
     context,
     attachMessages,
@@ -38,6 +41,7 @@ export class FinchApi {
     onQueryResponse = () => {},
     disableIntrospection,
     validationRules = [],
+    disableDevtools = false,
     ...options
   }: FinchApiOptions) {
     this.schema = makeExecutableSchema(options);
@@ -50,6 +54,7 @@ export class FinchApi {
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
     this.rules = validationRules;
+    this.devtools = new FinchDevtools({ autoListen: !disableDevtools });
 
     if (disableIntrospection) {
       this.rules.unshift(NoIntrospection);
@@ -90,6 +95,7 @@ export class FinchApi {
     variables?: Variables,
     baseContext?: FinchContextObj,
   ) {
+    const id = v4();
     const context = this.getContext(baseContext);
     const documentNode = isDocumentNode(query) ? query : gql(query);
     const queryStr = isDocumentNode(query)
@@ -102,6 +108,19 @@ export class FinchApi {
     );
     if (operationDef && 'name' in operationDef) {
       operationName = operationDef?.name?.value ?? undefined;
+    }
+
+    // Send initial query to devtools
+    try {
+      this.devtools.onStart({
+        id,
+        query: documentNode,
+        variables,
+        context,
+        operationName,
+      });
+    } catch (e) {
+      console.warn(e);
     }
 
     let validationErrors: readonly GraphQLError[] = [];
@@ -135,6 +154,17 @@ export class FinchApi {
         context,
         timeTaken,
         operationName,
+        response,
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+
+    // Send response to devtools
+    try {
+      this.devtools.onResponse({
+        id,
+        timeTaken,
         response,
       });
     } catch (e) {

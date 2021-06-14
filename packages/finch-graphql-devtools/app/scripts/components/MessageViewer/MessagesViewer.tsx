@@ -1,22 +1,12 @@
 import React, { useState } from 'react'
 import { Box } from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { queryApi } from 'finch-graphql'
-import { safeParse } from './helpers'
+import { FinchDevtools, FinchDevToolsMessageType } from 'finch-graphql'
 import { MessageContent } from './MessageContent'
 import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
-import { v4 } from 'uuid'
-import {
-  GetMessagesQuery,
-  GetMessagesDocument,
-  GetMessagesQueryVariables,
-  EnableMessagesMutation,
-  EnableMessagesDocument,
-  EnableMessagesMutationVariables,
-} from '../../schema'
-import { FinchMessage } from './types'
+import { FinchDevtoolsMessage } from './types'
 
 const TIMEOUT_SPEED = 1000
 
@@ -39,22 +29,11 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
     'messages:filterString',
     '',
   )
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
   const [selectedQuery, selectQuery] = useState(null)
   const [currentTabId] = useState(() => browser.devtools.inspectedWindow.tabId)
 
   const selectedQueryMessage = messages.find(({ id }) => selectedQuery === id)
-
-  const appendMessages = (newMessages: FinchMessage[]) => {
-    const parsedMessages = newMessages.map((props, i) => ({
-      ...props,
-      variables: safeParse(props.variables),
-      response: safeParse(props.response),
-      context: safeParse(props.context),
-      id: v4(),
-    }))
-    setMessages(existingMessages => [...existingMessages, ...parsedMessages])
-  }
 
   const filteredMessages = messages
     .filter(({ context }) => {
@@ -81,37 +60,33 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
     })
 
   useEffect(() => {
-    let timer = 0
+    const port = browser.runtime.connect(extensionId, {
+      name: FinchDevtools.portName,
+    })
 
-    const runQuery = async () => {
-      try {
-        const resp = await queryApi<
-          GetMessagesQuery,
-          GetMessagesQueryVariables
-        >(GetMessagesDocument, {}, { id: extensionId, messageKey })
-        if (resp && !resp.data._finchDevtools.enabled) {
-          await queryApi<
-            EnableMessagesMutation,
-            EnableMessagesMutationVariables
-          >(EnableMessagesDocument, {}, { id: extensionId, messageKey })
-        }
-        if (
-          resp &&
-          resp.data._finchDevtools.messages &&
-          resp.data._finchDevtools.messages.length
-        ) {
-          appendMessages(resp.data._finchDevtools.messages)
-        }
-      } catch (e) {
-        console.error(e)
+    port.onMessage.addListener((message: FinchDevtoolsMessage) => {
+      console.log(message)
+      switch (message.type) {
+        case FinchDevToolsMessageType.Start:
+          setMessages(messages => [...messages, message])
+        case FinchDevToolsMessageType.Response:
+          setMessages(messages => {
+            const foundMessage = messages.find(
+              existingMessage => existingMessage.id === message.id,
+            )
+            if (!foundMessage) {
+              return messages
+            }
+            const index = messages.indexOf(foundMessage)
+            return [
+              ...messages.slice(0, index),
+              { ...foundMessage, ...message },
+              ...messages.slice(index + 1),
+            ]
+          })
       }
-      timer = window.setTimeout(runQuery, timeoutSpeed)
-    }
-
-    timer = window.setTimeout(runQuery, timeoutSpeed)
-    return () => {
-      clearInterval(timer)
-    }
+    })
+    return () => port.disconnect()
   }, [])
 
   return (

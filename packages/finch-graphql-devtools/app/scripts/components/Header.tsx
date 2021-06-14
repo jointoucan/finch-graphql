@@ -16,8 +16,7 @@ export const Header = () => {
           <Image
             src="images/finch-graphql.svg"
             alt="Finch Logo"
-            width="65.304px"
-            height="40px"
+            height="30px"
           />
         </Box>
         <Tab>
