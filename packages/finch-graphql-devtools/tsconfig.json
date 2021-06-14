@@ -2,11 +2,10 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "composite": true,
     "skipLibCheck": true,
     "module": "commonjs",
     "outDir": "dist",
-    "declaration": true,
+    "declaration": false,
     "downlevelIteration": true,
     "noImplicitAny": true,
     "lib": ["es2019", "dom"],
