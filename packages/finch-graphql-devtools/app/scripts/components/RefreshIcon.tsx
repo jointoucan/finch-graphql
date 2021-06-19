@@ -1,5 +1,6 @@
 import { Icon, IconProps } from '@chakra-ui/icons'
 
+// From Octicons icon set https://primer.style/octicons/
 export const RefreshIcon: React.FC<IconProps> = props => {
   return (
     <Icon viewBox="0 0 16 16" {...props}>
