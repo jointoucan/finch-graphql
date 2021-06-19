@@ -8,7 +8,14 @@ body,
   height: 100vh;
   padding: 0;
   margin: 0;
-  background: #e2e8f0;
+  background: var(--chakra-colors-gray-200);
+  color: var(--chakra-colors-gray-600);
+}
+
+.graphiql-container,
+.graphiql-container button,
+.graphiql-container input {
+  color: var(--chakra-colors-gray-600);
 }
 
 .title {
@@ -20,7 +27,7 @@ body,
 }
 
 .graphiql-container .execute-button-wrap {
-  margin-left: 0;
+  margin: 0;
 }
 
 .finch-header {
@@ -31,16 +38,28 @@ body,
 }
 
 .graphiql-container .topBar {
-  padding: 24px;
-  background: #ebebeb;
-  border-bottom: 1px solid #cdcdcd;
+  background: transparent;
+  padding: 0;
 }
 
 .graphiql-container .docExplorerShow {
-  background: #ebebeb;
+  background: transparent;
   font-weight: 600;
   line-height: 1.2;
-  border-color: #cdcdcd;
+  border-color: transparent;
+}
+
+.graphiql-container .docExplorerShow,
+.graphiql-container .doc-explorer-back,
+.graphiql-container .historyShow {
+  color: var(--chakra-colors-blue-500);
+  fill: var(--chakra-colors-blue-500);
+}
+.graphiql-container .doc-explorer-back:before,
+.graphiql-container .docExplorerShow:before {
+  border-top-color: var(--chakra-colors-blue-500);
+  border-left-color: var(--chakra-colors-blue-500);
+  margin: 0 5px 0px 0;
 }
 
 .graphiql-container .doc-explorer-title,
@@ -52,30 +71,103 @@ body,
 
 .graphiql-container .toolbar-button,
 .graphiql-container .execute-button {
-  background: #cdcdcd;
+  background: transparent;
+  border: 1px solid #cdcdcd;
   box-shadow: none;
-  font-weight: 600;
   line-height: 1.2;
   height: 2rem;
-  color: #161616;
-  fill: #161616;
+  color: var(--chakra-colors-gray-600);
+  fill: var(--chakra-colors-gray-600);
   transition: all 0.2s ease;
+  margin-right: var(--chakra-space-2);
+  margin-left: 0;
+  line-height: 1.2;
+  font-weight: var(--chakra-fontWeights-semibold);
+}
+
+.graphiql-container .secondary-editor-title,
+.graphiql-container .topBarWrap {
+  background: var(--chakra-colors-grey-100);
+  border-bottom: 1px solid var(--chakra-colors-gray-200);
+  padding: var(--chakra-space-2);
+  padding-left: var(--chakra-space-3);
+  position: sticky;
+  top: 0;
+}
+
+.graphiql-container .secondary-editor-title {
+  font-variant: normal;
+  text-transform: none;
+  border-top: 1px solid var(--chakra-colors-gray-200);
+  font-size: 14px;
+  line-height: 1em;
+  font-weight: var(--chakra-fontWeights-semibold);
+}
+
+.graphiql-container .secondary-editor-title > div {
+  color: var(--chakra-colors-gray-600) !important;
+}
+
+.graphiql-container .docExplorerResizer {
+  cursor: col-resize;
+  height: 100%;
+  left: -2.5px;
+  position: absolute;
+  top: 0;
+  width: 5px;
+  background: var(--chakra-colors-gray-200);
+  z-index: 10;
+}
+
+.historyPaneWrap {
+  border-right: 5px solid var(--chakra-colors-gray-200);
+}
+
+.graphiql-container .topBar,
+.graphiql-container .docExplorerShow {
+  border-bottom: none;
+}
+
+.graphiql-container .toolbar-button:active,
+.graphiql-container .execute-button:active {
+  box-shadow: none;
+  background: var(--chakra-colors-gray-200);
 }
 
 .graphiql-container .toolbar-button:focus,
 .graphiql-container .execute-button:focus {
-  background: #cdcdcd;
   box-shadow: 0 0 0 3px rgb(66 153 225 / 60%);
   outline: transparent;
 }
 
 .graphiql-container .toolbar-button {
-  border-radius: 0.375rem;
+  border-radius: var(--chakra-radii-md);
 }
 
 .graphiql-container .execute-button {
-  border: none;
   width: 2rem;
+  height: 2rem;
+  border-radius: var(--chakra-radii-md);
+}
+
+.graphiql-container .execute-button svg {
+  margin-top: -1px;
+  margin-left: -1px;
+}
+
+.graphiql-container .history-contents > li,
+.graphiql-container .toolbar-menu-items > li,
+.graphiql-container .toolbar-select-options > li {
+  transition: background 0.3s ease-in-out;
+  background: var(--chakra-colors-white);
+  border-bottom: 1px solid var(--chakra-colors-gray-200);
+  font-size: 14px;
+  line-height: 1em;
+  font-weight: var(--chakra-fontWeights-semibold);
+  display: flex;
+  align-items: center;
+  padding: var(--chakra-space-2);
+  padding-left: var(--chakra-space-3);
 }
 
 .graphiql-container .execute-options > li.selected,
@@ -87,7 +179,52 @@ body,
 .graphiql-container .toolbar-select-options > li.hover,
 .graphiql-container .toolbar-select-options > li:active,
 .graphiql-container .toolbar-select-options > li:hover {
-  background: #e07a15;
+  background: var(--chakra-colors-blue-100);
+  border-bottom: 1px solid var(--chakra-colors-gray-200);
+  color: var(--chakra-colors-gray-600);
+}
+
+.graphiql-container .history-contents button {
+  line-height: 2em;
+}
+
+/* Override docs */
+
+.graphiql-container .keyword {
+  color: var(--chakra-colors-yellow-500);
+}
+
+.graphiql-container .type-name {
+  color: var(--chakra-colors-teal-400);
+}
+
+.graphiql-container .field-name {
+  color: var(--chakra-colors-blue-300);
+}
+
+.graphiql-container .arg-name {
+  color: var(--chakra-colors-purple-500);
+}
+
+.graphiql-container .doc-category code,
+.graphiql-container .doc-type-description code {
+  color: var(--chakra-colors-red-500);
+}
+
+.graphiql-container .doc-category-title {
+  font-variant: normal;
+  text-transform: capitalize;
+  color: var(--chakra-colors-gray-500);
+  border-bottom: 1px solid var(--chakra-colors-gray-200);
+}
+
+.graphiql-container .search-box {
+  border-bottom: 1px solid var(--chakra-colors-gray-200);
+}
+
+.graphiql-container .doc-explorer-contents,
+.graphiql-container .history-contents {
+  border-top: 1px solid var(--chakra-colors-gray-200);
 }
 
 /*

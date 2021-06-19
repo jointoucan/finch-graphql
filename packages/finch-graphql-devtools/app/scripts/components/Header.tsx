@@ -1,5 +1,6 @@
 import { Image } from './Image'
-import { TabList, Tab, Box, Button } from '@chakra-ui/react'
+import { TabList, Tab, Box, IconButton } from '@chakra-ui/react'
+import { RefreshIcon } from './RefreshIcon'
 
 export const Header = () => {
   return (
@@ -32,16 +33,18 @@ export const Header = () => {
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Button
+          <IconButton
             size="xs"
+            aria-label="refresh"
             mr={2}
+            fill="gray.600"
+            icon={<RefreshIcon />}
             onClick={() => {
               window.location.reload()
             }}
-            colorScheme="blue"
-          >
-            Refresh Frame
-          </Button>
+            variant="outline"
+            borderColor="grey.200"
+          />
         </Box>
       </TabList>
     </Box>

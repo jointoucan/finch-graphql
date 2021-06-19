@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Input, Switch, Text, IconButton } from '@chakra-ui/react'
-import { NotAllowedIcon } from '@chakra-ui/icons'
 import { CircleIcon } from './CircleIcon'
+import { ClearIcon } from './ClearIcon'
 
 interface MessagesFilterBarProps {
   onClearMessage: () => void
@@ -40,8 +40,8 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
         onClick={onToggleRecording}
         aria-label="Clear Messages"
         mr={2}
-        fill={isRecording ? 'red.500' : 'grey.400'}
-        _hover={{ fill: isRecording ? 'red.300' : 'grey.300' }}
+        fill={isRecording ? 'red.500' : 'gray.600'}
+        _hover={{ fill: isRecording ? 'red.300' : 'gray.400' }}
         icon={<CircleIcon />}
         variant="outline"
         borderColor="grey.200"
@@ -49,8 +49,9 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
       <IconButton
         size="sm"
         onClick={onClearMessage}
+        fill="gray.600"
         aria-label="Clear Messages"
-        icon={<NotAllowedIcon />}
+        icon={<ClearIcon />}
         variant="outline"
         borderColor="grey.200"
       />

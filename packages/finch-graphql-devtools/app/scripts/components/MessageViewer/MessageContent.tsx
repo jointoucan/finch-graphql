@@ -124,7 +124,8 @@ export const MessageContent: React.FC<{
                 flexDirection="row"
                 alignItems="center"
               >
-                Click the <CircleIcon mx={1} /> to start recording
+                Click the <CircleIcon fill="gray.600" mx={1} /> to start
+                recording
               </Box>
             )}
           </Text>
