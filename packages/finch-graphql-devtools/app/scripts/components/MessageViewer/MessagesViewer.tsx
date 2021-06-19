@@ -7,6 +7,7 @@ import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { FinchDevtoolsMessage } from './types'
+import { usePort } from '../../hooks/usePort'
 
 const TIMEOUT_SPEED = 1000
 
@@ -59,13 +60,10 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       return true
     })
 
-  useEffect(() => {
-    const port = browser.runtime.connect(extensionId, {
-      name: FinchDevtools.portName,
-    })
-
-    port.onMessage.addListener((message: FinchDevtoolsMessage) => {
-      console.log(message)
+  usePort({
+    extensionId,
+    portName: FinchDevtools.portName,
+    onMessage: (message: FinchDevtoolsMessage) => {
       switch (message.type) {
         case FinchDevToolsMessageType.Start:
           setMessages(messages => [...messages, message])
@@ -85,9 +83,8 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
             ]
           })
       }
-    })
-    return () => port.disconnect()
-  }, [])
+    },
+  })
 
   return (
     <Box
