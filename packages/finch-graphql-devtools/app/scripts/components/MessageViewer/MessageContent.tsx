@@ -14,6 +14,7 @@ import { Code } from '../Code'
 import { formatJSON, getMessageTagInfo } from './helpers'
 import { print } from 'graphql'
 import { FinchDevtoolsMessage } from './types'
+import { CircleIcon } from './CircleIcon'
 
 interface MessageAccordionItem {
   title: string
@@ -57,9 +58,10 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
   )
 }
 
-export const MessageContent: React.FC<{ message: FinchDevtoolsMessage }> = ({
-  message,
-}) => {
+export const MessageContent: React.FC<{
+  message: FinchDevtoolsMessage
+  isRecording: boolean
+}> = ({ message, isRecording }) => {
   const tag = message ? getMessageTagInfo(message) : { label: '', color: '  ' }
   return (
     <Box flex={1} display="flex" flexDirection="column" maxWidth="70vw">
@@ -113,7 +115,18 @@ export const MessageContent: React.FC<{ message: FinchDevtoolsMessage }> = ({
           alignItems="center"
         >
           <Text textAlign="center" fontWeight="700">
-            Select a message in the sidebar
+            {isRecording ? (
+              'Select a message in the sidebar'
+            ) : (
+              <Box
+                as="span"
+                display="inline-flex"
+                flexDirection="row"
+                alignItems="center"
+              >
+                Click the <CircleIcon mx={1} /> to start recording
+              </Box>
+            )}
           </Text>
         </Box>
       )}

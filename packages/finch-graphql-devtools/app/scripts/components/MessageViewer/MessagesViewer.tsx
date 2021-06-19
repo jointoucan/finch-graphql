@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
 import { Box } from '@chakra-ui/react'
-import { useEffect } from 'react'
-import { FinchDevtools, FinchDevToolsMessageType } from 'finch-graphql'
 import { MessageContent } from './MessageContent'
 import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
+import { MessagePortConnection } from './MessagePortConnection'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { FinchDevtoolsMessage } from './types'
-import { usePort } from '../../hooks/usePort'
 
 const TIMEOUT_SPEED = 1000
 
@@ -33,6 +31,7 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
   const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
   const [selectedQuery, selectQuery] = useState(null)
   const [currentTabId] = useState(() => browser.devtools.inspectedWindow.tabId)
+  const [isRecording, setIsRecording] = useState<boolean>(false)
 
   const selectedQueryMessage = messages.find(({ id }) => selectedQuery === id)
 
@@ -60,32 +59,6 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       return true
     })
 
-  usePort({
-    extensionId,
-    portName: FinchDevtools.portName,
-    onMessage: (message: FinchDevtoolsMessage) => {
-      switch (message.type) {
-        case FinchDevToolsMessageType.Start:
-          setMessages(messages => [...messages, message])
-        case FinchDevToolsMessageType.Response:
-          setMessages(messages => {
-            const foundMessage = messages.find(
-              existingMessage => existingMessage.id === message.id,
-            )
-            if (!foundMessage) {
-              return messages
-            }
-            const index = messages.indexOf(foundMessage)
-            return [
-              ...messages.slice(0, index),
-              { ...foundMessage, ...message },
-              ...messages.slice(index + 1),
-            ]
-          })
-      }
-    },
-  })
-
   return (
     <Box
       display="flex"
@@ -93,6 +66,13 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       flexDirection="column"
       backgroundColor="white"
     >
+      {isRecording && (
+        <MessagePortConnection
+          extensionId={extensionId}
+          setMessages={setMessages}
+        />
+      )}
+
       <MessagesFilterBar
         onClearMessage={() => {
           setMessages([])
@@ -105,6 +85,8 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
         onFilterStringChange={e => {
           setFilterString(e.currentTarget.value)
         }}
+        isRecording={isRecording}
+        onToggleRecording={() => setIsRecording(!isRecording)}
       />
       <Box display="flex" flex="1" backgroundColor="white">
         <MessagesSidebar
@@ -113,7 +95,10 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
           selectQuery={selectQuery}
         />
         <Box backgroundColor="grey.100" pr={0.2} flex={0} zIndex={2} />
-        <MessageContent message={selectedQueryMessage} />
+        <MessageContent
+          message={selectedQueryMessage}
+          isRecording={isRecording}
+        />
       </Box>
     </Box>
   )

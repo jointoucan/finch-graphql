@@ -1,6 +1,7 @@
 import React from 'react'
-import { Box, Button, Input, Switch, Text, IconButton } from '@chakra-ui/react'
+import { Box, Input, Switch, Text, IconButton } from '@chakra-ui/react'
 import { NotAllowedIcon } from '@chakra-ui/icons'
+import { CircleIcon } from './CircleIcon'
 
 interface MessagesFilterBarProps {
   onClearMessage: () => void
@@ -8,6 +9,8 @@ interface MessagesFilterBarProps {
   onToggleCurrentTabFilter: () => void
   filterString: string
   onFilterStringChange: React.ChangeEventHandler<HTMLInputElement>
+  isRecording: boolean
+  onToggleRecording: () => void
 }
 
 export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
@@ -16,6 +19,8 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
   onToggleCurrentTabFilter,
   filterString,
   onFilterStringChange,
+  onToggleRecording,
+  isRecording,
 }) => {
   return (
     <Box
@@ -30,6 +35,17 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
       borderBottomWidth="1px"
       borderBottomColor="gray.200"
     >
+      <IconButton
+        size="sm"
+        onClick={onToggleRecording}
+        aria-label="Clear Messages"
+        mr={2}
+        fill={isRecording ? 'red.500' : 'grey.400'}
+        _hover={{ fill: isRecording ? 'red.300' : 'grey.300' }}
+        icon={<CircleIcon />}
+        variant="outline"
+        borderColor="grey.200"
+      />
       <IconButton
         size="sm"
         onClick={onClearMessage}
