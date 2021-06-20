@@ -13,6 +13,6 @@ query getMessages {
   }
 }
 
-mutation enableMessages {
-  _enableFinchDevtools(enabled: true)
+mutation enableMessages($enabled: Boolean) {
+  _enableFinchDevtools(enabled: $enabled)
 }

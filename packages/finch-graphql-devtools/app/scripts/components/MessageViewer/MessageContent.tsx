@@ -15,6 +15,7 @@ import { formatJSON, getMessageTagInfo } from './helpers'
 import { print } from 'graphql'
 import { FinchDevtoolsMessage } from './types'
 import { CircleIcon } from './CircleIcon'
+import { useColorScheme } from '../../hooks/useColorScheme'
 
 interface MessageAccordionItem {
   title: string
@@ -28,6 +29,7 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
 }) => {
   const { index: selectedIndex } = useAccordionContext()
   const isOpen = index === selectedIndex
+  const scheme = useColorScheme()
 
   return (
     <AccordionItem
@@ -35,6 +37,7 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
       flex={isOpen ? '1' : ''}
       flexDirection="column"
       overflow={isOpen ? 'scroll' : 'hidden'}
+      borderColor={scheme.border}
     >
       <Heading size="sm" flex="0">
         <AccordionButton>
@@ -47,7 +50,7 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
       <Box
         display={isOpen ? 'flex' : 'none'}
         flexDirection="column"
-        backgroundColor="white"
+        backgroundColor={scheme.background}
         flex="1"
         flexBasis="1px"
         overflow="scroll"
@@ -63,13 +66,15 @@ export const MessageContent: React.FC<{
   isRecording: boolean
 }> = ({ message, isRecording }) => {
   const tag = message ? getMessageTagInfo(message) : { label: '', color: '  ' }
+  const scheme = useColorScheme()
+
   return (
     <Box flex={1} display="flex" flexDirection="column" maxWidth="70vw">
       {message ? (
         <Box flex="1" display="flex" flexDirection="column">
           <Box display="flex" flexDirection="column" pl={4} pt={6} pb={4}>
             <Box display="flex" alignItems="center" pb={2}>
-              <Tag backgroundColor={tag.color} mr={2}>
+              <Tag backgroundColor={tag.color} mr={2} color="gray.600">
                 {tag.label}
               </Tag>
               <Heading size="md" flex="0">
@@ -124,8 +129,8 @@ export const MessageContent: React.FC<{
                 flexDirection="row"
                 alignItems="center"
               >
-                Click the <CircleIcon fill="gray.600" mx={1} /> to start
-                recording
+                Click the <CircleIcon fill={scheme.foreground} mx={1} /> to
+                start recording
               </Box>
             )}
           </Text>
