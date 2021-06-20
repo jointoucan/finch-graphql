@@ -61,10 +61,10 @@ export const colorScheme: Record<'dark' | 'light', ColorScheme> = {
     str: 'teal.500',
     builtin: 'yellow.400',
     property: 'blue.600',
-    variable: 'blue.300',
+    variable: 'blue.500',
     atom: 'green.500',
     attribute: 'yellow.600',
-    number: 'purple.300',
-    matchingBracket: 'teal.200',
+    number: 'purple.400',
+    matchingBracket: 'teal.500',
   },
 }
