@@ -401,6 +401,15 @@ body,
   color: var(--foreground-secondary-color);
 }
 
+.graphiql-container .CodeMirror-foldmarker {
+  background-color: var(--highlight-color);
+  color: var(--foreground-color);
+}
+
+.CodeMirror-foldgutter-folded:after {
+  color: var(--foreground-secondary-color);
+}
+
 /* text */
 
 .CodeMirror-selected {
