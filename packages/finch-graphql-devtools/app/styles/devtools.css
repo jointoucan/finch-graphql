@@ -480,3 +480,40 @@ body,
 .CodeMirror-overlayscroll-vertical div {
   background-color: var(--cm-scrollbar-thumb);
 }
+
+/* addons hints */
+
+.CodeMirror-hints {
+  background-color: var(--background-secondary-color);
+}
+
+.CodeMirror-hint {
+  border-top: var(--border-color);
+  color: var(--foreground-color);
+}
+
+li.CodeMirror-hint-active {
+  background-color: var(--highlight-color);
+  color: var(--foreground-color);
+  border-top-color: var(--border-color);
+}
+
+.CodeMirror-hint-information {
+  border-top: var(--border-color);
+  color: var(--foreground-color);
+}
+
+.CodeMirror-hint-information .content {
+  color: var(--foreground-color);
+}
+
+.CodeMirror-hint-information .infoType {
+  color: var(--definition-color);
+}
+
+/* addon/lint */
+
+div.CodeMirror-lint-tooltip {
+  background-color: var(--background-secondary-color);
+  color: var(--foreground-color);
+}
