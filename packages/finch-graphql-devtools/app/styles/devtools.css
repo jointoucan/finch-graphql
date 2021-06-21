@@ -313,14 +313,17 @@ body,
   color: var(--builtin-color);
 }
 .CodeMirror .cm-comment {
-  color: var(--cm-comment);
+  color: var(--comment-color);
 }
 .CodeMirror .cm-def {
   color: var(--definition-color);
 }
+.CodeMirror .cm-invalidchar,
+.CodeMirror .cm-s-default,
 .CodeMirror .cm-error {
-  color: var(--cm-error);
+  color: var(--invalid-char-color);
 }
+
 .CodeMirror .cm-keyword {
   color: var(--keyword-color);
 }
@@ -444,7 +447,7 @@ body,
 /* addon/lint */
 
 .CodeMirror-lint-error {
-  background-color: var(--cm-lint-error);
+  background-color: var(--invalid-char-color);
 }
 .CodeMirror-lint-warning {
   background-color: var(--cm-lint-warning);
@@ -456,7 +459,7 @@ body,
   color: var(--cm-lint-marker-warning);
 }
 .CodeMirror-lint-error .CodeMirror-lint-marker {
-  border-bottom-color: var(--cm-lint-marker-error);
+  border-bottom-color: var(--invalid-char-color);
 }
 .CodeMirror-lint-warning .CodeMirror-lint-marker {
   border-bottom-color: var(--cm-lint-marker-warning);

@@ -45,6 +45,8 @@ export const CSSColorModeVar: FC = () => {
       '--matching-bracket-color',
       colorScheme[colorMode].matchingBracket,
     )
+    createVar('--invalid-char-color', colorScheme[colorMode].invalidChar)
+    createVar('--comment-color', colorScheme[colorMode].comment)
   }, [colorMode])
 
   return null

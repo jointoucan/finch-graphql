@@ -19,6 +19,8 @@ export interface ColorScheme {
   attribute: string
   number: string
   matchingBracket: string
+  invalidChar: string
+  comment: string
   // Needs cursor, highlight colors
 }
 
@@ -44,6 +46,8 @@ export const colorScheme: Record<'dark' | 'light', ColorScheme> = {
     attribute: 'yellow.200',
     number: 'purple.300',
     matchingBracket: 'teal.200',
+    invalidChar: 'red.200',
+    comment: 'gray.500',
   },
   light: {
     foreground: 'gray.600',
@@ -66,5 +70,7 @@ export const colorScheme: Record<'dark' | 'light', ColorScheme> = {
     attribute: 'yellow.600',
     number: 'purple.400',
     matchingBracket: 'teal.500',
+    invalidChar: 'red.500',
+    comment: 'gray.300',
   },
 }
