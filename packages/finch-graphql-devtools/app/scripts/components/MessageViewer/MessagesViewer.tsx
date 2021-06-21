@@ -6,6 +6,7 @@ import { MessagesFilterBar } from './MessagesFilterBar'
 import { MessagePortConnection } from './MessagePortConnection'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { FinchDevtoolsMessage } from './types'
+import { useColorScheme } from '../../hooks/useColorScheme'
 
 const TIMEOUT_SPEED = 1000
 
@@ -20,6 +21,7 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
   messageKey,
   timeoutSpeed = TIMEOUT_SPEED,
 }) => {
+  const scheme = useColorScheme()
   const [currentTabFilter, setCurrentTabFilter] = useLocalStorage(
     'messages:currentTabFilter',
     false,
@@ -64,7 +66,8 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       display="flex"
       height="100%"
       flexDirection="column"
-      backgroundColor="white"
+      color={scheme.foreground}
+      backgroundColor={scheme.background}
     >
       {isRecording && (
         <MessagePortConnection
@@ -88,13 +91,18 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
         isRecording={isRecording}
         onToggleRecording={() => setIsRecording(!isRecording)}
       />
-      <Box display="flex" flex="1" backgroundColor="white">
+      <Box display="flex" flex="1" backgroundColor={scheme.background}>
         <MessagesSidebar
           messages={filteredMessages}
           selectedQuery={selectedQuery}
           selectQuery={selectQuery}
         />
-        <Box backgroundColor="grey.100" pr={0.2} flex={0} zIndex={2} />
+        <Box
+          backgroundColor={scheme.backgroundSecondary}
+          pr={0.2}
+          flex={0}
+          zIndex={2}
+        />
         <MessageContent
           message={selectedQueryMessage}
           isRecording={isRecording}

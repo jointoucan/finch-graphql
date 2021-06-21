@@ -1,7 +1,8 @@
 import React from 'react'
 import { Box, Input, Switch, Text, IconButton } from '@chakra-ui/react'
-import { NotAllowedIcon } from '@chakra-ui/icons'
 import { CircleIcon } from './CircleIcon'
+import { ClearIcon } from './ClearIcon'
+import { useColorScheme } from '../../hooks/useColorScheme'
 
 interface MessagesFilterBarProps {
   onClearMessage: () => void
@@ -22,9 +23,10 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
   onToggleRecording,
   isRecording,
 }) => {
+  const scheme = useColorScheme()
   return (
     <Box
-      backgroundColor="grey.100"
+      backgroundColor={scheme.backgroundSecondary}
       p={2}
       display="flex"
       alignItems="center"
@@ -33,40 +35,42 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
       position="sticky"
       top="0"
       borderBottomWidth="1px"
-      borderBottomColor="gray.200"
+      borderBottomColor={scheme.border}
     >
       <IconButton
         size="sm"
         onClick={onToggleRecording}
         aria-label="Clear Messages"
         mr={2}
-        fill={isRecording ? 'red.500' : 'grey.400'}
-        _hover={{ fill: isRecording ? 'red.300' : 'grey.300' }}
+        fill={isRecording ? 'red.500' : scheme.foreground}
+        _hover={{ fill: isRecording ? 'red.300' : scheme.foreground }}
         icon={<CircleIcon />}
         variant="outline"
-        borderColor="grey.200"
+        borderColor={scheme.border}
       />
       <IconButton
         size="sm"
         onClick={onClearMessage}
+        fill={scheme.foreground}
         aria-label="Clear Messages"
-        icon={<NotAllowedIcon />}
+        icon={<ClearIcon />}
         variant="outline"
-        borderColor="grey.200"
+        borderColor={scheme.border}
       />
-      <Box width="1px" height="25px" backgroundColor="grey.200" mx={2} />
+      <Box width="1px" height="25px" backgroundColor={scheme.border} mx={2} />
       <Input
         size="sm"
         variant="outline"
         value={filterString}
         placeholder="Filter messages"
         onChange={onFilterStringChange}
-        backgroundColor="white"
+        backgroundColor={scheme.background}
+        borderColor={scheme.border}
         type="search"
         width="250px"
         borderRadius="8px"
       />
-      <Box width="1px" height="25px" backgroundColor="grey.200" mx={2} />
+      <Box width="1px" height="25px" backgroundColor={scheme.border} mx={2} />
 
       <Switch
         mr={2}

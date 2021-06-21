@@ -8,7 +8,19 @@ body,
   height: 100vh;
   padding: 0;
   margin: 0;
-  background: #e2e8f0;
+  background: var(--background-color);
+  color: var(--foreground-color);
+}
+
+.graphiql-container,
+.graphiql-container button,
+.graphiql-container input {
+  color: var(--foreground-color);
+}
+
+.CodeMirror::selection {
+  /* Change highlight background color to black */
+  background: var(--background-secondary-color);
 }
 
 .title {
@@ -20,7 +32,7 @@ body,
 }
 
 .graphiql-container .execute-button-wrap {
-  margin-left: 0;
+  margin: 0;
 }
 
 .finch-header {
@@ -31,16 +43,28 @@ body,
 }
 
 .graphiql-container .topBar {
-  padding: 24px;
-  background: #ebebeb;
-  border-bottom: 1px solid #cdcdcd;
+  background: transparent;
+  padding: 0;
 }
 
 .graphiql-container .docExplorerShow {
-  background: #ebebeb;
+  background: transparent;
   font-weight: 600;
   line-height: 1.2;
-  border-color: #cdcdcd;
+  border-color: transparent;
+}
+
+.graphiql-container .docExplorerShow,
+.graphiql-container .doc-explorer-back,
+.graphiql-container .historyShow {
+  color: var(--foreground-color);
+  fill: var(--foreground-color);
+}
+.graphiql-container .doc-explorer-back:before,
+.graphiql-container .docExplorerShow:before {
+  border-top-color: var(--foreground-color);
+  border-left-color: var(--foreground-color);
+  margin: 0 5px 0px 0;
 }
 
 .graphiql-container .doc-explorer-title,
@@ -52,30 +76,104 @@ body,
 
 .graphiql-container .toolbar-button,
 .graphiql-container .execute-button {
-  background: #cdcdcd;
+  background: transparent;
+  border: 1px solid var(--border-color);
   box-shadow: none;
-  font-weight: 600;
   line-height: 1.2;
   height: 2rem;
-  color: #161616;
-  fill: #161616;
+  color: var(--foreground-color);
+  fill: var(--foreground-color);
   transition: all 0.2s ease;
+  margin-right: var(--chakra-space-2);
+  margin-left: 0;
+  line-height: 1.2;
+  font-weight: var(--chakra-fontWeights-semibold);
+}
+
+.graphiql-container .secondary-editor-title,
+.graphiql-container .topBarWrap {
+  background: var(--background-secondary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--chakra-space-2);
+  padding-left: var(--chakra-space-3);
+  position: sticky;
+  top: 0;
+}
+
+.graphiql-container .secondary-editor-title {
+  font-variant: normal;
+  text-transform: none;
+  border-top: 1px solid var(--border-color);
+  font-size: 14px;
+  line-height: 1em;
+  font-weight: var(--chakra-fontWeights-semibold);
+}
+
+.graphiql-container .secondary-editor-title > div {
+  color: var(--foreground-color) !important;
+}
+
+.graphiql-container .docExplorerResizer {
+  cursor: col-resize;
+  height: 100%;
+  left: -2.5px;
+  position: absolute;
+  top: 0;
+  width: 5px;
+  background: var(--border-color);
+  z-index: 10;
+}
+
+.historyPaneWrap {
+  border-right: 5px solid var(--border-color);
+}
+
+.graphiql-container .topBar,
+.graphiql-container .docExplorerShow {
+  border-bottom: none;
+}
+
+.graphiql-container .toolbar-button:active,
+.graphiql-container .execute-button:active {
+  box-shadow: none;
+  background: var(--chakra-colors-gray-200);
 }
 
 .graphiql-container .toolbar-button:focus,
 .graphiql-container .execute-button:focus {
-  background: #cdcdcd;
   box-shadow: 0 0 0 3px rgb(66 153 225 / 60%);
   outline: transparent;
 }
 
 .graphiql-container .toolbar-button {
-  border-radius: 0.375rem;
+  border-radius: var(--chakra-radii-md);
 }
 
 .graphiql-container .execute-button {
-  border: none;
   width: 2rem;
+  height: 2rem;
+  border-radius: var(--chakra-radii-md);
+}
+
+.graphiql-container .execute-button svg {
+  margin-top: -1px;
+  margin-left: -1px;
+}
+
+.graphiql-container .history-contents > li,
+.graphiql-container .toolbar-menu-items > li,
+.graphiql-container .toolbar-select-options > li {
+  transition: background 0.3s ease-in-out;
+  background: var(--background-color);
+  color: var(--foreground-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  line-height: 1em;
+  font-weight: var(--chakra-fontWeights-semibold);
+  display: flex;
+  align-items: center;
+  padding: var(--chakra-space-2);
+  padding-left: var(--chakra-space-3);
 }
 
 .graphiql-container .execute-options > li.selected,
@@ -87,9 +185,344 @@ body,
 .graphiql-container .toolbar-select-options > li.hover,
 .graphiql-container .toolbar-select-options > li:active,
 .graphiql-container .toolbar-select-options > li:hover {
-  background: #e07a15;
+  background: var(--highlight-color);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--foreground-color);
+}
+
+.graphiql-container .history-contents button {
+  line-height: 2em;
+}
+
+/* Override docs */
+
+.graphiql-container .keyword {
+  color: var(--keyword-color);
+}
+
+.graphiql-container .type-name {
+  color: var(--definition-color);
+}
+
+.graphiql-container .field-name {
+  color: var(--keyword-color);
+}
+
+.graphiql-container .arg-name {
+  color: var(--variable-color);
+}
+
+.graphiql-container .doc-category-item {
+  color: var(--foreground-color);
+}
+
+.graphiql-container .doc-category code,
+.graphiql-container .doc-type-description code {
+  color: var(--highlight-color);
+  background-color: var(--background-secondary-color);
+}
+
+.graphiql-container .doc-category-title {
+  font-variant: normal;
+  text-transform: capitalize;
+  background: var(--background-color);
+  color: var(--foreground-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.graphiql-container .search-box {
+  background: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.graphiql-container .search-box > input {
+  background-color: var(--background-color);
+}
+
+.graphiql-container .docExplorerWrap,
+.graphiql-container .historyPaneWrap,
+.graphiql-container .doc-explorer {
+  background-color: var(--background-color);
+}
+
+.graphiql-container .doc-explorer-contents,
+.graphiql-container .history-contents {
+  border-top: 1px solid var(--border-color);
+  background: var(--background-color);
+}
+
+.result-window .CodeMirror {
+  background-color: var(--background-color);
+}
+
+.graphiql-container .resultWrap {
+  border-color: var(--border-color);
+}
+
+.graphiql-container .result-window .CodeMirror-gutters {
+  background-color: var(--border-color);
+  border-color: var(--border-color);
+  width: 5px;
 }
 
 /*
   End: Finch GraphiQL editor overrides
 */
+
+/* types defined by addons */
+
+.CodeMirror {
+  --cm-lint-error: var(--background-secondary);
+  --cm-lint-warning: var(--background-secondary);
+  --cm-lint-marker-error: #f44336;
+  --cm-lint-marker-warning: #ff9800;
+  --cm-matchhighlight: lightgreen;
+  --cm-selection-highlight-scrollbar: green;
+  --cm-cursor-highlight-scrollbar: #e91e63;
+  --cm-trailing-space: hsl(36, 100%, 75%);
+  --cm-whitespace: hsla(0, 0%, 0%, 0.2);
+  --cm-cursor-width: 1px;
+  --cm-scrollbar-track: #f7f7f7;
+  --cm-scrollbar-thumb: #bcd;
+}
+
+/* other */
+
+.CodeMirror {
+  --cm-gutter-border: var(--background-secondary-color);
+  --cm-gutter-active: transparent;
+}
+
+/* basics */
+
+.CodeMirror {
+  color: var(--foreground-color);
+  background: var(--background-color);
+}
+
+.CodeMirror .cm-atom {
+  color: var(--atom-color);
+}
+.CodeMirror .cm-attribute {
+  color: var(--attribute-color);
+}
+.CodeMirror .cm-bracket {
+  color: var(--cm-bracket);
+}
+.CodeMirror .cm-builtin {
+  color: var(--builtin-color);
+}
+.CodeMirror .cm-comment {
+  color: var(--comment-color);
+}
+.CodeMirror .cm-def {
+  color: var(--definition-color);
+}
+.CodeMirror .cm-invalidchar,
+.CodeMirror .cm-s-default,
+.CodeMirror .cm-error {
+  color: var(--invalid-char-color);
+}
+
+.CodeMirror .cm-keyword {
+  color: var(--keyword-color);
+}
+.CodeMirror .cm-link {
+  color: var(--cm-link);
+}
+.CodeMirror .cm-meta {
+  color: var(--cm-meta);
+}
+.CodeMirror .cm-negative {
+  color: var(--cm-negative);
+}
+.CodeMirror .cm-number {
+  color: var(--number-color);
+}
+.CodeMirror .cm-operator {
+  color: var(--cm-operator);
+}
+.CodeMirror .cm-positive {
+  color: var(--cm-positive);
+}
+.CodeMirror .cm-property {
+  color: var(--property-color);
+}
+.CodeMirror .cm-punctuation {
+  color: var(--punctuation-color);
+}
+.CodeMirror .cm-qualifier {
+  color: var(--cm-qualifier);
+}
+.CodeMirror .cm-quote {
+  color: var(--cm-quote);
+}
+.CodeMirror .cm-searching {
+  background-color: var(--cm-searching);
+}
+.CodeMirror .cm-string {
+  color: var(--str-color);
+}
+.CodeMirror .cm-string-2 {
+  color: var(--str-color);
+}
+.CodeMirror .cm-tag {
+  color: var(--cm-tag);
+}
+.CodeMirror .cm-variable {
+  color: var(--variable-color);
+}
+.CodeMirror .cm-variable-2 {
+  color: var(--variable-color);
+}
+.CodeMirror .cm-variable-3 {
+  color: var(--variable-color);
+}
+
+/* cursor */
+
+.CodeMirror-cursor {
+  border-color: var(--border-color) !important;
+}
+.CodeMirror-cursor {
+  border-width: var(--cm-cursor-width);
+}
+.CodeMirror-cursor-highlight-scrollbar {
+  background-color: var(--border-color);
+}
+
+/* gutters */
+
+.CodeMirror-gutters {
+  background-color: var(--background-secondary);
+  border-right-color: var(--border-color);
+}
+.CodeMirror-linenumber {
+  color: var(--foreground-secondary-color);
+}
+
+.graphiql-container .CodeMirror-foldmarker {
+  background-color: var(--highlight-color);
+  color: var(--foreground-color);
+}
+
+.CodeMirror-foldgutter-folded:after {
+  color: var(--foreground-secondary-color);
+}
+
+/* text */
+
+.CodeMirror-selected {
+  background: var(--background-secondary-color);
+}
+.CodeMirror-focused .CodeMirror-selected {
+  background: var(--background-secondary-color);
+}
+
+/* addon/edit */
+
+.CodeMirror-matchingbracket {
+  color: var(--matching-bracket-color) !important;
+}
+.CodeMirror-nonmatchingbracket {
+  color: var(--matching-bracket-color) !important;
+}
+
+/* addon/selection */
+
+.CodeMirror-activeline .CodeMirror-linenumber {
+  color: var(--cm-linenumber-active);
+}
+.CodeMirror-activeline .CodeMirror-activeline-background {
+  background-color: var(--cm-line-active);
+}
+.CodeMirror-activeline .CodeMirror-activeline-gutter {
+  background-color: var(--cm-gutter-active);
+}
+
+/* addon/edit  */
+
+.CodeMirror .cm-trailingspace {
+  background-color: var(--cm-trailing-space);
+}
+
+.CodeMirror .cm-matchhighlight:not(.CodeMirror-selectedtext) {
+  background-color: var(--cm-matchhighlight);
+}
+.CodeMirror-selection-highlight-scrollbar {
+  background-color: var(--cm-selection-highlight-scrollbar);
+}
+
+/* addon/lint */
+
+.CodeMirror-lint-error {
+  background-color: var(--invalid-char-color);
+}
+.CodeMirror-lint-warning {
+  background-color: var(--cm-lint-warning);
+}
+.CodeMirror-lint-error .CodeMirror-lint-icon {
+  color: var(--cm-lint-marker-error);
+}
+.CodeMirror-lint-warning .CodeMirror-lint-icon {
+  color: var(--cm-lint-marker-warning);
+}
+.CodeMirror-lint-error .CodeMirror-lint-marker {
+  border-bottom-color: var(--invalid-char-color);
+}
+.CodeMirror-lint-warning .CodeMirror-lint-marker {
+  border-bottom-color: var(--cm-lint-marker-warning);
+}
+
+/* addon/scroll */
+
+.CodeMirror-simplescroll-horizontal,
+.CodeMirror-simplescroll-vertical,
+.CodeMirror-overlayscroll-horizontal,
+.CodeMirror-overlayscroll-vertical {
+  background-color: var(--cm-scrollbar-track);
+}
+
+.CodeMirror-simplescroll-horizontal div,
+.CodeMirror-simplescroll-vertical div,
+.CodeMirror-overlayscroll-horizontal div,
+.CodeMirror-overlayscroll-vertical div {
+  background-color: var(--cm-scrollbar-thumb);
+}
+
+/* addons hints */
+
+.CodeMirror-hints {
+  background-color: var(--background-secondary-color);
+}
+
+.CodeMirror-hint {
+  border-top: var(--border-color);
+  color: var(--foreground-color);
+}
+
+li.CodeMirror-hint-active {
+  background-color: var(--highlight-color);
+  color: var(--foreground-color);
+  border-top-color: var(--border-color);
+}
+
+.CodeMirror-hint-information {
+  border-top: var(--border-color);
+  color: var(--foreground-color);
+}
+
+.CodeMirror-hint-information .content {
+  color: var(--foreground-color);
+}
+
+.CodeMirror-hint-information .infoType {
+  color: var(--definition-color);
+}
+
+/* addon/lint */
+
+div.CodeMirror-lint-tooltip {
+  background-color: var(--background-secondary-color);
+  color: var(--foreground-color);
+}

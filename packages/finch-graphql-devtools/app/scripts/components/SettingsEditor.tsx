@@ -9,6 +9,7 @@ import {
   Button,
 } from '@chakra-ui/react'
 import { useInstalledExtensions } from '../hooks/useInstalledExtensions'
+import { useColorScheme } from '../hooks/useColorScheme'
 
 interface SettingsEditorProps {
   extensionId?: string
@@ -31,13 +32,20 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
     error,
     requestManagementPermission,
   } = useInstalledExtensions()
+  const scheme = useColorScheme()
 
   const codeBlock = `"externally_connectable": {
     "ids": ["${(manifest && manifest.id) || 'extensionId'}"]
 }`
 
   return (
-    <Box py={4} px={5} display="flex" backgroundColor="white">
+    <Box
+      py={4}
+      px={5}
+      display="flex"
+      backgroundColor={scheme.background}
+      color={scheme.foreground}
+    >
       <Box flex={1} pr={6} maxWidth="400px">
         {error && (
           <Alert status="error" rounded={8}>
@@ -56,12 +64,12 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
           You will need to add this extensions id to your extensions manifest as
           a externally connectable extensions.
         </Text>
-        <Box as="pre" p={4} bg="grey.500" rounded={8} mb={3}>
-          <Box as="code" color="yellow.100">
+        <Box as="pre" p={4} bg={scheme.backgroundSecondary} rounded={8} mb={3}>
+          <Box as="code" color={scheme.foregroundSecondary}>
             {codeBlock}
           </Box>
         </Box>
-        <Alert colorScheme="yellow" rounded={8} pb={3}>
+        <Alert backgroundColor={scheme.highlight} rounded={8} pb={3}>
           <AlertIcon />
           This will not cause any warnings, when submitting your extension.
         </Alert>
@@ -69,7 +77,8 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
           If your extension has a custom message key you can add it here.
         </Text>
         <Input
-          backgroundColor="white"
+          backgroundColor={scheme.backgroundSecondary}
+          borderColor={scheme.border}
           placeholder="Message Key"
           id="messageKey"
           value={messageKey}
@@ -102,7 +111,9 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
                     minWidth="300px"
                     mr={2}
                     mb={2}
-                    backgroundColor={isSelected ? 'blue.100' : 'white'}
+                    backgroundColor={
+                      isSelected ? scheme.highlightSecondary : scheme.background
+                    }
                     p={3}
                     display="flex"
                     alignItems="center"
@@ -121,13 +132,25 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
                       mr={2}
                     />
                     <Box flex="1" overflow="hidden">
-                      <Text color={isSelected ? 'blue.400' : 'grey.300'}>
+                      <Text
+                        color={
+                          isSelected
+                            ? scheme.highlight
+                            : scheme.foregroundSecondary
+                        }
+                      >
                         {id}
                       </Text>
                       <Heading size="xs" whiteSpace="nowrap">
                         {name}
                       </Heading>
-                      <Text color={isSelected ? 'blue.400' : 'grey.300'}>
+                      <Text
+                        color={
+                          isSelected
+                            ? scheme.highlight
+                            : scheme.foregroundSecondary
+                        }
+                      >
                         v{version}
                       </Text>
                     </Box>
