@@ -300,6 +300,10 @@ body,
   background: var(--background-color);
 }
 
+.CodeMirror .cm-ws {
+  color: var(--foreground-color);
+}
+
 .CodeMirror .cm-atom {
   color: var(--atom-color);
 }

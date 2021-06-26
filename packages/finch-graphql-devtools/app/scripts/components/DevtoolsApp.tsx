@@ -1,5 +1,5 @@
 import { queryApi, FinchMessageKey } from 'finch-graphql'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react'
 import GraphiQL, { Fetcher } from 'graphiql'
 import { Header } from './Header'
@@ -8,6 +8,8 @@ import { StorageKey, DefaultQuery } from '../constants'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { MessagesViewer } from './MessageViewer'
 import { useColorScheme } from '../hooks/useColorScheme'
+import { FinchDevtoolsMessage } from './MessageViewer/types'
+import { MessagePortConnection } from './MessageViewer/MessagePortConnection'
 
 export const graphQLFetcher = ({
   messageKey,
@@ -34,6 +36,8 @@ export const DevtoolsApp = () => {
     FinchMessageKey.Generic,
   )
   const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0)
+  const [isRecording, setIsRecording] = useState<boolean>(false)
+  const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
 
   const fetcher = useMemo(() => {
     return graphQLFetcher({ messageKey, extensionId })
@@ -47,14 +51,27 @@ export const DevtoolsApp = () => {
       display="flex"
       flexDirection="column"
       height="100%"
+      isLazy
     >
-      <Header />
+      <Header isRecording={isRecording} />
+      {isRecording && (
+        <MessagePortConnection
+          extensionId={extensionId}
+          setMessages={setMessages}
+        />
+      )}
       <TabPanels display="flex" flexDirection="column" height="100%">
         <TabPanel p="0" height="100%">
           <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
         </TabPanel>
         <TabPanel p="0" height="100%">
-          <MessagesViewer extensionId={extensionId} messageKey={messageKey} />
+          <MessagesViewer
+            extensionId={extensionId}
+            isRecording={isRecording}
+            setIsRecording={setIsRecording}
+            messages={messages}
+            setMessages={setMessages}
+          />
         </TabPanel>
         <TabPanel p="0" height="100%">
           <SettingsEditor

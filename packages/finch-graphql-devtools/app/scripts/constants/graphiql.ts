@@ -1,9 +1,3 @@
-export const StorageKey = {
-  ExtensionId: 'finch:extension-id',
-  MessageKey: 'finch:message-key',
-  TabIndex: 'finch:tab-index',
-}
-
 export const DefaultQuery = `
 # Welcome to GraphiQL for Finch GraphQL
 #
