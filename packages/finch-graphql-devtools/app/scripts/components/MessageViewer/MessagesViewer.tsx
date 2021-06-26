@@ -3,23 +3,23 @@ import { Box } from '@chakra-ui/react'
 import { MessageContent } from './MessageContent'
 import { MessagesSidebar } from './MessageSidebar'
 import { MessagesFilterBar } from './MessagesFilterBar'
-import { MessagePortConnection } from './MessagePortConnection'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { FinchDevtoolsMessage } from './types'
 import { useColorScheme } from '../../hooks/useColorScheme'
 
-const TIMEOUT_SPEED = 1000
-
 interface MessageViewerProps {
   extensionId: string
-  messageKey: string
-  timeoutSpeed?: number
+  isRecording: boolean
+  setIsRecording: React.Dispatch<boolean>
+  messages: FinchDevtoolsMessage[]
+  setMessages: React.Dispatch<FinchDevtoolsMessage[]>
 }
 
 export const MessagesViewer: React.FC<MessageViewerProps> = ({
-  extensionId,
-  messageKey,
-  timeoutSpeed = TIMEOUT_SPEED,
+  isRecording,
+  setIsRecording,
+  messages,
+  setMessages,
 }) => {
   const scheme = useColorScheme()
   const [currentTabFilter, setCurrentTabFilter] = useLocalStorage(
@@ -30,10 +30,8 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
     'messages:filterString',
     '',
   )
-  const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
   const [selectedQuery, selectQuery] = useState(null)
   const [currentTabId] = useState(() => browser.devtools.inspectedWindow.tabId)
-  const [isRecording, setIsRecording] = useState<boolean>(false)
 
   const selectedQueryMessage = messages.find(({ id }) => selectedQuery === id)
 
@@ -69,13 +67,6 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       color={scheme.foreground}
       backgroundColor={scheme.background}
     >
-      {isRecording && (
-        <MessagePortConnection
-          extensionId={extensionId}
-          setMessages={setMessages}
-        />
-      )}
-
       <MessagesFilterBar
         onClearMessage={() => {
           setMessages([])

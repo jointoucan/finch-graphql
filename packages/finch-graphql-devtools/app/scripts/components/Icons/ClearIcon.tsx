@@ -1,5 +1,4 @@
 import { Icon, IconProps } from '@chakra-ui/icons'
-import { Box } from '@chakra-ui/react'
 
 export const ClearIcon: React.FC<IconProps> = props => {
   return (
