@@ -12,5 +12,9 @@
   "dependencies": {
     "lerna": "^4.0.0"
   },
-  "name": "finch-graphql-packages"
+  "name": "finch-graphql-packages",
+  "scripts": {
+    "build": "yarn workspace finch-graphql build",
+    "devtools": "yarn workspace finch-graphql-devtools dev chrome"
+  }
 }

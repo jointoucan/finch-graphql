@@ -1,20 +1,29 @@
 import { FC, Dispatch, SetStateAction } from 'react'
 import { FinchDevtools, FinchDevToolsMessageType } from 'finch-graphql'
 import { usePort } from '../hooks/usePort'
-import { FinchDevtoolsMessage } from './MessageViewer/types'
+import {
+  FinchDevtoolsIncomingMessage,
+  FinchDevtoolsMessage,
+} from './MessageViewer/types'
 import { useEffect } from 'react'
 
 interface PortConnectionProps {
   extensionId: string
   setMessages: Dispatch<SetStateAction<FinchDevtoolsMessage[]>>
+  setMessageKey: Dispatch<SetStateAction<string>>
   isRecording: boolean
   onDisconnected: () => void
   onConnected: () => void
 }
 
+/**
+ * PortConnection is a component that holds the usePort hook.
+ * This is a headless component and does not return any view.
+ */
 export const PortConnection: FC<PortConnectionProps> = ({
   extensionId,
   setMessages,
+  setMessageKey,
   isRecording,
   onDisconnected,
   onConnected,
@@ -23,8 +32,7 @@ export const PortConnection: FC<PortConnectionProps> = ({
     extensionId,
     portName: FinchDevtools.portName,
     dependencies: [isRecording],
-    onMessage: (message: FinchDevtoolsMessage) => {
-      console.log(message)
+    onMessage: (message: FinchDevtoolsIncomingMessage) => {
       switch (message.type) {
         case FinchDevToolsMessageType.Start:
           if (isRecording) {
@@ -49,12 +57,19 @@ export const PortConnection: FC<PortConnectionProps> = ({
             })
           }
           break
+        case FinchDevToolsMessageType.MessageKey:
+          setMessageKey(message.messageKey)
+          break
       }
     },
   })
 
   useEffect(() => {
     if (port) {
+      /**
+       * request the current ports message key to auto configure the project.
+       */
+      port.postMessage({ type: FinchDevToolsMessageType.RequestMessageKey })
       onConnected()
     } else {
       onDisconnected()

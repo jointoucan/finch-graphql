@@ -60,7 +60,7 @@ export const Header: React.FC<{
             display="flex"
             alignItems="center"
             width="150px"
-            backgroundColor={scheme.backgroundSecondary}
+            border={`1px solid ${scheme.border}`}
             borderRadius="8px"
             px={2}
           >
@@ -69,13 +69,14 @@ export const Header: React.FC<{
               fill={isConnected ? 'green.300' : scheme.border}
               mr={2}
             />
-            <Box flexDirection="column" overflow="hidden">
+            <Box flexDirection="column">
               {!!extensionName && (
                 <Heading
                   size="xxs"
                   whiteSpace="nowrap"
-                  maxWidth="100%"
                   textOverflow="ellipsis"
+                  overflow="hidden"
+                  maxWidth="120px"
                 >
                   {extensionName}
                 </Heading>

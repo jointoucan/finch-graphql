@@ -66,6 +66,7 @@ export const DevtoolsApp = () => {
         isRecording={isRecording}
         onDisconnected={() => setIsConnected(false)}
         onConnected={() => setIsConnected(true)}
+        setMessageKey={setMessageKey}
       />
       <Header
         isConnected={isConnected}
