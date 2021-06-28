@@ -9,7 +9,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage'
 import { MessagesViewer } from './MessageViewer'
 import { useColorScheme } from '../hooks/useColorScheme'
 import { FinchDevtoolsMessage } from './MessageViewer/types'
-import { MessagePortConnection } from './MessageViewer/MessagePortConnection'
+import { PortConnection } from './PortConnection'
 
 export const graphQLFetcher = ({
   messageKey,
@@ -38,6 +38,7 @@ export const DevtoolsApp = () => {
   const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0)
   const [isRecording, setIsRecording] = useState<boolean>(false)
   const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
+  const [isConnected, setIsConnected] = useState(false)
 
   const fetcher = useMemo(() => {
     return graphQLFetcher({ messageKey, extensionId })
@@ -53,13 +54,14 @@ export const DevtoolsApp = () => {
       height="100%"
       isLazy
     >
-      <Header isRecording={isRecording} />
-      {isRecording && (
-        <MessagePortConnection
-          extensionId={extensionId}
-          setMessages={setMessages}
-        />
-      )}
+      <PortConnection
+        extensionId={extensionId}
+        setMessages={setMessages}
+        isRecording={isRecording}
+        onDisconnected={() => setIsConnected(false)}
+        onConnected={() => setIsConnected(true)}
+      />
+      <Header isConnected={isConnected} isRecording={isRecording} />
       <TabPanels display="flex" flexDirection="column" height="100%">
         <TabPanel p="0" height="100%">
           <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />

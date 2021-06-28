@@ -1,9 +1,19 @@
 import { Image } from './Image'
-import { TabList, Tab, Box, IconButton, Tooltip } from '@chakra-ui/react'
+import {
+  TabList,
+  Tab,
+  Box,
+  IconButton,
+  Tooltip,
+  Heading,
+} from '@chakra-ui/react'
 import { CircleIcon, RefreshIcon } from './Icons'
 import { useColorScheme } from '../hooks/useColorScheme'
 
-export const Header: React.FC<{ isRecording: boolean }> = ({ isRecording }) => {
+export const Header: React.FC<{
+  isRecording: boolean
+  isConnected: boolean
+}> = ({ isRecording, isConnected }) => {
   const scheme = useColorScheme()
   return (
     <Box
@@ -35,12 +45,28 @@ export const Header: React.FC<{ isRecording: boolean }> = ({ isRecording }) => {
           ) : null}
         </Tab>
         <Tab>Settings</Tab>
+        <Box flex="1" />
         <Box
-          flex="1"
+          flex="0"
           display="flex"
           alignItems="center"
           justifyContent="flex-end"
         >
+          <CircleIcon
+            ml={2}
+            fontSize="xx-small"
+            fill={isConnected ? 'green.300' : scheme.border}
+            mr={2}
+          />
+          <Heading size="xxs" whiteSpace="nowrap">
+            {isConnected ? 'Connected' : 'Disconnected'}
+          </Heading>
+          <Box
+            width="1px"
+            height="25px"
+            backgroundColor={scheme.border}
+            mx={2}
+          />
           <Tooltip label="Refresh frame" openDelay={500}>
             <IconButton
               size="xs"

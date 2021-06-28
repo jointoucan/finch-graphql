@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FinchDevtools } from 'finch-graphql'
 import { FinchDevtoolsMessage } from '../components/MessageViewer/types'
 
@@ -14,32 +14,41 @@ export const usePort = ({
   extensionId,
   portName = FinchDevtools.portName,
   onMessage,
-}: PortOptions) => {
+}: PortOptions): chrome.runtime.Port | browser.runtime.Port | null => {
+  const [currentPort, setCurrentPort] = useState<
+    chrome.runtime.Port | browser.runtime.Port | null
+  >(null)
   const connectPort = (
     onMessage: (message: FinchDevtoolsMessage) => void,
-    portChange: (port: browser.runtime.Port) => void,
+    timeoutChanged: (timeout: number) => void,
   ) => {
     const port = browser.runtime.connect(extensionId, {
       name: portName,
     })
+    let timestamp = 0
+    setCurrentPort(port)
 
-    port.onDisconnect.addListener(() =>
-      setTimeout(() => {
+    port.onDisconnect.addListener(() => {
+      timestamp = window.setTimeout(() => {
         console.warn(`Reattempting reconnect to [${extensionId}]`)
-        connectPort(onMessage, portChange)
-      }, DEFAULT_TIMEOUT),
-    )
+        connectPort(onMessage, timeoutChanged)
+      }, DEFAULT_TIMEOUT)
+      timeoutChanged(timestamp)
+      setCurrentPort(null)
+    })
     port.onMessage.addListener(onMessage)
-    return port
   }
 
   useEffect(() => {
     if (!extensionId) {
       return () => {}
     }
-    let port: browser.runtime.Port = connectPort(onMessage, newPort => {
-      port = newPort
+    let timer = 0
+    connectPort(onMessage, currentTimer => {
+      timer = currentTimer
     })
-    return () => port.disconnect()
+    return () => clearTimeout(timer)
   }, [extensionId])
+
+  return currentPort
 }
