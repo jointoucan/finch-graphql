@@ -22,7 +22,9 @@ export const PortConnection: FC<PortConnectionProps> = ({
   const port = usePort({
     extensionId,
     portName: FinchDevtools.portName,
+    dependencies: [isRecording],
     onMessage: (message: FinchDevtoolsMessage) => {
+      console.log(message)
       switch (message.type) {
         case FinchDevToolsMessageType.Start:
           if (isRecording) {

@@ -4,11 +4,22 @@ query getExtensions {
     name
     version
     icon
+    enabled
   }
   manifest {
     id
     name
     version
+  }
+}
+
+query getExtension($id: String!) {
+  extension(id: $id) {
+    id
+    name
+    version
+    icon
+    enabled
   }
 }
 

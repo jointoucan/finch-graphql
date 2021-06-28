@@ -1,4 +1,3 @@
-import { GetMessagesQuery } from '../../schema'
 import {
   FinchResponseMessage,
   FinchStartMessage,

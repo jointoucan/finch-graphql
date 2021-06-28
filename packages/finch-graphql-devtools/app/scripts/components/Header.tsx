@@ -6,6 +6,7 @@ import {
   IconButton,
   Tooltip,
   Heading,
+  Text,
 } from '@chakra-ui/react'
 import { CircleIcon, RefreshIcon } from './Icons'
 import { useColorScheme } from '../hooks/useColorScheme'
@@ -13,7 +14,9 @@ import { useColorScheme } from '../hooks/useColorScheme'
 export const Header: React.FC<{
   isRecording: boolean
   isConnected: boolean
-}> = ({ isRecording, isConnected }) => {
+  extensionName?: string
+  extensionVersion?: string
+}> = ({ isRecording, isConnected, extensionName, extensionVersion }) => {
   const scheme = useColorScheme()
   return (
     <Box
@@ -23,6 +26,7 @@ export const Header: React.FC<{
       backgroundColor={scheme.background}
       position="sticky"
       top="0"
+      zIndex="10"
       borderColor={scheme.border}
     >
       <TabList flex="1" color={scheme.foreground}>
@@ -52,15 +56,36 @@ export const Header: React.FC<{
           alignItems="center"
           justifyContent="flex-end"
         >
-          <CircleIcon
-            ml={2}
-            fontSize="xx-small"
-            fill={isConnected ? 'green.300' : scheme.border}
-            mr={2}
-          />
-          <Heading size="xxs" whiteSpace="nowrap">
-            {isConnected ? 'Connected' : 'Disconnected'}
-          </Heading>
+          <Box
+            display="flex"
+            alignItems="center"
+            width="150px"
+            backgroundColor={scheme.backgroundSecondary}
+            borderRadius="8px"
+            px={2}
+          >
+            <CircleIcon
+              fontSize="xx-small"
+              fill={isConnected ? 'green.300' : scheme.border}
+              mr={2}
+            />
+            <Box flexDirection="column" overflow="hidden">
+              {!!extensionName && (
+                <Heading
+                  size="xxs"
+                  whiteSpace="nowrap"
+                  maxWidth="100%"
+                  textOverflow="ellipsis"
+                >
+                  {extensionName}
+                </Heading>
+              )}
+
+              <Text size="xxs" whiteSpace="nowrap" mt={-1}>
+                {isConnected ? 'Connected' : 'Disconnected'}
+              </Text>
+            </Box>
+          </Box>
           <Box
             width="1px"
             height="25px"

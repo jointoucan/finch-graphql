@@ -38,6 +38,8 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
     "ids": ["${(manifest && manifest.id) || 'extensionId'}"]
 }`
 
+  const enabledExtensions = extensions.filter(extension => extension.enabled)
+
   return (
     <Box
       py={4}
@@ -94,7 +96,7 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
               development this may change often.
             </Text>
             <Box display="flex" flexWrap="wrap">
-              {extensions.map(({ id, name, version, icon }) => {
+              {enabledExtensions.map(({ id, name, version, icon, enabled }) => {
                 const isSelected = id === extensionId
                 return (
                   <Box
@@ -130,6 +132,9 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
                       width="45px"
                       height="45px"
                       mr={2}
+                      css={{
+                        filter: enabled ? 'grayscale(0)' : 'grayscale(1)',
+                      }}
                     />
                     <Box flex="1" overflow="hidden">
                       <Text
@@ -151,7 +156,7 @@ export const SettingsEditor: React.FC<SettingsEditorProps> = ({
                             : scheme.foregroundSecondary
                         }
                       >
-                        v{version}
+                        {!enabled ? 'disabled' : `v${version}`}
                       </Text>
                     </Box>
                   </Box>
