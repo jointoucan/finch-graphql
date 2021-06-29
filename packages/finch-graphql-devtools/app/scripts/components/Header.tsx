@@ -1,6 +1,6 @@
 import { Image } from './Image'
 import { TabList, Tab, Box, IconButton, Tooltip } from '@chakra-ui/react'
-import { CircleIcon, RefreshIcon } from './Icons'
+import { CircleIcon, RefreshIcon, InfoIcon } from './Icons'
 import { useColorScheme } from '../hooks/useColorScheme'
 import { ExtensionSwitcher } from './ExtensionSwitcher'
 
@@ -64,26 +64,7 @@ export const Header: React.FC<{
             setExtensionId={setExtensionId}
             messageKey={messageKey}
           />
-          <Box
-            width="1px"
-            height="25px"
-            backgroundColor={scheme.border}
-            mx={2}
-          />
-          <Tooltip label="Refresh frame" openDelay={500} placement="bottom-end">
-            <IconButton
-              size="xs"
-              aria-label="Refresh frame"
-              mr={2}
-              fill={scheme.foreground}
-              icon={<RefreshIcon />}
-              onClick={() => {
-                window.location.reload()
-              }}
-              variant="outline"
-              borderColor={scheme.border}
-            />
-          </Tooltip>
+          <Box pr={2} />
         </Box>
       </TabList>
     </Box>

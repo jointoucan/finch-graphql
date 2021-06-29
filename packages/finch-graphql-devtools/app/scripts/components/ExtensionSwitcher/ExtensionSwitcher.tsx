@@ -10,12 +10,13 @@ import {
   DrawerOverlay,
   Input,
   useDisclosure,
+  Tooltip,
 } from '@chakra-ui/react'
 import { useRef } from 'react'
 import { FC } from 'react'
 import { useColorScheme } from '../../hooks/useColorScheme'
 import { useGetExtensionQuery } from '../../schema'
-import { CircleIcon, SettingsIcon, DownChevronIcon } from '../Icons'
+import { CircleIcon, InfoIcon, RefreshIcon } from '../Icons'
 import { CurrentExtension } from './CurrentExtension'
 import { ExtensionList } from './ExtensionList'
 import { ExtensionProfileForm } from './ExtensionProfileForm'
@@ -39,9 +40,10 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
   const scheme = useColorScheme()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef()
-  const { data } = useGetExtensionQuery({
+  const { data, refetch } = useGetExtensionQuery({
     variables: { id: extensionId },
   })
+
   const extensionInfo = data?.browser?.extension
   const hasManagementPermission = data?.browser?.permission ?? false
 
@@ -68,7 +70,8 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
           />
         }
       >
-        {extensionInfo?.name ?? 'Switch extension'}
+        {extensionInfo?.name ??
+          (extensionId ? 'Extension Status' : 'Setup Extension')}
       </Button>
       <Drawer
         isOpen={isOpen}
@@ -76,9 +79,56 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
         onClose={onClose}
         finalFocusRef={btnRef}
         size="sm"
+        autoFocus={false}
       >
-        <DrawerContent>
+        <DrawerContent backgroundColor={scheme.background}>
           <DrawerBody p={0}>
+            <Box
+              borderBottom={`1px solid`}
+              borderBottomColor={scheme.border}
+              p={2}
+              display="flex"
+              flexDirection="row"
+              justifyContent="flex-end"
+            >
+              <Tooltip
+                label="Refresh frame"
+                openDelay={500}
+                placement="bottom-end"
+              >
+                <IconButton
+                  size="xs"
+                  mr={1}
+                  aria-label="Refresh frame"
+                  fill={scheme.foreground}
+                  icon={<RefreshIcon />}
+                  onClick={() => {
+                    window.location.reload()
+                  }}
+                  variant="outline"
+                  borderColor={scheme.border}
+                />
+              </Tooltip>
+              <Tooltip
+                label="See setup documentation"
+                openDelay={500}
+                placement="bottom-end"
+              >
+                <IconButton
+                  size="xs"
+                  aria-label="See setup documentation"
+                  mr={2}
+                  fill={scheme.foreground}
+                  icon={<InfoIcon />}
+                  onClick={() => {
+                    // open docs
+                    // window.location.reload()
+                  }}
+                  variant="outline"
+                  borderColor={scheme.border}
+                />
+              </Tooltip>
+            </Box>
             {hasManagementPermission ? (
               <>
                 {extensionInfo && (

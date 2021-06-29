@@ -42,7 +42,7 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
         alignItems="flex-start"
         borderBottom={`1px solid`}
         borderBottomColor={scheme.border}
-        backgroundColor={scheme.backgroundSecondary}
+        backgroundColor={scheme.background}
         p={4}
         zIndex={10}
       >
