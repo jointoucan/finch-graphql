@@ -10,13 +10,13 @@ import {
 } from '@chakra-ui/react'
 import { CircleIcon, RefreshIcon } from './Icons'
 import { useColorScheme } from '../hooks/useColorScheme'
+import { ExtensionSwitcher } from './ExtensionSwitcher'
 
 export const Header: React.FC<{
   isRecording: boolean
   isConnected: boolean
-  extensionName?: string
-  extensionVersion?: string
-}> = ({ isRecording, isConnected, extensionName, extensionVersion }) => {
+  extensionId?: string
+}> = ({ isRecording, isConnected, extensionId }) => {
   const scheme = useColorScheme()
   return (
     <Box
@@ -56,37 +56,10 @@ export const Header: React.FC<{
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Box
-            display="flex"
-            alignItems="center"
-            width="150px"
-            border={`1px solid ${scheme.border}`}
-            borderRadius="8px"
-            px={2}
-          >
-            <CircleIcon
-              fontSize="xx-small"
-              fill={isConnected ? 'green.300' : scheme.border}
-              mr={2}
-            />
-            <Box flexDirection="column">
-              {!!extensionName && (
-                <Heading
-                  size="xxs"
-                  whiteSpace="nowrap"
-                  textOverflow="ellipsis"
-                  overflow="hidden"
-                  maxWidth="120px"
-                >
-                  {extensionName}
-                </Heading>
-              )}
-
-              <Text size="xxs" whiteSpace="nowrap" mt={-1}>
-                {isConnected ? 'Connected' : 'Disconnected'}
-              </Text>
-            </Box>
-          </Box>
+          <ExtensionSwitcher
+            isConnected={isConnected}
+            extensionId={extensionId}
+          />
           <Box
             width="1px"
             height="25px"

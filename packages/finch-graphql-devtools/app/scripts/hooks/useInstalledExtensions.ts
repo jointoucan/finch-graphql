@@ -9,8 +9,14 @@ export const useInstalledExtensions = () => {
   const { data, loading, error, refetch } = useGetExtensionsQuery()
   const [requestManagementPermission] = useRequestManagementPermissionMutation()
 
+  const extensions =
+    data?.extensions?.filter(extension => extension.enabled) ?? []
+  const disabledExtensions =
+    data?.extensions?.filter(extension => !extension.enabled) ?? []
+
   return {
-    extensions: (data && data.extensions) || [],
+    extensions,
+    disabledExtensions,
     loading,
     error,
     manifest: (data && data.manifest) || null,

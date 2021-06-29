@@ -10,7 +10,6 @@ import { MessagesViewer } from './MessageViewer'
 import { useColorScheme } from '../hooks/useColorScheme'
 import { FinchDevtoolsMessage } from './MessageViewer/types'
 import { PortConnection } from './PortConnection'
-import { useGetExtensionQuery } from '../schema'
 
 export const graphQLFetcher = ({
   messageKey,
@@ -39,12 +38,6 @@ export const DevtoolsApp = () => {
   const [isRecording, setIsRecording] = useState<boolean>(false)
   const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
   const [isConnected, setIsConnected] = useState(false)
-  const { data } = useGetExtensionQuery({
-    variables: { id: extensionId },
-    skip: !extensionId,
-  })
-
-  const extensionInfo = data?.extension
 
   const fetcher = useMemo(() => {
     return graphQLFetcher({ messageKey, extensionId })
@@ -71,8 +64,7 @@ export const DevtoolsApp = () => {
       <Header
         isConnected={isConnected}
         isRecording={isRecording}
-        extensionName={extensionInfo?.name}
-        extensionVersion={extensionInfo?.version}
+        extensionId={extensionId}
       />
       <TabPanels display="flex" flexDirection="column" height="100%">
         <TabPanel p="0" height="100%">
