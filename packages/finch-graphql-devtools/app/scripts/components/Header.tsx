@@ -70,7 +70,7 @@ export const Header: React.FC<{
             backgroundColor={scheme.border}
             mx={2}
           />
-          <Tooltip label="Refresh frame" openDelay={500}>
+          <Tooltip label="Refresh frame" openDelay={500} placement="bottom-end">
             <IconButton
               size="xs"
               aria-label="Refresh frame"

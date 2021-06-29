@@ -59,43 +59,47 @@ export const usePort = ({
       onMessage: (message: FinchDevtoolsIncomingMessage) => void,
       timeoutChanged: (timeout: number) => void,
     ) => {
-      const port = browser.runtime.connect(extensionId, {
-        name: portName,
-      })
-      let timestamp = 0
-      thisPort = port
+      try {
+        const port = browser.runtime.connect(extensionId, {
+          name: portName,
+        })
+        let timestamp = 0
+        thisPort = port
 
-      /**
-       * We set the current port after a small timeout to avoid flicking of UI when
-       * reconnecting.
-       */
-      const connectedTimeout = window.setTimeout(() => {
-        if (!isMounted) {
-          return
-        }
-        setCurrentPort(port)
-      }, 300)
+        /**
+         * We set the current port after a small timeout to avoid flicking of UI when
+         * reconnecting.
+         */
+        const connectedTimeout = window.setTimeout(() => {
+          if (!isMounted) {
+            return
+          }
+          setCurrentPort(port)
+        }, 300)
 
-      /**
-       * This listens for the background to disconnect from the port. If the extension does not establish a
-       * connection this gets called quickly after creating the port.
-       */
-      port.onDisconnect.addListener(() => {
-        if (!isMounted) {
-          return
-        }
-        clearTimeout(connectedTimeout)
-        timestamp = window.setTimeout(() => {
-          console.warn(`Reattempting reconnect to [${extensionId}]`)
-          connectPort(onMessage, timeoutChanged)
-        }, DEFAULT_TIMEOUT)
-        timeoutChanged(timestamp)
-        setCurrentPort(null)
-      })
-      /**
-       * This is the onMessage event binding.
-       */
-      port.onMessage.addListener(onMessage)
+        /**
+         * This listens for the background to disconnect from the port. If the extension does not establish a
+         * connection this gets called quickly after creating the port.
+         */
+        port.onDisconnect.addListener(() => {
+          if (!isMounted) {
+            return
+          }
+          clearTimeout(connectedTimeout)
+          timestamp = window.setTimeout(() => {
+            console.warn(`Reattempting reconnect to [${extensionId}]`)
+            connectPort(onMessage, timeoutChanged)
+          }, DEFAULT_TIMEOUT)
+          timeoutChanged(timestamp)
+          setCurrentPort(null)
+        })
+        /**
+         * This is the onMessage event binding.
+         */
+        port.onMessage.addListener(onMessage)
+      } catch (e) {
+        // This will throw on a bad extension id
+      }
     }
     connectPort(onMessage, currentTimer => {
       timer = currentTimer

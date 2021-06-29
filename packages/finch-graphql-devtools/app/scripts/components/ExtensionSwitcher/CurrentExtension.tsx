@@ -10,19 +10,15 @@ interface CurrentExtensionProps {
   version: string
   icon?: string
   enabled: boolean
-  messageKey: string
-  setMessageKey: (messageKey: string) => void
   isConnected: boolean
 }
 
 export const CurrentExtension: FC<CurrentExtensionProps> = ({
-  id,
   icon,
   name,
   version,
-  messageKey,
-  setMessageKey,
   isConnected,
+  children,
 }) => {
   const scheme = useColorScheme()
   return (
@@ -70,33 +66,7 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
             {name}
           </Heading>
           <Text>v{version}</Text>
-          <Box mt={4}>
-            <Text as="label" htmlFor="extensionId">
-              Extension id
-            </Text>
-            <Input
-              backgroundColor={scheme.backgroundSecondary}
-              borderColor={scheme.border}
-              id="extensionId"
-              value={id}
-              readOnly
-            />
-          </Box>
-          <Box mt={4}>
-            <Text as="label" htmlFor="messageKey">
-              Message key
-            </Text>
-            <Input
-              backgroundColor={scheme.backgroundSecondary}
-              borderColor={scheme.border}
-              id="messageKey"
-              value={messageKey}
-              onChange={e => {
-                console.log(e)
-                setMessageKey(e.target.value)
-              }}
-            />
-          </Box>
+          {children}
         </Box>
       </Box>
     </Box>

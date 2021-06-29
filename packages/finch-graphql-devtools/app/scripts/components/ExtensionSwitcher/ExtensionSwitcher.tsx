@@ -18,6 +18,8 @@ import { useGetExtensionQuery } from '../../schema'
 import { CircleIcon, SettingsIcon, DownChevronIcon } from '../Icons'
 import { CurrentExtension } from './CurrentExtension'
 import { ExtensionList } from './ExtensionList'
+import { ExtensionProfileForm } from './ExtensionProfileForm'
+import { NoPermissionDrawer } from './NoPermissionDrawer'
 
 interface ExtensionSwitcherProps {
   isConnected: boolean
@@ -37,17 +39,11 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
   const scheme = useColorScheme()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef()
-  // TODO handle error state
-  const { data, loading } = useGetExtensionQuery({
+  const { data } = useGetExtensionQuery({
     variables: { id: extensionId },
-    skip: !extensionId,
   })
   const extensionInfo = data?.browser?.extension
   const hasManagementPermission = data?.browser?.permission ?? false
-
-  if (loading) {
-    return null
-  }
 
   return (
     <>
@@ -81,7 +77,6 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
         finalFocusRef={btnRef}
         size="sm"
       >
-        <DrawerOverlay />
         <DrawerContent>
           <DrawerBody p={0}>
             {hasManagementPermission ? (
@@ -89,18 +84,32 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
                 {extensionInfo && (
                   <CurrentExtension
                     {...extensionInfo}
-                    messageKey={messageKey}
-                    setMessageKey={setMessageKey}
                     isConnected={isConnected}
-                  />
+                  >
+                    <ExtensionProfileForm
+                      extensionId={extensionId}
+                      onExtensionIdChange={() => {}}
+                      readOnlyExtensionId
+                      messageKey={messageKey}
+                      onMessageKeyChange={setMessageKey}
+                    />
+                  </CurrentExtension>
                 )}
                 <ExtensionList
+                  hasCurrentExtension={!!extensionInfo}
                   currentExtensionId={extensionId}
                   setExtensionId={setExtensionId}
                 />
               </>
             ) : (
-              <>No Permission UI: not implemented</>
+              <NoPermissionDrawer>
+                <ExtensionProfileForm
+                  extensionId={extensionId}
+                  onExtensionIdChange={setExtensionId}
+                  messageKey={messageKey}
+                  onMessageKeyChange={setMessageKey}
+                />
+              </NoPermissionDrawer>
             )}
           </DrawerBody>
         </DrawerContent>

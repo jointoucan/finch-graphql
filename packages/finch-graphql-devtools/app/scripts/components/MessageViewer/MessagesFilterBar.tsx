@@ -39,6 +39,7 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
       <Tooltip
         label={isRecording ? 'Stop recording' : 'Start recording'}
         openDelay={500}
+        placement="bottom-start"
       >
         <IconButton
           size="sm"
@@ -52,7 +53,7 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
           borderColor={scheme.border}
         />
       </Tooltip>
-      <Tooltip label="Clear messages" openDelay={500}>
+      <Tooltip label="Clear messages" openDelay={500} placement="bottom-start">
         <IconButton
           size="sm"
           onClick={onClearMessage}

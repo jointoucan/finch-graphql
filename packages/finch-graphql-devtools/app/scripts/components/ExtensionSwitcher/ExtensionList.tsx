@@ -6,13 +6,9 @@ import { useInstalledExtensions } from '../../hooks/useInstalledExtensions'
 export const ExtensionList: FC<{
   setExtensionId: (id: string) => void
   currentExtensionId: string
-}> = ({ setExtensionId, currentExtensionId }) => {
-  const {
-    extensions,
-    manifest,
-    error,
-    requestManagementPermission,
-  } = useInstalledExtensions()
+  hasCurrentExtension: boolean
+}> = ({ setExtensionId, currentExtensionId, hasCurrentExtension }) => {
+  const { extensions } = useInstalledExtensions()
   const scheme = useColorScheme()
 
   return (
@@ -27,11 +23,15 @@ export const ExtensionList: FC<{
           px={2}
           py={1}
           position="sticky"
-          top={245}
+          top={hasCurrentExtension ? 245 : 0}
           backgroundColor={scheme.border}
           zIndex={10}
         >
-          <Text>Switch extension</Text>
+          <Text>
+            {hasCurrentExtension
+              ? 'Switch extension'
+              : 'Please choose an extension'}
+          </Text>
         </ListItem>
         {extensions
           .filter(({ id }) => currentExtensionId !== id)
@@ -48,6 +48,8 @@ export const ExtensionList: FC<{
               onClick={() => {
                 setExtensionId(id)
               }}
+              css={{ transition: 'background 0.3s ease-in-out' }}
+              _hover={{ backgroundColor: 'whiteAlpha.100' }}
             >
               <Box>
                 <img
