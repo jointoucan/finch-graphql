@@ -22,11 +22,17 @@ import { ExtensionList } from './ExtensionList'
 interface ExtensionSwitcherProps {
   isConnected: boolean
   extensionId?: string
+  messageKey: string
+  setMessageKey: (messageKey: string) => void
+  setExtensionId: (extensionId: string) => void
 }
 
 export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
   isConnected,
   extensionId,
+  messageKey,
+  setMessageKey,
+  setExtensionId,
 }) => {
   const scheme = useColorScheme()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -72,8 +78,18 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
         <DrawerOverlay />
         <DrawerContent>
           <DrawerBody p={0}>
-            {extensionInfo && <CurrentExtension {...extensionInfo} />}
-            <ExtensionList />
+            {extensionInfo && (
+              <CurrentExtension
+                {...extensionInfo}
+                messageKey={messageKey}
+                setMessageKey={setMessageKey}
+                isConnected={isConnected}
+              />
+            )}
+            <ExtensionList
+              currentExtensionId={extensionId}
+              setExtensionId={setExtensionId}
+            />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

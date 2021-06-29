@@ -4,4 +4,5 @@ export const StorageKey = {
   TabIndex: 'finch:tab-index',
   GraphiQLQuery: 'graphiql:query',
   GraphiQLVariables: 'graphiql:variables',
+  ExtensionProfilePrefix: 'finch:profile:',
 }

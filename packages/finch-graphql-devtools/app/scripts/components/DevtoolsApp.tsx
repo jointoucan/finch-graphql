@@ -3,13 +3,13 @@ import { useMemo, useState } from 'react'
 import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react'
 import GraphiQL, { Fetcher } from 'graphiql'
 import { Header } from './Header'
-import { SettingsEditor } from './SettingsEditor'
 import { StorageKey, DefaultQuery } from '../constants'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { MessagesViewer } from './MessageViewer'
 import { useColorScheme } from '../hooks/useColorScheme'
 import { FinchDevtoolsMessage } from './MessageViewer/types'
 import { PortConnection } from './PortConnection'
+import { useCallback } from 'react'
 
 export const graphQLFetcher = ({
   messageKey,
@@ -30,14 +30,37 @@ export const DevtoolsApp = () => {
     StorageKey.ExtensionId,
     '',
   )
-  const [messageKey, setMessageKey] = useLocalStorage<string>(
-    StorageKey.MessageKey,
-    FinchMessageKey.Generic,
-  )
+  const [extensionProfile, setExtensionProfile] = useLocalStorage<{
+    messageKey: string
+    nickName: null | string
+  }>(`${StorageKey.ExtensionProfilePrefix}${extensionId}`, {
+    messageKey: FinchMessageKey.Generic,
+    nickName: null,
+  })
   const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0)
   const [isRecording, setIsRecording] = useState<boolean>(false)
   const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
   const [isConnected, setIsConnected] = useState(false)
+
+  const messageKey = extensionProfile.messageKey
+
+  const setMessageKey = useCallback(
+    (updatedMessageKey: string) => {
+      extensionProfile.messageKey = updatedMessageKey
+      setExtensionProfile(extensionProfile)
+    },
+    [extensionId, extensionProfile],
+  )
+
+  console.log({ messageKey })
+
+  const setNickName = useCallback(
+    (updateNickName: string | null) => {
+      extensionProfile.nickName = updateNickName
+      setExtensionProfile(extensionProfile)
+    },
+    [extensionId, extensionProfile],
+  )
 
   const fetcher = useMemo(() => {
     return graphQLFetcher({ messageKey, extensionId })
@@ -65,6 +88,9 @@ export const DevtoolsApp = () => {
         isConnected={isConnected}
         isRecording={isRecording}
         extensionId={extensionId}
+        setMessageKey={setMessageKey}
+        setExtensionId={setExtensionId}
+        messageKey={messageKey}
       />
       <TabPanels display="flex" flexDirection="column" height="100%">
         <TabPanel p="0" height="100%">
@@ -77,22 +103,6 @@ export const DevtoolsApp = () => {
             setIsRecording={setIsRecording}
             messages={messages}
             setMessages={setMessages}
-          />
-        </TabPanel>
-        <TabPanel p="0" height="100%">
-          <SettingsEditor
-            extensionId={extensionId}
-            onChangeExtensionId={id => {
-              if (typeof id === 'string') {
-                setExtensionId(id)
-              } else {
-                setExtensionId(id.target.value)
-              }
-            }}
-            messageKey={messageKey}
-            onChangeMessageKey={e => {
-              setMessageKey(e.target.value)
-            }}
           />
         </TabPanel>
       </TabPanels>
