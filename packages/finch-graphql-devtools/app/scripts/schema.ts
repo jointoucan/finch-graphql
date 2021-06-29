@@ -13,6 +13,24 @@ export type Scalars = {
   Float: number;
 };
 
+export type Browser = {
+  __typename?: 'Browser';
+  extensions: Array<Extension>;
+  extension?: Maybe<Extension>;
+  manifest: Extension;
+  permission?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type BrowserExtensionArgs = {
+  id: Scalars['String'];
+};
+
+
+export type BrowserPermissionArgs = {
+  permission: PermissionInput;
+};
+
 export type Extension = {
   __typename?: 'Extension';
   name: Scalars['String'];
@@ -27,16 +45,14 @@ export type Mutation = {
   requestManagementPermission: Scalars['Boolean'];
 };
 
-export type Query = {
-  __typename?: 'Query';
-  extensions: Array<Extension>;
-  extension?: Maybe<Extension>;
-  manifest: Extension;
+export type PermissionInput = {
+  origins?: Maybe<Array<Scalars['String']>>;
+  permissions?: Maybe<Array<Scalars['String']>>;
 };
 
-
-export type QueryExtensionArgs = {
-  id: Scalars['String'];
+export type Query = {
+  __typename?: 'Query';
+  browser?: Maybe<Browser>;
 };
 
 export type GetExtensionsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -44,13 +60,16 @@ export type GetExtensionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetExtensionsQuery = (
   { __typename?: 'Query' }
-  & { extensions: Array<(
-    { __typename?: 'Extension' }
-    & Pick<Extension, 'id' | 'name' | 'version' | 'icon' | 'enabled'>
-  )>, manifest: (
-    { __typename?: 'Extension' }
-    & Pick<Extension, 'id' | 'name' | 'version'>
-  ) }
+  & { browser?: Maybe<(
+    { __typename?: 'Browser' }
+    & { extensions: Array<(
+      { __typename?: 'Extension' }
+      & Pick<Extension, 'id' | 'name' | 'version' | 'icon' | 'enabled'>
+    )>, manifest: (
+      { __typename?: 'Extension' }
+      & Pick<Extension, 'id' | 'name' | 'version'>
+    ) }
+  )> }
 );
 
 export type GetExtensionQueryVariables = Exact<{
@@ -60,9 +79,13 @@ export type GetExtensionQueryVariables = Exact<{
 
 export type GetExtensionQuery = (
   { __typename?: 'Query' }
-  & { extension?: Maybe<(
-    { __typename?: 'Extension' }
-    & Pick<Extension, 'id' | 'name' | 'version' | 'icon' | 'enabled'>
+  & { browser?: Maybe<(
+    { __typename?: 'Browser' }
+    & Pick<Browser, 'permission'>
+    & { extension?: Maybe<(
+      { __typename?: 'Extension' }
+      & Pick<Extension, 'id' | 'name' | 'version' | 'icon' | 'enabled'>
+    )> }
   )> }
 );
 
@@ -77,28 +100,33 @@ export type RequestManagementPermissionMutation = (
 
 export const GetExtensions = gql`
     query getExtensions {
-  extensions {
-    id
-    name
-    version
-    icon
-    enabled
-  }
-  manifest {
-    id
-    name
-    version
+  browser {
+    extensions {
+      id
+      name
+      version
+      icon
+      enabled
+    }
+    manifest {
+      id
+      name
+      version
+    }
   }
 }
     `;
 export const GetExtension = gql`
     query getExtension($id: String!) {
-  extension(id: $id) {
-    id
-    name
-    version
-    icon
-    enabled
+  browser {
+    extension(id: $id) {
+      id
+      name
+      version
+      icon
+      enabled
+    }
+    permission(permission: {permissions: ["management"]})
   }
 }
     `;
@@ -110,17 +138,19 @@ export const RequestManagementPermission = gql`
 
 export const GetExtensionsDocument = gql`
     query getExtensions {
-  extensions {
-    id
-    name
-    version
-    icon
-    enabled
-  }
-  manifest {
-    id
-    name
-    version
+  browser {
+    extensions {
+      id
+      name
+      version
+      icon
+      enabled
+    }
+    manifest {
+      id
+      name
+      version
+    }
   }
 }
     `;
@@ -130,12 +160,15 @@ export const useGetExtensionsQuery = (config?: {
       }) => useQuery<GetExtensionsQuery, GetExtensionsQueryVariables>(GetExtensionsDocument, config);
 export const GetExtensionDocument = gql`
     query getExtension($id: String!) {
-  extension(id: $id) {
-    id
-    name
-    version
-    icon
-    enabled
+  browser {
+    extension(id: $id) {
+      id
+      name
+      version
+      icon
+      enabled
+    }
+    permission(permission: {permissions: ["management"]})
   }
 }
     `;

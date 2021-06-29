@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import extensionsSchema from './schemas/extensions'
+import browserSchema from './schemas/browser'
 
 export const initialSchema = gql`
   schema {
@@ -14,4 +14,4 @@ export const initialSchema = gql`
   }
 `
 
-export const typeDefs = [initialSchema, extensionsSchema]
+export const typeDefs = [initialSchema, browserSchema]

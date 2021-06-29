@@ -10,16 +10,16 @@ export const useInstalledExtensions = () => {
   const [requestManagementPermission] = useRequestManagementPermissionMutation()
 
   const extensions =
-    data?.extensions?.filter(extension => extension.enabled) ?? []
+    data?.browser?.extensions?.filter(extension => extension.enabled) ?? []
   const disabledExtensions =
-    data?.extensions?.filter(extension => !extension.enabled) ?? []
+    data?.browser?.extensions?.filter(extension => !extension.enabled) ?? []
 
   return {
     extensions,
     disabledExtensions,
     loading,
     error,
-    manifest: (data && data.manifest) || null,
+    manifest: data?.browser.manifest || null,
     requestManagementPermission,
     refetch,
   }

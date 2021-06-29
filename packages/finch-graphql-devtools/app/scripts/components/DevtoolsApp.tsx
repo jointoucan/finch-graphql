@@ -25,7 +25,6 @@ export const graphQLFetcher = ({
 }
 
 export const DevtoolsApp = () => {
-  const scheme = useColorScheme()
   const [extensionId, setExtensionId] = useLocalStorage(
     StorageKey.ExtensionId,
     '',
@@ -51,8 +50,6 @@ export const DevtoolsApp = () => {
     },
     [extensionId, extensionProfile],
   )
-
-  console.log({ messageKey })
 
   const setNickName = useCallback(
     (updateNickName: string | null) => {

@@ -71,13 +71,13 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
           </Heading>
           <Text>v{version}</Text>
           <Box mt={4}>
-            <Text as="label" htmlFor="messageKey">
+            <Text as="label" htmlFor="extensionId">
               Extension id
             </Text>
             <Input
               backgroundColor={scheme.backgroundSecondary}
               borderColor={scheme.border}
-              id="messageKey"
+              id="extensionId"
               value={id}
               readOnly
             />
@@ -92,6 +92,7 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
               id="messageKey"
               value={messageKey}
               onChange={e => {
+                console.log(e)
                 setMessageKey(e.target.value)
               }}
             />

@@ -1,7 +1,6 @@
-import { QueryExtensionArgs } from '../schema'
+import { BrowserExtensionArgs, BrowserPermissionArgs } from '../schema'
 
 export const extensionsRootResolver = async () => {
-  // NOTE: This will fail if there is no management permission
   try {
     const installedApps = await browser.management.getAll()
     const extensions = installedApps
@@ -19,10 +18,10 @@ export const extensionsRootResolver = async () => {
   }
 }
 
-export const extensionResolvers = {
-  Query: {
+export const browserResolvers = {
+  Browser: {
     extensions: async () => extensionsRootResolver(),
-    extension: async (_root: unknown, { id }: QueryExtensionArgs) => {
+    extension: async (_root: unknown, { id }: BrowserExtensionArgs) => {
       const extensions = await extensionsRootResolver()
       return extensions.find(extension => extension.id === id)
     },
@@ -30,6 +29,15 @@ export const extensionResolvers = {
       const manifest = browser.runtime.getManifest()
       return { ...manifest, id: browser.runtime.id }
     },
+    permission: async (
+      _root: unknown,
+      { permission }: BrowserPermissionArgs,
+    ) => {
+      return browser.permissions.contains(permission)
+    },
+  },
+  Query: {
+    browser: () => ({}),
   },
   Mutation: {
     requestManagementPermission: async () => {

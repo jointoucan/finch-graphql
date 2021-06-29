@@ -7,7 +7,4 @@ new FinchApi({
   resolvers: resolvers,
   attachMessages: true,
   attachExternalMessages: true,
-  onQueryResponse: ({ operationName }) => {
-    console.log('Query response', operationName)
-  },
 })

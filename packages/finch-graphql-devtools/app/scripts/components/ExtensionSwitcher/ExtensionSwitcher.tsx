@@ -37,11 +37,17 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
   const scheme = useColorScheme()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef()
-  const { data } = useGetExtensionQuery({
+  // TODO handle error state
+  const { data, loading } = useGetExtensionQuery({
     variables: { id: extensionId },
     skip: !extensionId,
   })
-  const extensionInfo = data?.extension
+  const extensionInfo = data?.browser?.extension
+  const hasManagementPermission = data?.browser?.permission ?? false
+
+  if (loading) {
+    return null
+  }
 
   return (
     <>
@@ -78,18 +84,24 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
         <DrawerOverlay />
         <DrawerContent>
           <DrawerBody p={0}>
-            {extensionInfo && (
-              <CurrentExtension
-                {...extensionInfo}
-                messageKey={messageKey}
-                setMessageKey={setMessageKey}
-                isConnected={isConnected}
-              />
+            {hasManagementPermission ? (
+              <>
+                {extensionInfo && (
+                  <CurrentExtension
+                    {...extensionInfo}
+                    messageKey={messageKey}
+                    setMessageKey={setMessageKey}
+                    isConnected={isConnected}
+                  />
+                )}
+                <ExtensionList
+                  currentExtensionId={extensionId}
+                  setExtensionId={setExtensionId}
+                />
+              </>
+            ) : (
+              <>No Permission UI: not implemented</>
             )}
-            <ExtensionList
-              currentExtensionId={extensionId}
-              setExtensionId={setExtensionId}
-            />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

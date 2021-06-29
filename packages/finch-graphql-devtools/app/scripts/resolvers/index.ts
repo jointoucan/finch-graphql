@@ -1,10 +1,3 @@
-import { extensionResolvers } from './extensions'
+import { browserResolvers } from './browser'
 
-export const resolvers = {
-  Query: {
-    ...extensionResolvers.Query,
-  },
-  Mutation: {
-    ...extensionResolvers.Mutation,
-  },
-}
+export const resolvers = [browserResolvers]

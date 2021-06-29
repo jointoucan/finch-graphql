@@ -9,10 +9,20 @@ export default gql`
     enabled: Boolean!
   }
 
-  extend type Query {
+  input PermissionInput {
+    origins: [String!]
+    permissions: [String!]
+  }
+
+  type Browser {
     extensions: [Extension!]!
     extension(id: String!): Extension
     manifest: Extension!
+    permission(permission: PermissionInput!): Boolean
+  }
+
+  extend type Query {
+    browser: Browser
   }
 
   extend type Mutation {
