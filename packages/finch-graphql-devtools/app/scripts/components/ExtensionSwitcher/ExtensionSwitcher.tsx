@@ -121,8 +121,10 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
                   fill={scheme.foreground}
                   icon={<InfoIcon />}
                   onClick={() => {
-                    // open docs
-                    // window.location.reload()
+                    window.open(
+                      'https://jointoucan.github.io/finch-graphql/docs/devtools',
+                      '_blank',
+                    )
                   }}
                   variant="outline"
                   borderColor={scheme.border}
