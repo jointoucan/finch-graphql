@@ -1,14 +1,30 @@
 query getExtensions {
-  extensions {
-    id
-    name
-    version
-    icon
+  browser {
+    extensions {
+      id
+      name
+      version
+      icon
+      enabled
+    }
+    manifest {
+      id
+      name
+      version
+    }
   }
-  manifest {
-    id
-    name
-    version
+}
+
+query getExtension($id: String!) {
+  browser {
+    extension(id: $id) {
+      id
+      name
+      version
+      icon
+      enabled
+    }
+    permission(permission: { permissions: ["management"] })
   }
 }
 

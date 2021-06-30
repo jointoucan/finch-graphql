@@ -1,9 +1,24 @@
 import { Image } from './Image'
 import { TabList, Tab, Box, IconButton, Tooltip } from '@chakra-ui/react'
-import { CircleIcon, RefreshIcon } from './Icons'
+import { CircleIcon, RefreshIcon, InfoIcon } from './Icons'
 import { useColorScheme } from '../hooks/useColorScheme'
+import { ExtensionSwitcher } from './ExtensionSwitcher'
 
-export const Header: React.FC<{ isRecording: boolean }> = ({ isRecording }) => {
+export const Header: React.FC<{
+  isRecording: boolean
+  isConnected: boolean
+  extensionId?: string
+  messageKey: string
+  setMessageKey: (messageKey: string) => void
+  setExtensionId: (extensionId: string) => void
+}> = ({
+  isRecording,
+  isConnected,
+  extensionId,
+  setMessageKey,
+  setExtensionId,
+  messageKey,
+}) => {
   const scheme = useColorScheme()
   return (
     <Box
@@ -13,6 +28,7 @@ export const Header: React.FC<{ isRecording: boolean }> = ({ isRecording }) => {
       backgroundColor={scheme.background}
       position="sticky"
       top="0"
+      zIndex="10"
       borderColor={scheme.border}
     >
       <TabList flex="1" color={scheme.foreground}>
@@ -34,27 +50,21 @@ export const Header: React.FC<{ isRecording: boolean }> = ({ isRecording }) => {
             <CircleIcon ml={2} fontSize="xx-small" fill="red.500" />
           ) : null}
         </Tab>
-        <Tab>Settings</Tab>
+        <Box flex="1" />
         <Box
-          flex="1"
+          flex="0"
           display="flex"
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Tooltip label="Refresh frame" openDelay={500}>
-            <IconButton
-              size="xs"
-              aria-label="Refresh frame"
-              mr={2}
-              fill={scheme.foreground}
-              icon={<RefreshIcon />}
-              onClick={() => {
-                window.location.reload()
-              }}
-              variant="outline"
-              borderColor={scheme.border}
-            />
-          </Tooltip>
+          <ExtensionSwitcher
+            isConnected={isConnected}
+            extensionId={extensionId}
+            setMessageKey={setMessageKey}
+            setExtensionId={setExtensionId}
+            messageKey={messageKey}
+          />
+          <Box pr={2} />
         </Box>
       </TabList>
     </Box>

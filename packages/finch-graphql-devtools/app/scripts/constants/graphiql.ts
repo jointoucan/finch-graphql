@@ -1,26 +1,17 @@
 export const DefaultQuery = `
-# Welcome to GraphiQL for Finch GraphQL
+# Welcome to Finch GraphiQL Devtools
+# 
+# This is a set of tools for debugging your extensions 
+# Finch GraphiQL Devtools. For more information please visit the docs
 #
-# GraphiQL is an in-browser tool for writing, validating, and
-# testing GraphQL queries. Try it out. 
-#
-# First you will need to connect you extension to Finch GraphiQL.
-# To do this head over to the setting tab and insert the extensionID
-# of your extension into the field. If you have a custom message key
-# pass that into the message key felid. 
-#
-# If you have not yet you will need to setup externally connects in
-# you extension, the Finch GraphiQL extensionID needs to be put into
-# the "ids" section.
-#
-# https://developer.chrome.com/docs/extensions/mv2/manifest/externally_connectable/
-#
-# query getExtensionInfo {
-#   browser {
-#     manifest {
-#       name
-#       version
-#     }
-#   }
-# }
-#`
+# https://jointoucan.github.io/finch-graphql/docs/devtools
+
+query getExtensionInfo {
+  browser {
+    manifest {
+      name
+      version
+    }
+  }
+}
+`

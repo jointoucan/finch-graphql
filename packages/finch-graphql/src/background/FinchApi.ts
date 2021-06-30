@@ -49,19 +49,22 @@ export class FinchApi {
       this.schema = applyMiddleware(this.schema, ...options.middleware);
     }
     this.context = context ?? { source: FinchMessageSource.Internal };
-    this.messageKey = messageKey;
+    this.messageKey = messageKey ?? FinchMessageKey.Generic;
     this.onQueryResponse = onQueryResponse;
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
     this.rules = validationRules;
-    this.devtools = new FinchDevtools({ autoListen: !disableDevtools });
+    this.devtools = new FinchDevtools({
+      autoListen: !disableDevtools,
+      messageKey: disableIntrospection ? undefined : this.messageKey,
+    });
 
     if (disableIntrospection) {
       this.rules.unshift(NoIntrospection);
     }
 
     const attachOptions = {
-      messageKey: this.messageKey ?? FinchMessageKey.Generic,
+      messageKey: this.messageKey,
     };
 
     if (attachMessages) {

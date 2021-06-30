@@ -4,7 +4,23 @@ import { FinchContextObj } from '../types';
 export enum FinchDevToolsMessageType {
   Start = 'start',
   Response = 'response',
+  RequestMessageKey = 'request message key',
+  MessageKey = 'message key',
+  HealthCheck = 'health check',
+  HealthCheckOk = 'health check ok',
 }
+
+export interface FinchRequestMessageKey {
+  type: FinchDevToolsMessageType.RequestMessageKey;
+}
+
+export interface FinchRequestHealthCheck {
+  type: FinchDevToolsMessageType.HealthCheck;
+}
+
+export type FinchDevtoolsIncomingMessage =
+  | FinchRequestMessageKey
+  | FinchRequestHealthCheck;
 
 export interface FinchStartMessage {
   type: FinchDevToolsMessageType;

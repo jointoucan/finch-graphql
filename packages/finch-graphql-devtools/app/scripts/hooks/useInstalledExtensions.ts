@@ -1,20 +1,19 @@
-import { useMutation, useQuery } from 'finch-graphql'
-import gql from 'graphql-tag'
-import {
-  useGetExtensionsQuery,
-  useRequestManagementPermissionMutation,
-} from '../schema'
+import { useGetExtensionsQuery } from '../schema'
 
 export const useInstalledExtensions = () => {
   const { data, loading, error, refetch } = useGetExtensionsQuery()
-  const [requestManagementPermission] = useRequestManagementPermissionMutation()
+
+  const extensions =
+    data?.browser?.extensions?.filter(extension => extension.enabled) ?? []
+  const disabledExtensions =
+    data?.browser?.extensions?.filter(extension => !extension.enabled) ?? []
 
   return {
-    extensions: (data && data.extensions) || [],
+    extensions,
+    disabledExtensions,
     loading,
     error,
-    manifest: (data && data.manifest) || null,
-    requestManagementPermission,
+    manifest: data?.browser.manifest || null,
     refetch,
   }
 }

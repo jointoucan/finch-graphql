@@ -6,11 +6,23 @@ export default gql`
     version: String!
     id: String!
     icon: String!
+    enabled: Boolean!
+  }
+
+  input PermissionInput {
+    origins: [String!]
+    permissions: [String!]
+  }
+
+  type Browser {
+    extensions: [Extension!]!
+    extension(id: String!): Extension
+    manifest: Extension!
+    permission(permission: PermissionInput!): Boolean
   }
 
   extend type Query {
-    extensions: [Extension!]!
-    manifest: Extension!
+    browser: Browser
   }
 
   extend type Mutation {
