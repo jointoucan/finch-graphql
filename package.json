@@ -15,6 +15,7 @@
   "name": "finch-graphql-packages",
   "scripts": {
     "build": "yarn workspace finch-graphql build",
-    "devtools": "yarn workspace finch-graphql-devtools dev chrome"
+    "devtools": "yarn workspace finch-graphql-devtools dev chrome",
+    "docs": "yarn workspace finch-docs start"
   }
 }
