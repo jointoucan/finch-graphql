@@ -42,8 +42,8 @@ const createConfig = async () => {
      */
     output: {
       path: paths.outputDirectory,
-      filename: 'scripts/[name].js',
-      chunkFilename: 'scripts/[id].chunk.js',
+      filename: '[name].js',
+      chunkFilename: '[id].chunk.js',
     },
     /**
      * Which extensions to resolve, currently supports typescript.
