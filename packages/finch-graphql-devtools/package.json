@@ -3,8 +3,8 @@
   "version": "1.5.0",
   "description": "Finch GraphQL devtools is an extension that will allow you to query a Finch GraphQL background process to be able to debug the schema, query, and mutate data in the extension.",
   "scripts": {
-    "dev": "webextension-toolbox dev",
-    "build": "webextension-toolbox build",
+    "dev": "node scripts/watch.js",
+    "build": "node scripts/build.js",
     "codegen": "graphql-codegen -c ./codegen.yml",
     "compile": "tsc --noEmit"
   },
@@ -15,10 +15,16 @@
     "@graphql-codegen/typescript-operations": "^1.18.0",
     "@types/firefox-webext-browser": "^82.0.0",
     "@types/uuid": "^8.3.0",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^6.3.2",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "string-replace-loader": "^3.0.3",
+    "ts-loader": "8.2.0",
     "typescript": "^4.3.2",
-    "webextension-toolbox": "3.0.0",
     "webextension-toolbox-typescript": "^1.0.3",
-    "webpack": "4"
+    "webpack": "4",
+    "webpackbar": "^5.0.0-3",
+    "zip-webpack-plugin": "^4.0.1"
   },
   "dependencies": {
     "@chakra-ui/icon": "^1.1.9",
@@ -39,6 +45,10 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-virtualized": "^9.22.3",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "webextension-polyfill": "^0.8.0",
+    "webpack": "4",
+    "webpack-browser-extension-plugin": "^1.1.0",
+    "webpack-webextension-plugin": "0.3.0"
   }
 }
