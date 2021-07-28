@@ -1,5 +1,5 @@
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
-import { createRequestEvent } from './createEvents';
+import { v4 } from 'uuid';
 import { isListeningOnDocument } from './isListeningOnDocument';
 import { FinchDocumentEventNames, FinchResponseEvent } from './types';
 
@@ -33,32 +33,41 @@ export const queryApiFromDocument = async <
       new Error('Finch is not currently listening for messages'),
     );
   }
-  const requestEvent = createRequestEvent(
-    options?.extensionId,
-    query,
-    variables,
-  );
-  const requestId = requestEvent.detail.requestId;
+
+  const requestId = v4();
 
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       reject(new Error('Finch request has timed out.'));
-      document.removeEventListener(FinchDocumentEventNames.Response, onMessage);
+      window.removeEventListener('message', onMessage);
     }, options?.timeout ?? DEFAULT_TIMEOUT);
     const onMessage = async (event: FinchResponseEvent) => {
       // Filter out other events that might be coming into the handler
-      if (event.detail.requestId !== requestId) {
+      if (
+        !event.data.type ||
+        event.data.type !== FinchDocumentEventNames.Response ||
+        event.data.requestId !== requestId
+      ) {
         return;
       }
       clearTimeout(timer);
       resolve({
-        data: event.detail.data as Query | null,
-        errors: event.detail.errors,
+        data: event.data.data as Query | null,
+        errors: event.data.errors,
       });
       // Unbind after we got a response
-      document.removeEventListener(FinchDocumentEventNames.Response, onMessage);
+      window.removeEventListener('message', onMessage);
     };
-    document.addEventListener(FinchDocumentEventNames.Response, onMessage);
-    document.dispatchEvent(requestEvent);
+    window.addEventListener('message', onMessage);
+    window.postMessage(
+      {
+        type: FinchDocumentEventNames.Request,
+        extensionId: options?.extensionId,
+        query,
+        variables,
+        requestId,
+      },
+      '*',
+    );
   });
 };
