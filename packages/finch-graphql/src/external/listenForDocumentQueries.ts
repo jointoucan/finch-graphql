@@ -52,7 +52,6 @@ export const listenForDocumentQueries = (options?: FinchQueryOptions) => {
     });
     sendResponse(event.data.requestId, resp.data, resp.errors);
   };
-  // document.addEventListener(FinchDocumentEventNames.Request, onMessage);
   window.addEventListener('message', onMessage);
   document.body.setAttribute('data-finch-listener', `${Date.now()}`);
   return () => {
