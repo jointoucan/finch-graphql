@@ -6,18 +6,24 @@ export enum FinchDocumentEventNames {
 }
 
 export interface FinchRequestEventProps {
+  type: FinchDocumentEventNames;
   query: DocumentNode | string;
   variables?: any;
   requestId: string;
   extensionId: string;
 }
 
-export type FinchRequestEvent = CustomEvent<FinchRequestEventProps>;
+export interface FinchRequestEvent extends MessageEvent {
+  data: FinchRequestEventProps;
+}
 
 export interface FinchResponseEventProps {
+  type: FinchDocumentEventNames;
   data: any;
   errors?: Array<GraphQLFormattedError>;
   requestId: string;
 }
 
-export type FinchResponseEvent = CustomEvent<FinchResponseEventProps>;
+export interface FinchResponseEvent extends MessageEvent {
+  data: FinchResponseEventProps;
+}
