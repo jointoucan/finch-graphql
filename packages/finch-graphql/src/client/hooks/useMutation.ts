@@ -24,6 +24,7 @@ export const useMutation = <Query, Variables>(
   const makeMutation = useCallback(
     async (argVars: Variables) => {
       setLoading(true);
+      setError(null);
       let resp: Response<Query> | null = null;
       try {
         resp = await client.mutate<Query, Variables>(query, argVars);
