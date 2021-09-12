@@ -14,8 +14,8 @@ jobs:
         run: npm install yarn --global
       - name: Yarn install
         run: yarn
-      - name: Build finch-graphql
-        run: yarn workspace finch-graphql build
+      - name: Build Modules
+        run: yarn lerna run build
       - uses: actions/cache@v2.1.6
         id: restore-build
         with:

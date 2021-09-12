@@ -43,8 +43,6 @@
     "graphql": "^15.4.0"
   },
   "dependencies": {
-    "@finch-graphql/browser-polyfill": "1.2.0",
-    "@finch-graphql/client": "1.2.0",
     "@graphql-tools/schema": "^7.1.2",
     "graphql-middleware": "^6.0.4"
   }
