@@ -2,8 +2,7 @@ import { GraphQLFormattedError } from 'graphql';
 import { getExtensionId } from '@finch-graphql/browser-polyfill';
 import { queryApi } from '../client';
 import { FinchQueryOptions } from '@finch-graphql/types';
-import { createResponseEvent } from './createEvents';
-import { FinchRequestEvent, FinchDocumentEventNames } from './types';
+import { FinchDocumentEventNames, FinchRequestEvent } from './types';
 
 /**
  * sendResponse a method to send a response through the document.
@@ -12,12 +11,18 @@ import { FinchRequestEvent, FinchDocumentEventNames } from './types';
  * @param errors the errors from the graphQL response
  */
 export const sendResponse = (
-  event: FinchRequestEvent,
+  requestId: string,
   data: any,
   errors: Array<GraphQLFormattedError>,
 ) => {
-  document.dispatchEvent(
-    createResponseEvent(event.detail.requestId, data, errors),
+  window.postMessage(
+    {
+      type: FinchDocumentEventNames.Response,
+      data,
+      errors,
+      requestId,
+    },
+    '*',
   );
 };
 
@@ -34,19 +39,23 @@ export const sendResponse = (
  */
 export const listenForDocumentQueries = (options?: FinchQueryOptions) => {
   const onMessage = async (event: FinchRequestEvent) => {
-    if (event.detail.extensionId !== getExtensionId()) {
+    if (
+      !event.data.type ||
+      event.data.type !== FinchDocumentEventNames.Request ||
+      event.data.extensionId !== getExtensionId()
+    ) {
       return true;
     }
-    const resp = await queryApi(event.detail.query, event.detail.variables, {
+    const resp = await queryApi(event.data.query, event.data.variables, {
       ...options,
       external: true,
     });
-    sendResponse(event, resp.data, resp.errors);
+    sendResponse(event.data.requestId, resp.data, resp.errors);
   };
-  document.addEventListener(FinchDocumentEventNames.Request, onMessage);
+  window.addEventListener('message', onMessage);
   document.body.setAttribute('data-finch-listener', `${Date.now()}`);
   return () => {
-    document.removeEventListener(FinchDocumentEventNames.Request, onMessage);
+    window.removeEventListener('message', onMessage);
     document.body.removeAttribute('data-finch-listener');
   };
 };

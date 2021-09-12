@@ -11,8 +11,7 @@
       "packages/finch-docs"
     ],
     "nohoist": [
-      "**/html-minifier-terser",
-      "**/webextension-toolbox"
+      "**/html-minifier-terser"
     ]
   },
   "dependencies": {
