@@ -1,6 +1,6 @@
 import { queryApi } from './client';
 import gql from 'graphql-tag';
-import { FinchMessageKey } from '../types';
+import { FinchMessageKey } from '@finch-graphql/types';
 
 describe('queryApi', () => {
   it('should send and message to the background script', async () => {

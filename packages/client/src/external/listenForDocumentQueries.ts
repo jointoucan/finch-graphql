@@ -1,7 +1,7 @@
 import { GraphQLFormattedError } from 'graphql';
-import { getExtensionId } from '../browser';
+import { getExtensionId } from '@finch-graphql/browser-polyfill';
 import { queryApi } from '../client';
-import { FinchQueryOptions } from '../types';
+import { FinchQueryOptions } from '@finch-graphql/types';
 import { createResponseEvent } from './createEvents';
 import { FinchRequestEvent, FinchDocumentEventNames } from './types';
 

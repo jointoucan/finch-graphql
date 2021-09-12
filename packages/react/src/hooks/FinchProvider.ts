@@ -1,5 +1,5 @@
 import { createElement, createContext, FC, useContext } from 'react';
-import { FinchClient } from '../FinchClient';
+import { FinchClient } from '@finch-graphql/client';
 
 interface FinchProviderProps {
   client: FinchClient;

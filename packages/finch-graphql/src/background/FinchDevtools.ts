@@ -1,5 +1,8 @@
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
-import { onConnectExternal, removeConnectExternalListener } from '../browser';
+import {
+  onConnectExternal,
+  removeConnectExternalListener,
+} from '@finch-graphql/browser-polyfill';
 import { FinchContextObj } from '../types';
 import {
   FinchStartMessage,

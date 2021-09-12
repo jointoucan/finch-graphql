@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { FinchMessageKey } from '../types';
+import { FinchMessageKey } from '@finch-graphql/types';
 import { isListeningOnDocument } from './isListeningOnDocument';
 import { listenForDocumentQueries } from './listenForDocumentQueries';
 import { queryApiFromDocument } from './queryApiFromDocument';

@@ -1,5 +1,5 @@
 {
-  "name": "finch-graphql",
+  "name": "@finch-graphql/client",
   "version": "1.2.0",
   "description": "Graphql api for your background script of a web extension",
   "main": "dist/index.js",
@@ -43,22 +43,15 @@
     "jest-webextension-mock": "^3.7.6",
     "kcd-scripts": "^8.0.2",
     "prettier": "^2.2.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
     "typescript": "^4.0.3"
   },
   "peerDependencies": {
-    "@graphql-tools/schema": "^7.1.2",
-    "graphql": "^15.4.0",
-    "react": "<=16.x"
+    "graphql": "^15.4.0"
   },
   "dependencies": {
     "@finch-graphql/browser-polyfill": "1.2.0",
-    "@finch-graphql/client": "1.2.0",
-    "@graphql-tools/schema": "^7.1.2",
-    "graphql-middleware": "^6.0.4",
+    "@finch-graphql/types": "1.2.0",
     "graphql-tag": "^2.11.0",
-    "use-deep-compare-effect": "^1.6.1",
     "uuid": "^8.3.2"
   }
 }

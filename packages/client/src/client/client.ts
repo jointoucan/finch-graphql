@@ -1,8 +1,12 @@
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import gql from 'graphql-tag';
-import { sendMessage } from '../browser';
+import { sendMessage } from '@finch-graphql/browser-polyfill';
 import { isListeningOnDocument, queryApiFromDocument } from '../external';
-import { GenericVariables, FinchMessageKey, FinchQueryOptions } from '../types';
+import {
+  GenericVariables,
+  FinchMessageKey,
+  FinchQueryOptions,
+} from '@finch-graphql/types';
 import { isDocumentNode } from '../utils';
 
 /**

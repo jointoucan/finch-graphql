@@ -20,7 +20,10 @@ import {
   FinchContextObj,
   FinchExecutionResults,
 } from '../types';
-import { addExternalMessageListener, addMessageListener } from '../browser';
+import {
+  addExternalMessageListener,
+  addMessageListener,
+} from '@finch-graphql/browser-polyfill';
 import { NoIntrospection } from './NoIntrospection';
 import { FinchDevtools } from './FinchDevtools';
 import { v4 } from 'uuid';

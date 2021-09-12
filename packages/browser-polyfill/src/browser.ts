@@ -1,4 +1,4 @@
-import { FinchMessage } from './types';
+import { FinchMessage } from '@finch-graphql/types';
 
 /**
  * addMessageListener adds a message event handler
