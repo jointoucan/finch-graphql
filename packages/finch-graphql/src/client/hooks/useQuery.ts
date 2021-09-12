@@ -22,6 +22,8 @@ export const useQuery = <Query, Variables>(
   const makeQuery = useCallback(
     async (argVars?: Variables) => {
       try {
+        // Clear out old error cache
+        setError(null);
         const resp = await client.query<Query, Variables>(
           query,
           // @ts-ignore variables are kinda weird

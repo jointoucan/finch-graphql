@@ -96,6 +96,44 @@ describe('useQuery', () => {
       type: FinchMessageKey.Generic,
     });
   });
+  it('should clear out any old error values on refetch', async () => {
+    const sendMessageMock = jest
+      .fn()
+      .mockImplementation((message, callback) => {
+        setTimeout(() => {
+          callback({ errors: [new Error('foo')] });
+        }, 0);
+      });
+    chrome.runtime.sendMessage = sendMessageMock;
+
+    const wrapper = renderHook(() => useQuery(testDoc, {}), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient(),
+        });
+      },
+    });
+
+    await wrapper.waitForNextUpdate();
+
+    // Original error
+    expect(wrapper.result.current.error.message).toBe('foo');
+
+    sendMessageMock.mockReset().mockImplementation((message, callback) => {
+      setTimeout(() => {
+        callback({ data: { foo: true } });
+      }, 0);
+    });
+
+    await act(async () => {
+      await wrapper.result.current.refetch();
+    });
+
+    // Error cache is cleared
+    expect(wrapper.result.current.error).toBe(null);
+  });
   it('wrapping it in a provider should allow for external calls', async () => {
     const sendMessageMock = jest
       .fn()
