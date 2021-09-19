@@ -1,3 +1,3 @@
-import { browserResolvers } from './browser'
+import { browserResolvers } from './browser';
 
-export const resolvers = [browserResolvers]
+export const resolvers = [browserResolvers];

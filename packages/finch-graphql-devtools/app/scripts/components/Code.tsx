@@ -1,9 +1,9 @@
-import React, { FC } from 'react'
-import { Box } from '@chakra-ui/react'
-import { useColorScheme } from '../hooks/useColorScheme'
+import React, { FC } from 'react';
+import { Box } from '@chakra-ui/react';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 export const Code: FC<{ code: string }> = ({ code }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   return (
     <Box as="pre" p={4} rounded={8} mb={3} overflow="scroll">
       <Box
@@ -15,5 +15,5 @@ export const Code: FC<{ code: string }> = ({ code }) => {
         {code}
       </Box>
     </Box>
-  )
-}
+  );
+};

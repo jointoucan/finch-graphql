@@ -1,1 +1,1 @@
-export { ExtensionSwitcher } from './ExtensionSwitcher'
+export { ExtensionSwitcher } from './ExtensionSwitcher';

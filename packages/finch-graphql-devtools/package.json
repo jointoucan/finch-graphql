@@ -6,7 +6,8 @@
     "dev": "node scripts/watch.js",
     "build": "node scripts/build.js",
     "codegen": "graphql-codegen -c ./codegen.yml",
-    "compile": "tsc --noEmit"
+    "compile": "tsc --noEmit",
+    "test": "echo \"No test in the devtools\""
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.21.5",

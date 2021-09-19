@@ -9,7 +9,10 @@
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "serve": "docusaurus serve",
-    "clear": "docusaurus clear"
+    "clear": "docusaurus clear",
+    "test": "echo \"No test in docs\"",
+    "lint": "echo \"No lint in docs\"",
+    "compile": "echo \"No compile in docs\""
   },
   "dependencies": {
     "@docusaurus/core": "2.0.0-alpha.74",

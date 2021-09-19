@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export default gql`
   type Extension {
@@ -28,4 +28,4 @@ export default gql`
   extend type Mutation {
     requestManagementPermission: Boolean!
   }
-`
+`;

@@ -5,4 +5,4 @@ export const StorageKey = {
   GraphiQLQuery: 'graphiql:query',
   GraphiQLVariables: 'graphiql:variables',
   ExtensionProfilePrefix: 'finch:profile:',
-}
+};

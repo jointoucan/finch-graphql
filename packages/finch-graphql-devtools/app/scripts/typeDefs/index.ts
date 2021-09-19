@@ -1,5 +1,5 @@
-import gql from 'graphql-tag'
-import browserSchema from './schemas/browser'
+import gql from 'graphql-tag';
+import browserSchema from './schemas/browser';
 
 export const initialSchema = gql`
   schema {
@@ -12,6 +12,6 @@ export const initialSchema = gql`
   type Mutation {
     _: Boolean
   }
-`
+`;
 
-export const typeDefs = [initialSchema, browserSchema]
+export const typeDefs = [initialSchema, browserSchema];

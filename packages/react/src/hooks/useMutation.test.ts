@@ -1,10 +1,10 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import gql from 'graphql-tag';
-import { FinchMessageKey } from '../../types';
+import { FinchMessageKey } from '@finch-graphql/types';
 import { FinchProvider } from './FinchProvider';
 import { useMutation } from './useMutation';
-import { FinchClient } from '../FinchClient';
+import { FinchClient } from '@finch-graphql/client';
 
 const testDoc = gql`
   mutation foo {

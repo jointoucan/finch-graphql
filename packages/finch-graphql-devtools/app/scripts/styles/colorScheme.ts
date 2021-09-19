@@ -1,26 +1,26 @@
 export interface ColorScheme {
-  foreground: string
-  foregroundSecondary: string
-  background: string
-  backgroundSecondary: string
-  highlight: string
-  highlightSecondary: string
-  border: string
-  scheme: 'dark' | 'light'
+  foreground: string;
+  foregroundSecondary: string;
+  background: string;
+  backgroundSecondary: string;
+  highlight: string;
+  highlightSecondary: string;
+  border: string;
+  scheme: 'dark' | 'light';
   // Editor colors
-  keyword: string
-  definition: string
-  punctuation: string
-  str: string
-  builtin: string
-  property: string
-  variable: string
-  atom: string
-  attribute: string
-  number: string
-  matchingBracket: string
-  invalidChar: string
-  comment: string
+  keyword: string;
+  definition: string;
+  punctuation: string;
+  str: string;
+  builtin: string;
+  property: string;
+  variable: string;
+  atom: string;
+  attribute: string;
+  number: string;
+  matchingBracket: string;
+  invalidChar: string;
+  comment: string;
   // Needs cursor, highlight colors
 }
 
@@ -73,4 +73,4 @@ export const colorScheme: Record<'dark' | 'light', ColorScheme> = {
     invalidChar: 'red.500',
     comment: 'gray.300',
   },
-}
+};

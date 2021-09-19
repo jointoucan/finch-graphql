@@ -21,6 +21,9 @@
   "scripts": {
     "build": "yarn workspace finch-graphql build",
     "devtools": "yarn workspace finch-graphql-devtools dev chrome",
-    "docs": "yarn workspace finch-docs start"
+    "docs": "yarn workspace finch-docs start",
+    "test": "yarn lerna exec \"yarn test\"",
+    "compile": "yarn lerna exec \"yarn compile\"",
+    "lint": "eslint -c ./.eslintrc.js **/{src,app}/**/*.ts"
   }
 }

@@ -1,9 +1,9 @@
-import { extendTheme, ThemeConfig } from '@chakra-ui/react'
+import { extendTheme, ThemeConfig } from '@chakra-ui/react';
 
 const config: ThemeConfig = {
   initialColorMode: 'light',
   useSystemColorMode: true,
-}
+};
 
 const colors = {
   teal: {
@@ -30,6 +30,6 @@ const colors = {
     400: '#323232',
     500: '#161616',
   },
-}
+};
 
-export const theme = extendTheme({ config, colors })
+export const theme = extendTheme({ config, colors });

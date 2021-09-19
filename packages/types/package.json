@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "yarn build",
-    "test": "jest",
+    "test": "echo \"No tests in types\"",
     "lint": "eslint -c ./.eslintrc.js ./src/**/*.ts"
   },
   "devDependencies": {

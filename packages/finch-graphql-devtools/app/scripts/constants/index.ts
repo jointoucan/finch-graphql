@@ -1,2 +1,2 @@
-export * from './graphiql'
-export * from './storage'
+export * from './graphiql';
+export * from './storage';
