@@ -40,7 +40,5 @@ jobs:
         run: yarn lint
       - name: Test Code
         run: yarn test
-      - name: Compile Code
-        run: yarn compile
-      - name: Test build
-        run: yarn build
+      - name: Test compile devtools
+        run: yarn workspace finch-graphql-devtools compile
