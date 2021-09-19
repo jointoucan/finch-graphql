@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "echo \"No build in codegen\"",
-    "test": "echo \"No test in codegen\""
+    "test": "echo \"No test in codegen\"",
+    "compile": "echo \"No compile in codegen\""
   }
 }
