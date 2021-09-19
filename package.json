@@ -7,6 +7,7 @@
       "packages/client",
       "packages/react",
       "packages/finch-graphql",
+      "packages/finch-typescript-codegen",
       "packages/finch-graphql-devtools",
       "packages/finch-docs"
     ],
@@ -19,7 +20,7 @@
   },
   "name": "finch-graphql-packages",
   "scripts": {
-    "build": "yarn workspace finch-graphql build",
+    "build": "yarn lerna exec \"yarn build\"",
     "devtools": "yarn workspace finch-graphql-devtools dev chrome",
     "docs": "yarn workspace finch-docs start",
     "test": "yarn lerna exec \"yarn test\"",

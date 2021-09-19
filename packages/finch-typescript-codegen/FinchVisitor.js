@@ -1,23 +1,24 @@
 /* eslint-disable no-underscore-dangle */
-const { visit, concatAST } = require("graphql");
+const { visit, concatAST } = require('graphql');
 const {
   ClientSideBaseVisitor,
   DocumentMode,
   getConfigValue,
-} = require("@graphql-codegen/visitor-plugin-common");
-const { pascalCase } = require("pascal-case");
-const autoBind = require("auto-bind");
+} = require('@graphql-codegen/visitor-plugin-common');
+const { pascalCase } = require('pascal-case');
+const autoBind = require('auto-bind');
 
 class FinchVisitor extends ClientSideBaseVisitor {
   constructor(schema, fragments, rawConfig, documents) {
     super(schema, fragments, rawConfig, {
       documentMode: DocumentMode.graphQLTag,
-      errorType: getConfigValue(rawConfig.errorType, "unknown"),
+      errorType: getConfigValue(rawConfig.errorType, 'unknown'),
       exposeQueryKeys: getConfigValue(rawConfig.exposeQueryKeys, false),
+      withHooks: getConfigValue(rawConfig.withHooks, false),
     });
     this._externalImportPrefix = this.config.importOperationTypesFrom
       ? `${this.config.importOperationTypesFrom}.`
-      : "";
+      : '';
     this._documents = documents;
 
     autoBind(this);
@@ -37,8 +38,9 @@ class FinchVisitor extends ClientSideBaseVisitor {
 
     return [
       ...baseImports,
-      `import { useQuery, useMutation } from 'finch-graphql';`,
-    ];
+      this.config.withHooks &&
+        `import { useQuery, useMutation } from '@finch-graphql/react';`,
+    ].filter(x => x);
   }
 
   buildOperation(
@@ -46,26 +48,30 @@ class FinchVisitor extends ClientSideBaseVisitor {
     documentVariableName,
     operationType,
     operationResultType,
-    operationVariablesTypes
+    operationVariablesTypes,
   ) {
     const operationName = this.convertName(
-      (node.name && node.name.value) || "",
+      (node.name && node.name.value) || '',
       {
         suffix: pascalCase(operationType),
         useTypesPrefix: false,
-      }
+      },
     );
 
-    if (operationType === "Query") {
+    if (!this.config.withHooks) {
+      return null;
+    }
+
+    if (operationType === 'Query') {
       return `export const use${operationName} = (config?: {
         variables?: ${operationVariablesTypes};
         skip?: Boolean;
       }) => use${operationType}<${operationResultType}, ${operationVariablesTypes}>(${documentVariableName}, config);`;
     }
-    if (operationType === "Mutation") {
+    if (operationType === 'Mutation') {
       return `export const use${operationName} = () => use${operationType}<${operationResultType}, ${operationVariablesTypes}>(${documentVariableName});`;
     }
-    if (operationType === "Subscription") {
+    if (operationType === 'Subscription') {
       // eslint-disable-next-line no-console
       console.warn(`Plugin for "finch-graphql" does not support subscriptions`);
     }
@@ -75,7 +81,7 @@ class FinchVisitor extends ClientSideBaseVisitor {
 }
 
 const plugin = (schema, documents, config) => {
-  const allAst = concatAST(documents.map((v) => v.document));
+  const allAst = concatAST(documents.map(v => v.document));
 
   const allFragments = [];
 
@@ -86,8 +92,8 @@ const plugin = (schema, documents, config) => {
     prepend: [...visitor.getImports()],
     content: [
       visitor.fragments,
-      ...visitorResult.definitions.filter((t) => typeof t === "string"),
-    ].join("\n"),
+      ...visitorResult.definitions.filter(t => typeof t === 'string'),
+    ].join('\n'),
   };
 };
 

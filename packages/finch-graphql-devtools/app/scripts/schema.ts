@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { useQuery, useMutation } from 'finch-graphql';
+import { useQuery, useMutation } from '@finch-graphql/react';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];

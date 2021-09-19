@@ -17,8 +17,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "yarn build",
-    "test": "jest",
-    "lint": "eslint -c ./.eslintrc.js ./src/**/*.ts"
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.1",

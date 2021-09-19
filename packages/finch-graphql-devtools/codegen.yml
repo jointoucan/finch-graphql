@@ -7,3 +7,5 @@ generates:
       - typescript-operations
       - typescript-document-nodes
       - finch-typescript-codegen
+    config:
+      withHooks: true # Generate hooks

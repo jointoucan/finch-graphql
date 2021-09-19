@@ -1,20 +1,17 @@
-import { useEffect, useState } from 'react'
-import { FinchDevtools } from 'finch-graphql'
-import {
-  FinchDevtoolsIncomingMessage,
-  FinchDevtoolsMessage,
-} from '../components/MessageViewer/types'
+import { useEffect, useState } from 'react';
+import { FinchDevtools } from 'finch-graphql';
+import { FinchDevtoolsIncomingMessage } from '../components/MessageViewer/types';
 
 interface PortOptions {
-  extensionId: string
-  portName?: string
-  onMessage: (message: FinchDevtoolsIncomingMessage) => void
-  dependencies?: any[]
+  extensionId: string;
+  portName?: string;
+  onMessage: (message: FinchDevtoolsIncomingMessage) => void;
+  dependencies?: any[];
 }
 
-type MaybePort = chrome.runtime.Port | browser.runtime.Port | null
+type MaybePort = chrome.runtime.Port | browser.runtime.Port | null;
 
-const DEFAULT_TIMEOUT = 1000
+const DEFAULT_TIMEOUT = 1000;
 
 /**
  * usePort is a hook that connects to an external extensions port, and if it fails
@@ -31,24 +28,24 @@ export const usePort = ({
   dependencies = [],
   onMessage,
 }: PortOptions): MaybePort => {
-  const [currentPort, setCurrentPort] = useState<MaybePort>(null)
+  const [currentPort, setCurrentPort] = useState<MaybePort>(null);
 
   useEffect(() => {
     if (!extensionId) {
-      return () => {}
+      return () => {};
     }
     /**
      * isMounted is a variable that helps us indicate if the current effect is mounted
      */
-    let isMounted = true
+    let isMounted = true;
     /**
      * timer is a variable that hold the current timeout, so we can clean it up on un-mount
      */
-    let timer = 0
+    let timer = 0;
     /**
      * thisPort is a scoped port that we use to disconnect any old connection on un-mount of the effect.
      */
-    let thisPort: MaybePort = null
+    let thisPort: MaybePort = null;
     /**
      * connectPort is a function that will recursively call itself to attempt the reconnect of a
      * port.
@@ -56,15 +53,15 @@ export const usePort = ({
      * @param timeoutChanged a function that will receive the latest timeout to reconnect, this is used to be able to cleanup the timeout on unmount.
      */
     const connectPort = (
-      onMessage: (message: FinchDevtoolsIncomingMessage) => void,
+      onPortMessage: (message: FinchDevtoolsIncomingMessage) => void,
       timeoutChanged: (timeout: number) => void,
     ) => {
       try {
         const port = browser.runtime.connect(extensionId, {
           name: portName,
-        })
-        let timestamp = 0
-        thisPort = port
+        });
+        let timestamp = 0;
+        thisPort = port;
 
         /**
          * We set the current port after a small timeout to avoid flicking of UI when
@@ -72,10 +69,10 @@ export const usePort = ({
          */
         const connectedTimeout = window.setTimeout(() => {
           if (!isMounted) {
-            return
+            return;
           }
-          setCurrentPort(port)
-        }, 300)
+          setCurrentPort(port);
+        }, 300);
 
         /**
          * This listens for the background to disconnect from the port. If the extension does not establish a
@@ -83,38 +80,38 @@ export const usePort = ({
          */
         port.onDisconnect.addListener(() => {
           if (!isMounted) {
-            return
+            return;
           }
-          clearTimeout(connectedTimeout)
+          clearTimeout(connectedTimeout);
           timestamp = window.setTimeout(() => {
-            console.warn(`Reattempting reconnect to [${extensionId}]`)
-            connectPort(onMessage, timeoutChanged)
-          }, DEFAULT_TIMEOUT)
-          timeoutChanged(timestamp)
-          setCurrentPort(null)
-        })
+            console.warn(`Reattempting reconnect to [${extensionId}]`);
+            connectPort(onPortMessage, timeoutChanged);
+          }, DEFAULT_TIMEOUT);
+          timeoutChanged(timestamp);
+          setCurrentPort(null);
+        });
         /**
          * This is the onMessage event binding.
          */
-        port.onMessage.addListener(onMessage)
+        port.onMessage.addListener(onPortMessage);
       } catch (e) {
         // This will throw on a bad extension id
       }
-    }
+    };
     connectPort(onMessage, currentTimer => {
-      timer = currentTimer
-    })
+      timer = currentTimer;
+    });
     /**
      * cleanup of the effect, and if we have a scoped port we tear that down too.
      */
     return () => {
-      isMounted = false
-      clearTimeout(timer)
+      isMounted = false;
+      clearTimeout(timer);
       if (thisPort) {
-        thisPort.disconnect()
+        thisPort.disconnect();
       }
-    }
-  }, [extensionId, ...dependencies])
+    };
+  }, [extensionId, ...dependencies]);
 
-  return currentPort
-}
+  return currentPort;
+};
