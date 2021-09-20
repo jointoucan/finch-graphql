@@ -1,73 +1,73 @@
 module.exports = {
-  title: "Finch GraphQL",
-  tagline: "Communication for modern extensions",
-  url: "https://jointoucan.github.io/finch-graphql/",
-  baseUrl: "/finch-graphql/",
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.svg",
-  organizationName: "jointoucan", // Usually your GitHub org/user name.
-  projectName: "finch-graphql", // Usually your repo name.
+  title: 'Finch GraphQL',
+  tagline: 'Communication for modern extensions',
+  url: 'https://jointoucan.github.io/finch-graphql/',
+  baseUrl: '/finch-graphql/',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+  favicon: 'img/favicon.svg',
+  organizationName: 'jointoucan', // Usually your GitHub org/user name.
+  projectName: 'finch-graphql', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: "Finch GraphQL",
+      title: 'Finch GraphQL',
       logo: {
-        alt: "Finch",
-        src: "img/logo.svg",
+        alt: 'Finch',
+        src: 'img/logo.svg',
       },
       items: [
         {
-          to: "docs/",
-          activeBasePath: "docs",
-          label: "Docs",
-          position: "left",
+          to: 'docs/',
+          activeBasePath: 'docs',
+          label: 'Docs',
+          position: 'left',
         },
         {
-          href: "https://github.com/jointoucan/finch-graphql",
-          label: "GitHub",
-          position: "right",
+          href: 'https://github.com/jointoucan/finch-graphql',
+          label: 'GitHub',
+          position: 'right',
         },
       ],
     },
     footer: {
-      style: "light",
+      style: 'light',
       links: [
         {
-          title: "Documentation",
+          title: 'Documentation',
           items: [
             {
-              label: "Concepts",
-              to: "/docs/how-it-works",
+              label: 'Concepts',
+              to: '/docs/how-it-works',
             },
             {
-              label: "Setup API",
-              to: "/docs/",
+              label: 'Setup API',
+              to: '/docs/',
             },
             {
-              label: "Setup client",
-              to: "/docs/client-setup",
+              label: 'Setup client',
+              to: '/docs/client-setup',
             },
           ],
         },
         {
-          title: "Integrations",
+          title: 'Integrations',
           items: [
             {
-              label: "Devtools",
-              to: "/docs/devtools",
+              label: 'Devtools',
+              to: '/docs/devtools',
             },
             {
-              label: "Typescript codegen",
-              to: "/docs/typescript-codegen",
+              label: 'Typescript codegen',
+              to: '/docs/typescript-codegen',
             },
           ],
         },
         {
-          title: "Examples",
+          title: 'Examples',
           items: [
             {
-              label: "Finch Bookmarks",
-              to: "https://github.com/jcblw/finch-bookmarks",
+              label: 'Finch Bookmarks',
+              to: 'https://github.com/jcblw/finch-bookmarks',
             },
           ],
         },
@@ -77,16 +77,16 @@ module.exports = {
   },
   presets: [
     [
-      "@docusaurus/preset-classic",
+      '@docusaurus/preset-classic',
       {
         docs: {
-          sidebarPath: require.resolve("./sidebars.js"),
+          sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            "https://github.com/jointoucan/finch-graphql/edit/master/packages/finch-docs/",
+            'https://github.com/jointoucan/finch-graphql/edit/master/packages/finch-docs/',
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: require.resolve('./src/css/custom.css'),
         },
       },
     ],
