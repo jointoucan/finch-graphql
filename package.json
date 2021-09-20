@@ -6,10 +6,10 @@
       "packages/browser-polyfill",
       "packages/client",
       "packages/react",
-      "packages/finch-graphql",
+      "packages/api",
       "packages/finch-typescript-codegen",
-      "packages/finch-graphql-devtools",
-      "packages/finch-docs"
+      "packages/devtools",
+      "packages/docs"
     ],
     "nohoist": [
       "**/html-minifier-terser"
