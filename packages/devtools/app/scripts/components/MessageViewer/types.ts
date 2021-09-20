@@ -1,6 +1,6 @@
-import { FinchDevToolsMessageType } from 'finch-graphql/dist/background/types';
+import { FinchDevToolsMessageType } from '@finch-graphql/api';
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
-import { FinchContextObj } from '../../../../../finch-graphql/dist';
+import { FinchContextObj } from '@finch-graphql/api';
 
 export type FinchDevtoolsIncomingMessage =
   | {
