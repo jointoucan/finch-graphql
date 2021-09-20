@@ -4,14 +4,14 @@ title: Client Setup
 sidebar_label: Setup client scripts
 ---
 
-The client represents content, popover or any of the other page scripts that are created internally in the extension. These scripts have a relatively small amount of setup needed because they are already connected with the background script.
+The client represents content, popover or any of the other page scripts that are created internally in the extension. These scripts have a relatively small amount of setup needed because they are already connected with the background script. To install run `npm install @finch-graphql/client --save`.
 
 ## Configuring your client
 
 Finch GraphQL has a FinchClient class that is the client version of the FinchApi class. This allows you to configure your client to include things like custom message keys and caching.
 
 ```typescript
-import { FinchClient, QueryCache } from "finch-graphql";
+import { FinchClient, QueryCache } from '@finch-graphql/client';
 
 const cache = new QueryCache();
 // Cache is optional
@@ -23,8 +23,8 @@ export const client = new FinchClient({ cache });
 To be able to get information from the background script you would need to write a GraphQL query, and then use the **client** method to pull that information from the GraphQL API.
 
 ```typescript
-import { client } from "./finch-client";
-import gql from "graphql-tag";
+import { client } from './finch-client';
+import gql from 'graphql-tag';
 
 const GetBrowserPermissionDoc = gql`
   query getBrowserPermission($input: PermissionsInput) {
@@ -36,7 +36,7 @@ const GetBrowserPermissionDoc = gql`
 
 (async function main() {
   const resp = await client.query(GetBrowserPermissionDoc, {
-    input: { permissions: ["geolocation"] },
+    input: { permissions: ['geolocation'] },
   });
 
   if (resp.data?.browser?.permissions) {
@@ -49,7 +49,7 @@ There is also a very similar method that will allow you to make mutations agains
 
 ```typescript
 await client.mutate(RequestPermissionDoc, {
-  input: { permissions: ["geolocation"] },
+  input: { permissions: ['geolocation'] },
 });
 ```
 
@@ -61,7 +61,7 @@ If you have a custom message key in your API then you can pass it to the constru
 
 ```typescript
 new FinchClient({
-  messageKey: "secret",
+  messageKey: 'secret',
 });
 ```
 
@@ -75,7 +75,7 @@ const client = new FinchClient({
 });
 
 const unsubscribe = client.subscribe(doc, variables, () => {
-  console.log("Ive got an update");
+  console.log('Ive got an update');
 });
 ```
 
@@ -90,7 +90,7 @@ Finch GraphQL comes packaged with React Hooks. This makes it super simple to sta
 The FinchClient can then be passed to the **FinchProvider** when using the client with React. This makes the client available to all of the other hooks in this section.
 
 ```typescript
-import { FinchProvider, FinchClient } from "finch-graphql";
+import { FinchProvider, FinchClient } from '@finch-graphql/react';
 
 const client = new FinchClient();
 

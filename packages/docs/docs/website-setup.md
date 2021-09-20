@@ -29,7 +29,7 @@ If you are planning support more browsers you will need to setup a script that w
 To setup the proxy all you need to do is listen for documents events. Finch GraphQL has a helper method to do that.
 
 ```typescript
-import { listenForDocumentQueries } from "finch-graphql";
+import { listenForDocumentQueries } from '@finch-graphql/client';
 
 listenForDocumentQueries();
 ```
@@ -57,23 +57,25 @@ Your website will need to have `finch-graphql` installed to be able to communica
 > You will need to know the ID of your extension, on all platforms, to be able to query the extension externally. You can get this info by running something like `browser.runtime.id`.
 
 ```typescript
-import { FinchClient } from "finch-graphql";
+import { FinchClient } from '@finch-graphql/client';
 
 const queryDoc = `query test { foo }`;
 const variables = {};
-const client = new FinchClient({ id: "<your extension id>" });
+const client = new FinchClient({ id: '<your extension id>' });
 
 const resp = await client.query(queryDoc, variables);
 ```
 
 #### Usage with React
 
+You will need the `@finch-graphql/react` package to use the React integration.
+
 When using the React hooks you need to be able to setup the `FinchProvider` with the extension id.
 
 ```typescript
-import { FinchProvider, FinchClient } from "finch-graphql";
+import { FinchProvider, FinchClient } from '@finch-graphql/react';
 
-const client = new FinchClient({ id: "<your extension id>" });
+const client = new FinchClient({ id: '<your extension id>' });
 
 const MyApp = () => {
   return (

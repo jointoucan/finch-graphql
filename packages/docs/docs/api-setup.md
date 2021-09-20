@@ -2,7 +2,7 @@
 id: api-setup
 title: API Setup
 sidebar_label: Setup background API
-slug: "/"
+slug: '/'
 ---
 
 ## Initialize Finch Api
@@ -10,15 +10,15 @@ slug: "/"
 The **FinchApi** class is a class that allows you to create an executable graphql schema. It is modeled to look just like the **ApolloServer** class. The only required properties in the options are typeDefs and resolvers.
 
 ```typescript
-import { FinchApi } from 'finch-graphql'
-import { typeDefs } from './typeDefs'
-import { resolvers } from './resolvers'
+import { FinchApi } from '@finch-graphql/api';
+import { typeDefs } from './typeDefs';
+import { resolvers } from './resolvers';
 
 // Create the executable schema
 const api = new FinchApi({
   typeDefs,
   resolver,
-})
+});
 ```
 
 ### TypeDefs
@@ -26,7 +26,7 @@ const api = new FinchApi({
 **TypeDefs** are schemas for the GraphQL api. These can be a GraphQL document or and array of GraphQL documents. These help you define what the graph contracts of your GraphQL api.
 
 ```typescript
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 const browserSchema = gql`
   input PermissionsInput {
@@ -41,7 +41,7 @@ const browserSchema = gql`
   type Query {
     browser: Browser!
   }
-`
+`;
 
 export const typeDefs = [browserSchema];
 ```
@@ -52,7 +52,7 @@ You can learn more about what can go into a schema in the [official GraphQL docs
 
 ### Resolvers
 
-Resolvers are functions that can be executed in the graph that will allow your to asynchronously query or mutate data. This is the same shape as you would have setting up resolvers in **ApolloServer**. 
+Resolvers are functions that can be executed in the graph that will allow your to asynchronously query or mutate data. This is the same shape as you would have setting up resolvers in **ApolloServer**.
 
 ```typescript
 const browserResolvers = {
@@ -85,23 +85,22 @@ const api = new FinchApi({
   typeDefs,
   resolver,
   // auto attach messages
-  attachMessages: true 
-})
+  attachMessages: true,
+});
 ```
 
 Finch GraphQL has a built in way to attach messages. In the example above we pass **attachMessages** as _true_ to be able to auto attach messages to the browser messaging API. For projects with existing messages you will probably want to avoid this because it may interfere with responses to other messages. There is another way you can attach to the messaging API without interfering.
 
 ```typescript
-import { FinchMessageKey } from 'finch-graphql'
-import { api } from './graphql-api'
+import { FinchMessageKey } from '@finch-graphql/api';
+import { api } from './graphql-api';
 
 browser.runtime.onMessage.addListener(message => {
   if (message.type === FinchMessageKey.Generic) {
-    return api.onMessage(message)
+    return api.onMessage(message);
   }
   // ... do other message stuff
-}, [])
+}, []);
 ```
 
 This will allow you to have your custom messages working properly and be able to use Finch GraphQL as well.
-
