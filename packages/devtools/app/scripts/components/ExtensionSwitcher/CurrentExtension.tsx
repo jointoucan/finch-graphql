@@ -1,16 +1,15 @@
-import { Box, Heading, Input, Text } from '@chakra-ui/react'
-import { FinchMessageKey } from 'finch-graphql'
-import { FC } from 'react'
-import { useColorScheme } from '../../hooks/useColorScheme'
-import { CircleIcon } from '../Icons'
+import { Box, Heading, Text } from '@chakra-ui/react';
+import { FC } from 'react';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { CircleIcon } from '../Icons';
 
 interface CurrentExtensionProps {
-  id: string
-  name: string
-  version: string
-  icon?: string
-  enabled: boolean
-  isConnected: boolean
+  id: string;
+  name: string;
+  version: string;
+  icon?: string;
+  enabled: boolean;
+  isConnected: boolean;
 }
 
 export const CurrentExtension: FC<CurrentExtensionProps> = ({
@@ -20,7 +19,7 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
   isConnected,
   children,
 }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   return (
     <Box position="sticky" top={0} zIndex={10}>
       <Box
@@ -70,5 +69,5 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
         </Box>
       </Box>
     </Box>
-  )
-}
+  );
+};

@@ -1,67 +1,67 @@
-import { queryApi, FinchMessageKey } from 'finch-graphql'
-import { useMemo, useState } from 'react'
-import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react'
-import GraphiQL, { Fetcher } from 'graphiql'
-import { Header } from './Header'
-import { StorageKey, DefaultQuery } from '../constants'
-import { useLocalStorage } from '../hooks/useLocalStorage'
-import { MessagesViewer } from './MessageViewer'
-import { useColorScheme } from '../hooks/useColorScheme'
-import { FinchDevtoolsMessage } from './MessageViewer/types'
-import { PortConnection } from './PortConnection'
-import { useCallback } from 'react'
+import { queryApi } from '@finch-graphql/react';
+import { FinchMessageKey } from '@finch-graphql/types';
+import { useMemo, useState } from 'react';
+import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react';
+import GraphiQL, { Fetcher } from 'graphiql';
+import { Header } from './Header';
+import { StorageKey, DefaultQuery } from '../constants';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { MessagesViewer } from './MessageViewer';
+import { FinchDevtoolsMessage } from './MessageViewer/types';
+import { PortConnection } from './PortConnection';
+import { useCallback } from 'react';
 
 export const graphQLFetcher = ({
   messageKey,
   extensionId,
 }: {
-  messageKey: string
-  extensionId: string
+  messageKey: string;
+  extensionId: string;
 }): Fetcher => async ({ query, variables }) => {
   return queryApi(query, variables || {}, {
     messageKey,
     id: extensionId,
-  })
-}
+  });
+};
 
 export const DevtoolsApp = () => {
   const [extensionId, setExtensionId] = useLocalStorage(
     StorageKey.ExtensionId,
     '',
-  )
+  );
   const [extensionProfile, setExtensionProfile] = useLocalStorage<{
-    messageKey: string
-    nickName: null | string
+    messageKey: string;
+    nickName: null | string;
   }>(`${StorageKey.ExtensionProfilePrefix}${extensionId}`, {
     messageKey: FinchMessageKey.Generic,
     nickName: null,
-  })
-  const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0)
-  const [isRecording, setIsRecording] = useState<boolean>(false)
-  const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([])
-  const [isConnected, setIsConnected] = useState(false)
+  });
+  const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
 
-  const messageKey = extensionProfile.messageKey
+  const messageKey = extensionProfile.messageKey;
 
   const setMessageKey = useCallback(
     (updatedMessageKey: string) => {
-      extensionProfile.messageKey = updatedMessageKey
-      setExtensionProfile(extensionProfile)
+      extensionProfile.messageKey = updatedMessageKey;
+      setExtensionProfile(extensionProfile);
     },
     [extensionId, extensionProfile],
-  )
+  );
 
   const setNickName = useCallback(
     (updateNickName: string | null) => {
-      extensionProfile.nickName = updateNickName
-      setExtensionProfile(extensionProfile)
+      extensionProfile.nickName = updateNickName;
+      setExtensionProfile(extensionProfile);
     },
     [extensionId, extensionProfile],
-  )
+  );
 
   const fetcher = useMemo(() => {
-    return graphQLFetcher({ messageKey, extensionId })
-  }, [messageKey, extensionId])
+    return graphQLFetcher({ messageKey, extensionId });
+  }, [messageKey, extensionId]);
 
   return (
     <Tabs
@@ -104,5 +104,5 @@ export const DevtoolsApp = () => {
         </TabPanel>
       </TabPanels>
     </Tabs>
-  )
-}
+  );
+};

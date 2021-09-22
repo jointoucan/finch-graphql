@@ -1,4 +1,4 @@
-import { FinchApi } from 'finch-graphql';
+import { FinchApi } from '@finch-graphql/api';
 import { resolvers } from './resolvers';
 import { typeDefs } from './typeDefs';
 

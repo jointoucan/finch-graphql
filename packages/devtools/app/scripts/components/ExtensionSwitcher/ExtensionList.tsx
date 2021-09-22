@@ -1,15 +1,15 @@
-import { Box, Heading, Text, List, ListItem } from '@chakra-ui/react'
-import { FC } from 'react'
-import { useColorScheme } from '../../hooks/useColorScheme'
-import { useInstalledExtensions } from '../../hooks/useInstalledExtensions'
+import { Box, Heading, Text, List, ListItem } from '@chakra-ui/react';
+import { FC } from 'react';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { useInstalledExtensions } from '../../hooks/useInstalledExtensions';
 
 export const ExtensionList: FC<{
-  setExtensionId: (id: string) => void
-  currentExtensionId: string
-  hasCurrentExtension: boolean
+  setExtensionId: (id: string) => void;
+  currentExtensionId: string;
+  hasCurrentExtension: boolean;
 }> = ({ setExtensionId, currentExtensionId, hasCurrentExtension }) => {
-  const { extensions } = useInstalledExtensions()
-  const scheme = useColorScheme()
+  const { extensions } = useInstalledExtensions();
+  const scheme = useColorScheme();
 
   return (
     <Box>
@@ -46,7 +46,7 @@ export const ExtensionList: FC<{
               p={4}
               cursor="pointer"
               onClick={() => {
-                setExtensionId(id)
+                setExtensionId(id);
               }}
               css={{ transition: 'background 0.3s ease-in-out' }}
               _hover={{ backgroundColor: 'whiteAlpha.100' }}
@@ -75,5 +75,5 @@ export const ExtensionList: FC<{
           ))}
       </List>
     </Box>
-  )
-}
+  );
+};

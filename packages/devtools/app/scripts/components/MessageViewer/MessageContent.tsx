@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   Box,
   Text,
@@ -12,18 +12,18 @@ import {
   Tooltip,
   IconButton,
   useTabsContext,
-} from '@chakra-ui/react'
-import { Code } from '../Code'
-import { formatJSON, getMessageTagInfo } from './helpers'
-import { print } from 'graphql'
-import { FinchDevtoolsMessage } from './types'
-import { CircleIcon, LinkOutIcon } from '../Icons'
-import { useColorScheme } from '../../hooks/useColorScheme'
-import { StorageKey } from '../../constants'
+} from '@chakra-ui/react';
+import { Code } from '../Code';
+import { formatJSON, getMessageTagInfo } from './helpers';
+import { print } from 'graphql';
+import { FinchDevtoolsMessage } from './types';
+import { CircleIcon, LinkOutIcon } from '../Icons';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { StorageKey } from '../../constants';
 
 interface MessageAccordionItem {
-  title: string
-  index: number
+  title: string;
+  index: number;
 }
 
 export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
@@ -31,9 +31,9 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
   title,
   index,
 }) => {
-  const { index: selectedIndex } = useAccordionContext()
-  const isOpen = index === selectedIndex
-  const scheme = useColorScheme()
+  const { index: selectedIndex } = useAccordionContext();
+  const isOpen = index === selectedIndex;
+  const scheme = useColorScheme();
 
   return (
     <AccordionItem
@@ -62,16 +62,16 @@ export const MessageAccordionItem: React.FC<MessageAccordionItem> = ({
         {children}
       </Box>
     </AccordionItem>
-  )
-}
+  );
+};
 
 export const MessageContent: React.FC<{
-  message: FinchDevtoolsMessage
-  isRecording: boolean
+  message: FinchDevtoolsMessage;
+  isRecording: boolean;
 }> = ({ message, isRecording }) => {
-  const tag = message ? getMessageTagInfo(message) : { label: '', color: '  ' }
-  const scheme = useColorScheme()
-  const { setSelectedIndex: setSelectedTab } = useTabsContext()
+  const tag = message ? getMessageTagInfo(message) : { label: '', color: '  ' };
+  const scheme = useColorScheme();
+  const { setSelectedIndex: setSelectedTab } = useTabsContext();
 
   return (
     <Box flex={1} display="flex" flexDirection="column" maxWidth="70vw">
@@ -105,14 +105,14 @@ export const MessageContent: React.FC<{
                       localStorage.setItem(
                         StorageKey.GraphiQLQuery,
                         print(message.query),
-                      )
+                      );
                       localStorage.setItem(
                         StorageKey.GraphiQLVariables,
                         JSON.stringify(message.variables, null, ' '),
-                      )
+                      );
                       // set local storage
                       // open graphiql tab
-                      setSelectedTab(0)
+                      setSelectedTab(0);
                     }}
                     size="sm"
                     aria-label="Open in GraphiQL"
@@ -171,5 +171,5 @@ export const MessageContent: React.FC<{
         </Box>
       )}
     </Box>
-  )
-}
+  );
+};

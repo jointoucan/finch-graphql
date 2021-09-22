@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FinchDevtools } from 'finch-graphql';
+import { FinchDevtools } from '@finch-graphql/api';
 import { FinchDevtoolsIncomingMessage } from '../components/MessageViewer/types';
 
 interface PortOptions {

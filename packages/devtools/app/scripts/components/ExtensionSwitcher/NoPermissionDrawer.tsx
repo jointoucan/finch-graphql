@@ -1,14 +1,14 @@
-import { Box, Button, Heading, Text } from '@chakra-ui/react'
-import { FC } from 'react'
-import { useColorScheme } from '../../hooks/useColorScheme'
-import { useRequestManagementPermissionMutation } from '../../schema'
+import { Box, Button, Heading, Text } from '@chakra-ui/react';
+import { FC } from 'react';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { useRequestManagementPermissionMutation } from '../../schema';
 
 export const NoPermissionDrawer: FC = ({ children }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   const [
     requestManagementPermission,
     { loading },
-  ] = useRequestManagementPermissionMutation()
+  ] = useRequestManagementPermissionMutation();
   return (
     <>
       <Box
@@ -49,10 +49,10 @@ export const NoPermissionDrawer: FC = ({ children }) => {
           variant="outline"
           borderColor={scheme.border}
           onClick={async () => {
-            await requestManagementPermission({})
+            await requestManagementPermission({});
             setTimeout(() => {
-              window.location.reload()
-            }, 100)
+              window.location.reload();
+            }, 100);
           }}
           disabled={!!loading}
         >
@@ -72,5 +72,5 @@ export const NoPermissionDrawer: FC = ({ children }) => {
         zIndex={10}
       />
     </>
-  )
-}
+  );
+};

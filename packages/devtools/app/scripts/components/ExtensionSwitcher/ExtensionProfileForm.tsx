@@ -1,13 +1,13 @@
-import { Box, Input, Text } from '@chakra-ui/react'
-import { FC } from 'react'
-import { useColorScheme } from '../../hooks/useColorScheme'
+import { Box, Input, Text } from '@chakra-ui/react';
+import { FC } from 'react';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 interface ExtensionProfileFormProps {
-  extensionId: string
-  readOnlyExtensionId?: boolean
-  messageKey: string
-  onExtensionIdChange: (extensionId: string) => void
-  onMessageKeyChange: (messageKey: string) => void
+  extensionId: string;
+  readOnlyExtensionId?: boolean;
+  messageKey: string;
+  onExtensionIdChange: (extensionId: string) => void;
+  onMessageKeyChange: (messageKey: string) => void;
 }
 
 export const ExtensionProfileForm: FC<ExtensionProfileFormProps> = ({
@@ -17,7 +17,7 @@ export const ExtensionProfileForm: FC<ExtensionProfileFormProps> = ({
   onMessageKeyChange,
   onExtensionIdChange,
 }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   return (
     <>
       <Box mt={4}>
@@ -30,7 +30,7 @@ export const ExtensionProfileForm: FC<ExtensionProfileFormProps> = ({
           id="extensionId"
           value={extensionId}
           onChange={e => {
-            onExtensionIdChange(e.target.value)
+            onExtensionIdChange(e.target.value);
           }}
           readOnly={readOnlyExtensionId}
         />
@@ -45,10 +45,10 @@ export const ExtensionProfileForm: FC<ExtensionProfileFormProps> = ({
           id="messageKey"
           value={messageKey}
           onChange={e => {
-            onMessageKeyChange(e.target.value)
+            onMessageKeyChange(e.target.value);
           }}
         />
       </Box>
     </>
-  )
-}
+  );
+};

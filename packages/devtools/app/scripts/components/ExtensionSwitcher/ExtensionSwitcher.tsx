@@ -1,33 +1,28 @@
 import {
   Box,
-  Text,
-  Heading,
   IconButton,
   Button,
   Drawer,
   DrawerContent,
   DrawerBody,
-  DrawerOverlay,
-  Input,
   useDisclosure,
   Tooltip,
-} from '@chakra-ui/react'
-import { useRef } from 'react'
-import { FC } from 'react'
-import { useColorScheme } from '../../hooks/useColorScheme'
-import { useGetExtensionQuery } from '../../schema'
-import { CircleIcon, InfoIcon, RefreshIcon } from '../Icons'
-import { CurrentExtension } from './CurrentExtension'
-import { ExtensionList } from './ExtensionList'
-import { ExtensionProfileForm } from './ExtensionProfileForm'
-import { NoPermissionDrawer } from './NoPermissionDrawer'
+} from '@chakra-ui/react';
+import { useRef, FC } from 'react';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { useGetExtensionQuery } from '../../schema';
+import { CircleIcon, InfoIcon, RefreshIcon } from '../Icons';
+import { CurrentExtension } from './CurrentExtension';
+import { ExtensionList } from './ExtensionList';
+import { ExtensionProfileForm } from './ExtensionProfileForm';
+import { NoPermissionDrawer } from './NoPermissionDrawer';
 
 interface ExtensionSwitcherProps {
-  isConnected: boolean
-  extensionId?: string
-  messageKey: string
-  setMessageKey: (messageKey: string) => void
-  setExtensionId: (extensionId: string) => void
+  isConnected: boolean;
+  extensionId?: string;
+  messageKey: string;
+  setMessageKey: (messageKey: string) => void;
+  setExtensionId: (extensionId: string) => void;
 }
 
 export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
@@ -37,15 +32,15 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
   setMessageKey,
   setExtensionId,
 }) => {
-  const scheme = useColorScheme()
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const btnRef = useRef()
-  const { data, refetch } = useGetExtensionQuery({
+  const scheme = useColorScheme();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = useRef();
+  const { data } = useGetExtensionQuery({
     variables: { id: extensionId },
-  })
+  });
 
-  const extensionInfo = data?.browser?.extension
-  const hasManagementPermission = data?.browser?.permission ?? false
+  const extensionInfo = data?.browser?.extension;
+  const hasManagementPermission = data?.browser?.permission ?? false;
 
   return (
     <>
@@ -103,7 +98,7 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
                   fill={scheme.foreground}
                   icon={<RefreshIcon />}
                   onClick={() => {
-                    window.location.reload()
+                    window.location.reload();
                   }}
                   variant="outline"
                   borderColor={scheme.border}
@@ -124,7 +119,7 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
                     window.open(
                       'https://jointoucan.github.io/finch-graphql/docs/devtools',
                       '_blank',
-                    )
+                    );
                   }}
                   variant="outline"
                   borderColor={scheme.border}
@@ -167,5 +162,5 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
         </DrawerContent>
       </Drawer>
     </>
-  )
-}
+  );
+};
