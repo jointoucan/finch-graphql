@@ -1,6 +1,6 @@
 {
   "name": "@finch-graphql/api",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "Graphql api for your background script of a web extension",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -52,7 +52,7 @@
     "react": "<=16.x"
   },
   "dependencies": {
-    "@finch-graphql/browser-polyfill": "1.2.0",
+    "@finch-graphql/browser-polyfill": "2.0.0",
     "@graphql-tools/schema": "^7.1.2",
     "graphql-middleware": "^6.0.4",
     "graphql-tag": "^2.11.0",
