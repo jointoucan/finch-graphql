@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import { Box } from '@chakra-ui/react'
-import { MessageContent } from './MessageContent'
-import { MessagesSidebar } from './MessageSidebar'
-import { MessagesFilterBar } from './MessagesFilterBar'
-import { useLocalStorage } from '../../hooks/useLocalStorage'
-import { FinchDevtoolsMessage } from './types'
-import { useColorScheme } from '../../hooks/useColorScheme'
+import React, { useState } from 'react';
+import { Box } from '@chakra-ui/react';
+import { MessageContent } from './MessageContent';
+import { MessagesSidebar } from './MessageSidebar';
+import { MessagesFilterBar } from './MessagesFilterBar';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { FinchDevtoolsMessage } from './types';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 interface MessageViewerProps {
-  extensionId: string
-  isRecording: boolean
-  setIsRecording: React.Dispatch<boolean>
-  messages: FinchDevtoolsMessage[]
-  setMessages: React.Dispatch<FinchDevtoolsMessage[]>
+  extensionId: string;
+  isRecording: boolean;
+  setIsRecording: React.Dispatch<boolean>;
+  messages: FinchDevtoolsMessage[];
+  setMessages: React.Dispatch<FinchDevtoolsMessage[]>;
 }
 
 export const MessagesViewer: React.FC<MessageViewerProps> = ({
@@ -21,19 +21,19 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
   messages,
   setMessages,
 }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   const [currentTabFilter, setCurrentTabFilter] = useLocalStorage(
     'messages:currentTabFilter',
     false,
-  )
+  );
   const [filterString, setFilterString] = useLocalStorage(
     'messages:filterString',
     '',
-  )
-  const [selectedQuery, selectQuery] = useState(null)
-  const [currentTabId] = useState(() => browser.devtools.inspectedWindow.tabId)
+  );
+  const [selectedQuery, selectQuery] = useState(null);
+  const [currentTabId] = useState(() => browser.devtools.inspectedWindow.tabId);
 
-  const selectedQueryMessage = messages.find(({ id }) => selectedQuery === id)
+  const selectedQueryMessage = messages.find(({ id }) => selectedQuery === id);
 
   const filteredMessages = messages
     .filter(({ context }) => {
@@ -43,21 +43,21 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
         context.sender.tab &&
         context.sender.tab.id === currentTabId
       ) {
-        return true
+        return true;
       } else if (!currentTabFilter) {
-        return true
+        return true;
       }
-      return false
+      return false;
     })
     .filter(({ operationName }) => {
       if (filterString) {
         if (operationName && operationName.includes(filterString)) {
-          return true
+          return true;
         }
-        return false
+        return false;
       }
-      return true
-    })
+      return true;
+    });
 
   return (
     <Box
@@ -69,15 +69,15 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
     >
       <MessagesFilterBar
         onClearMessage={() => {
-          setMessages([])
+          setMessages([]);
         }}
         currentTabOnly={currentTabFilter}
         onToggleCurrentTabFilter={() => {
-          setCurrentTabFilter(!currentTabFilter)
+          setCurrentTabFilter(!currentTabFilter);
         }}
         filterString={filterString}
         onFilterStringChange={e => {
-          setFilterString(e.currentTarget.value)
+          setFilterString(e.currentTarget.value);
         }}
         isRecording={isRecording}
         onToggleRecording={() => setIsRecording(!isRecording)}
@@ -100,5 +100,5 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
         />
       </Box>
     </Box>
-  )
-}
+  );
+};

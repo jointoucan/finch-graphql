@@ -1,6 +1,6 @@
-import { ColorModeScript } from '@chakra-ui/react'
-import { FC } from 'react'
-import { Theme } from './Theme'
+import { ColorModeScript } from '@chakra-ui/react';
+import { FC } from 'react';
+import { Theme } from './Theme';
 
 export const DevtoolsTheme: FC = ({ children }) => {
   return (
@@ -8,5 +8,5 @@ export const DevtoolsTheme: FC = ({ children }) => {
       <ColorModeScript />
       <Theme>{children}</Theme>
     </>
-  )
-}
+  );
+};

@@ -1,16 +1,23 @@
-import React from 'react'
-import { Box, Input, Switch, Text, IconButton, Tooltip } from '@chakra-ui/react'
-import { CircleIcon, ClearIcon } from '../Icons'
-import { useColorScheme } from '../../hooks/useColorScheme'
+import React from 'react';
+import {
+  Box,
+  Input,
+  Switch,
+  Text,
+  IconButton,
+  Tooltip,
+} from '@chakra-ui/react';
+import { CircleIcon, ClearIcon } from '../Icons';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 interface MessagesFilterBarProps {
-  onClearMessage: () => void
-  currentTabOnly: boolean
-  onToggleCurrentTabFilter: () => void
-  filterString: string
-  onFilterStringChange: React.ChangeEventHandler<HTMLInputElement>
-  isRecording: boolean
-  onToggleRecording: () => void
+  onClearMessage: () => void;
+  currentTabOnly: boolean;
+  onToggleCurrentTabFilter: () => void;
+  filterString: string;
+  onFilterStringChange: React.ChangeEventHandler<HTMLInputElement>;
+  isRecording: boolean;
+  onToggleRecording: () => void;
 }
 
 export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
@@ -22,7 +29,7 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
   onToggleRecording,
   isRecording,
 }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   return (
     <Box
       backgroundColor={scheme.backgroundSecondary}
@@ -88,5 +95,5 @@ export const MessagesFilterBar: React.FC<MessagesFilterBarProps> = ({
       </Text>
       <Box flex="1" />
     </Box>
-  )
-}
+  );
+};

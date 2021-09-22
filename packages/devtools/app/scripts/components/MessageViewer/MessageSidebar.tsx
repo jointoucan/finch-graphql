@@ -1,16 +1,16 @@
-import React from 'react'
-import { Box, Text, Heading, Tag, Divider } from '@chakra-ui/react'
-import { AutoSizer, List, ListRowRenderer } from 'react-virtualized'
-import { FinchDevtoolsMessage } from './types'
-import { getMessageTagInfo } from './helpers'
-import { useColorScheme } from '../../hooks/useColorScheme'
-import { ColorScheme } from '../../styles/colorScheme'
+import React from 'react';
+import { Box, Text, Heading, Tag, Divider } from '@chakra-ui/react';
+import { AutoSizer, List, ListRowRenderer } from 'react-virtualized';
+import { FinchDevtoolsMessage } from './types';
+import { getMessageTagInfo } from './helpers';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { ColorScheme } from '../../styles/colorScheme';
 
 interface MessageSidebarProp {
-  messages: FinchDevtoolsMessage[]
-  selectQuery: (id: string) => void
-  selectedQuery: string
-  scheme: ColorScheme
+  messages: FinchDevtoolsMessage[];
+  selectQuery: (id: string) => void;
+  selectedQuery: string;
+  scheme: ColorScheme;
 }
 
 export const renderListItem = ({
@@ -19,21 +19,21 @@ export const renderListItem = ({
   selectedQuery,
   scheme,
 }: MessageSidebarProp): ListRowRenderer => ({ index, key, style }) => {
-  const message = messages[index]
+  const message = messages[index];
 
   if (!message) {
-    return null
+    return null;
   }
 
-  const { response, operationName, timeTaken, id } = message
-  const tag = getMessageTagInfo(message)
+  const { operationName, timeTaken, id } = message;
+  const tag = getMessageTagInfo(message);
 
   return (
     <Box style={style} key={key}>
       <Box
         py={2}
         onClick={() => {
-          selectQuery(id)
+          selectQuery(id);
         }}
         cursor="pointer"
         display="flex"
@@ -67,21 +67,21 @@ export const renderListItem = ({
       </Box>
       <Divider backgroundColor={scheme.border} />
     </Box>
-  )
-}
+  );
+};
 
 export const MessagesSidebar: React.FC<Omit<MessageSidebarProp, 'scheme'>> = ({
   messages,
   selectQuery,
   selectedQuery,
 }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   const renderer = renderListItem({
     messages,
     selectQuery,
     selectedQuery,
     scheme,
-  })
+  });
 
   return (
     <Box flex={1} maxWidth="30vw" overflow="scroll">
@@ -115,5 +115,5 @@ export const MessagesSidebar: React.FC<Omit<MessageSidebarProp, 'scheme'>> = ({
         )}
       </AutoSizer>
     </Box>
-  )
-}
+  );
+};

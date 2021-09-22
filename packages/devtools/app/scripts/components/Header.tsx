@@ -1,16 +1,16 @@
-import { Image } from './Image'
-import { TabList, Tab, Box, IconButton, Tooltip } from '@chakra-ui/react'
-import { CircleIcon, RefreshIcon, InfoIcon } from './Icons'
-import { useColorScheme } from '../hooks/useColorScheme'
-import { ExtensionSwitcher } from './ExtensionSwitcher'
+import { Image } from './Image';
+import { TabList, Tab, Box } from '@chakra-ui/react';
+import { CircleIcon } from './Icons';
+import { useColorScheme } from '../hooks/useColorScheme';
+import { ExtensionSwitcher } from './ExtensionSwitcher';
 
 export const Header: React.FC<{
-  isRecording: boolean
-  isConnected: boolean
-  extensionId?: string
-  messageKey: string
-  setMessageKey: (messageKey: string) => void
-  setExtensionId: (extensionId: string) => void
+  isRecording: boolean;
+  isConnected: boolean;
+  extensionId?: string;
+  messageKey: string;
+  setMessageKey: (messageKey: string) => void;
+  setExtensionId: (extensionId: string) => void;
 }> = ({
   isRecording,
   isConnected,
@@ -19,7 +19,7 @@ export const Header: React.FC<{
   setExtensionId,
   messageKey,
 }) => {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   return (
     <Box
       height="48px"
@@ -68,5 +68,5 @@ export const Header: React.FC<{
         </Box>
       </TabList>
     </Box>
-  )
-}
+  );
+};

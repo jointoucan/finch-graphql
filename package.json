@@ -25,6 +25,6 @@
     "docs": "yarn workspace finch-docs start",
     "test": "yarn lerna exec \"yarn test\"",
     "compile": "yarn lerna exec \"yarn compile\"",
-    "lint": "eslint -c ./.eslintrc.js **/{src,app}/**/*.ts"
+    "lint": "eslint -c ./.eslintrc.js **/{src,app}/**/*.{ts,tsx,js} --no-error-on-unmatched-pattern"
   }
 }

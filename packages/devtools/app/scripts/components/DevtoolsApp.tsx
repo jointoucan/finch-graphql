@@ -51,14 +51,6 @@ export const DevtoolsApp = () => {
     [extensionId, extensionProfile],
   );
 
-  const setNickName = useCallback(
-    (updateNickName: string | null) => {
-      extensionProfile.nickName = updateNickName;
-      setExtensionProfile(extensionProfile);
-    },
-    [extensionId, extensionProfile],
-  );
-
   const fetcher = useMemo(() => {
     return graphQLFetcher({ messageKey, extensionId });
   }, [messageKey, extensionId]);
