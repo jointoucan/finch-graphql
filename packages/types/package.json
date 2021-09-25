@@ -45,5 +45,8 @@
   "dependencies": {
     "@graphql-tools/schema": "^7.1.2",
     "graphql-middleware": "^6.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

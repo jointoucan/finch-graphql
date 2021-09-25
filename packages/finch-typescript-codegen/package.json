@@ -17,5 +17,9 @@
     "build": "echo \"No build in codegen\"",
     "test": "echo \"No test in codegen\"",
     "compile": "echo \"No compile in codegen\""
+  },
+  "gitHead": "72991ff90eeec52ef1e2f97bc11ee469f09a377b",
+  "publishConfig": {
+    "access": "public"
   }
 }
