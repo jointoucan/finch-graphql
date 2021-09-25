@@ -37,7 +37,7 @@ Message passing is one of the main means of communication for content scripts to
 The `FinchApi` class is a class that allows you to create an executable graphql schema. It is modeled to look just like the `ApolloServer` class. The only required properties in the options are `typeDefs` and `resolvers`.
 
 ```typescript
-import { FinchApi } from 'finch-graphql';
+import { FinchApi } from '@finch-graphql/api';
 
 // Define your schema
 const typeDefs = `
@@ -86,7 +86,7 @@ When initializing the api Finch has some options to be able to customize your AP
 If you do not have any existing messages you may use the `attachMessages` option to automatically attach to the runtime messages. If you have existing messages you will want to setup up the manual handler to ensure you are able to resolve async resolvers.
 
 ```typescript
-import { FinchMessageKey } from 'finch-graphql';
+import { FinchMessageKey } from '@finch-graphql/types';
 
 browser.runtime.on[External]Message.addListener(message => {
   if (message.type === FinchMessageKey.Generic) {
@@ -100,7 +100,9 @@ browser.runtime.on[External]Message.addListener(message => {
 This is the main reason for this library, it makes it super easy to query large amounts of data from the background script without sending multiple messages.
 
 ```typescript
-import { queryApi } from 'finch-graphql';
+import { FinchClient } from '@finch-graphql/client';
+
+const client = new FinchClient();
 
 const GetBrowserPermission = `
   query getBrowserPermission($input: PermissionsInput) {
@@ -109,7 +111,7 @@ const GetBrowserPermission = `
     }
   }
 `(async function main() {
-  const resp = await queryApi(GetBrowserPermission, {
+  const resp = await client.query(GetBrowserPermission, {
     input: { permissions: ['geolocation'] },
   });
 
@@ -124,6 +126,8 @@ const GetBrowserPermission = `
 There is two hooks available to use if you are using a React application. First is the **useQuery** hook.
 
 ```typescript
+import { useQuery } from '@finch-graphql/react';
+
 const MyComponent = () => {
   const { data, error } = useQuery<QueryTypes, VariableTypes>(
     MyComponentQueryDoc,
