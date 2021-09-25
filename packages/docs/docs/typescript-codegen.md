@@ -17,9 +17,9 @@ To load in the schema from Finch it is best to use the schemas source files, if 
 
 ```typescript
 // ./src/typeDefs/index.ts
-import gql from "graphql-tag";
-import browserSchema from "./schemas/browser";
-import otherSchema from "./schemas/other";
+import gql from 'graphql-tag';
+import browserSchema from './schemas/browser';
+import otherSchema from './schemas/other';
 
 export const typeDefs = [browserSchema, otherSchema];
 ```
@@ -28,7 +28,7 @@ This makes it so the schemas are consumable by the **FinchApi** _typeDefs_ optio
 
 ```typescript
 // ./src/typeDefs/schema/browser.ts
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export default gql`
   type Manifest {
@@ -67,7 +67,7 @@ import {
   GetBrowserManifestQuery,
   GetBrowserManifestQueryVariables,
   GetBrowserManifestDocument,
-} from "./schema/background";
+} from './schema/background';
 
 // Fully typed response!
 const resp = queryApi<
@@ -107,7 +107,7 @@ generates:
 This should run and now your generated file should contain hooks that make it so you do not need to import so many types.
 
 ```typescript
-import { useGetBrowserManifestQuery } from "./schema/background";
+import { useGetBrowserManifestQuery } from './schema/background';
 
 // in React component, fully typed!
 const { data } = useGetBrowserManifestQuery();
