@@ -7,7 +7,7 @@
       "packages/client",
       "packages/react",
       "packages/api",
-      "packages/finch-typescript-codegen",
+      "packages/typescript-codegen",
       "packages/devtools",
       "packages/docs"
     ],
