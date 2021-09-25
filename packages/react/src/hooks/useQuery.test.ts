@@ -2,7 +2,7 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useQuery } from './useQuery';
 import gql from 'graphql-tag';
-import { FinchMessageKey } from '../types';
+import { FinchMessageKey } from '@finch-graphql/types';
 import { FinchProvider } from './FinchProvider';
 import { FinchClient, QueryCache } from '@finch-graphql/client';
 
