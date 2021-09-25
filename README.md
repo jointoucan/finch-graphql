@@ -7,12 +7,14 @@ Finch GraphQL is a library that allows you to build up a local GraphQL API that 
 ## Install
 
 ```shell
-npm install --save @finch-graphql/api @finch-graphql/client graphql react
-# or
-yarn add @finch-graphql/api @finch-graphql/client graphql react
+npm install --save @finch-graphql/api @finch-graphql/client graphql
 ```
 
-> ⚛ Currently React is needed for the included React hooks
+If you are planning to use Finch GraphQL with react you can also install our React hooks
+
+```shell
+npm install --save @finch-graphql/react
+```
 
 ## How it works
 
