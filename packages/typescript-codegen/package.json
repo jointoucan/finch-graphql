@@ -1,5 +1,5 @@
 {
-  "name": "finch-typescript-codegen",
+  "name": "@finch-graphql/typescript-codegen",
   "version": "0.1.2-alpha.0",
   "main": "FinchVisitor.js",
   "dependencies": {
