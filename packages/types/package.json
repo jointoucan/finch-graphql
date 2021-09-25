@@ -32,7 +32,7 @@
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.1",
-    "graphql": "^15.4.0",
+    "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
     "kcd-scripts": "^8.0.2",
     "prettier": "^2.2.1",
@@ -40,7 +40,7 @@
   },
   "peerDependencies": {
     "@graphql-tools/schema": "^7.1.2",
-    "graphql": "^15.4.0"
+    "graphql": "^15.5.0"
   },
   "dependencies": {
     "@graphql-tools/schema": "^7.1.2",
