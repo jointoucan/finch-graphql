@@ -2,7 +2,14 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/types",
+      "packages/browser-polyfill",
+      "packages/client",
+      "packages/react",
+      "packages/api",
+      "packages/typescript-codegen",
+      "packages/devtools",
+      "packages/docs"
     ],
     "nohoist": [
       "**/html-minifier-terser"
@@ -13,8 +20,11 @@
   },
   "name": "finch-graphql-packages",
   "scripts": {
-    "build": "yarn workspace finch-graphql build",
+    "build": "yarn lerna exec \"yarn build\"",
     "devtools": "yarn workspace finch-graphql-devtools dev chrome",
-    "docs": "yarn workspace finch-docs start"
+    "docs": "yarn workspace finch-docs start",
+    "test": "yarn lerna exec \"yarn test\"",
+    "compile": "yarn lerna exec \"yarn compile\"",
+    "lint": "eslint -c ./.eslintrc.js **/{src,app}/**/*.{ts,tsx,js} --no-error-on-unmatched-pattern"
   }
 }

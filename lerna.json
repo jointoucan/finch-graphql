@@ -1,9 +1,15 @@
 {
   "packages": [
-    "packages/*"
+    "packages/types",
+    "packages/browser-polyfill",
+    "packages/client",
+    "packages/react",
+    "packages/finch-graphql",
+    "packages/finch-graphql-devtools",
+    "packages/finch-docs"
   ],
-  "nohoist": [
-    "**/html-minifier-terser"
-  ],
-  "version": "independent"
+  "nohoist": ["**/html-minifier-terser"],
+  "version": "independent",
+  "npmClient": "yarn",
+  "useWorkspaces": true
 }

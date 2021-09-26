@@ -9,20 +9,20 @@ jobs:
       - name: Setup container
         uses: actions/setup-node@v1
         with:
-          node-version: "12.x"
+          node-version: '12.x'
       - name: Install Yarn
         run: npm install yarn --global
       - name: Yarn install
         run: yarn
-      - name: Build finch-graphql
-        run: yarn workspace finch-graphql build
+      - name: Build Modules
+        run: yarn lerna run build
       - uses: actions/cache@v2.1.6
         id: restore-build
         with:
           path: ./*
           key: ${{ github.sha }}
-  testCore:
-    name: Test finch-graphql library
+  test:
+    name: Test
     needs: [installDependencies]
     runs-on: ubuntu-latest
     steps:
@@ -30,32 +30,15 @@ jobs:
       - name: Setup container
         uses: actions/setup-node@v1
         with:
-          node-version: "12.x"
+          node-version: '12.x'
       - uses: actions/cache@v2.1.6
         id: restore-build
         with:
           path: ./*
           key: ${{ github.sha }}
       - name: Lint Code
-        run: yarn workspace finch-graphql lint
+        run: yarn lint
       - name: Test Code
-        run: yarn workspace finch-graphql test
-  testDevtools:
-    name: Test devtools extension
-    needs: [installDependencies]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Setup container
-        uses: actions/setup-node@v1
-        with:
-          node-version: "12.x"
-      - uses: actions/cache@v2.1.6
-        id: restore-build
-        with:
-          path: ./*
-          key: ${{ github.sha }}
-      - name: Yarn relink packages
-        run: yarn # This should be quick
-      - name: Test compile
+        run: yarn test
+      - name: Test compile devtools
         run: yarn workspace finch-graphql-devtools compile

@@ -1,0 +1,11 @@
+schema: ./app/scripts/typeDefs/schemas/*.ts # Schema files with default exports
+documents: ./app/scripts/graphql/*.graphql # GraphQL files for clients to consume
+generates:
+  ./app/scripts/schema.ts: # Path to file to be generated
+    plugins: # Common typescript plugins
+      - typescript
+      - typescript-operations
+      - typescript-document-nodes
+      - finch-typescript-codegen
+    config:
+      withHooks: true # Generate hooks

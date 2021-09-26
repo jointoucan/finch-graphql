@@ -1,0 +1,52 @@
+{
+  "name": "@finch-graphql/types",
+  "version": "2.0.3-alpha.0",
+  "description": "Graphql api for your background script of a web extension",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "repository": "https://github.com/jointoucan/finch-graphql",
+  "author": "Jacob Lowe",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "yarn build",
+    "test": "echo \"No tests in types\"",
+    "lint": "eslint -c ./.eslintrc.js ./src/**/*.ts"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.140",
+    "@types/react": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^8.0.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "graphql": "^15.5.0",
+    "graphql-tag": "^2.11.0",
+    "kcd-scripts": "^8.0.2",
+    "prettier": "^2.2.1",
+    "typescript": "^4.0.3"
+  },
+  "peerDependencies": {
+    "@graphql-tools/schema": "^7.1.2",
+    "graphql": "^15.5.0"
+  },
+  "dependencies": {
+    "@graphql-tools/schema": "^7.1.2",
+    "graphql-middleware": "^6.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
