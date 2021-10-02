@@ -24,7 +24,7 @@ jobs:
       - name: Setup container
         uses: actions/setup-node@v1
         with:
-          node-version: "12.x"
+          node-version: '12.x'
       - name: Yarn install
         run: yarn install --frozen-lockfile
       - name: Docusaurus Build
@@ -33,4 +33,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./packages/finch-docs/build
+          publish_dir: ./packages/docs/build
