@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>declarative</title>
+    <g id="declarative" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" fill="#2B7670" x="5" y="25" width="86" height="13" rx="6.5"></rect>
+        <rect id="Rectangle" fill="#E07A15" x="26" y="57" width="100" height="12" rx="6"></rect>
+        <rect id="Rectangle" fill="#2B7670" x="5" y="73" width="86" height="12" rx="6"></rect>
+        <rect id="Rectangle" fill="#AB5930" x="26" y="88" width="53" height="13" rx="6.5"></rect>
+        <rect id="Rectangle" fill="#000000" x="5" y="9" width="53" height="13" rx="6.5"></rect>
+        <rect id="Rectangle" fill="#2B7670" x="5" y="104" width="53" height="13" rx="6.5"></rect>
+        <rect id="Rectangle" fill="#E07A15" x="26" y="41" width="86" height="12" rx="6"></rect>
+    </g>
+</svg>
