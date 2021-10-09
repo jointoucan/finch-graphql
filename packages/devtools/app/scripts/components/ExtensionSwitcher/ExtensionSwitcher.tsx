@@ -135,7 +135,9 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
                   >
                     <ExtensionProfileForm
                       extensionId={extensionId}
-                      onExtensionIdChange={() => {}}
+                      onExtensionIdChange={key => {
+                        setMessageKey(key);
+                      }}
                       readOnlyExtensionId
                       messageKey={messageKey}
                       onMessageKeyChange={setMessageKey}
