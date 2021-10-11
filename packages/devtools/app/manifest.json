@@ -3,14 +3,15 @@
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDescription__",
   "version": "1.5.1",
-  "manifest_version": 3,
+  "manifest_version": 2,
   "default_locale": "en",
   "icons": {
     "16": "images/finch-16.png",
     "128": "images/finch-128.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"],
+    "persistent": false
   },
   "minimum_chrome_version": "88",
   "devtools_page": "pages/devtools.html",

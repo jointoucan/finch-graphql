@@ -45,8 +45,11 @@ export const DevtoolsApp = () => {
 
   const setMessageKey = useCallback(
     (updatedMessageKey: string) => {
-      extensionProfile.messageKey = updatedMessageKey;
-      setExtensionProfile(extensionProfile);
+      const newExtensionProfile = {
+        ...extensionProfile,
+        messageKey: updatedMessageKey,
+      };
+      setExtensionProfile(newExtensionProfile);
     },
     [extensionId, extensionProfile],
   );
