@@ -55,7 +55,6 @@
     "@finch-graphql/browser-polyfill": "^2.0.3",
     "@finch-graphql/client": "^2.0.3",
     "@finch-graphql/types": "^2.0.3",
-    "@graphql-tools/schema": "^7.1.2",
     "graphql-tag": "^2.11.0",
     "use-deep-compare-effect": "^1.6.1",
     "uuid": "^8.3.2"
