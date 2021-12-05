@@ -230,4 +230,93 @@ describe('useQuery', () => {
     // Validate new value is present
     expect(wrapper.result.current.data).toEqual({ bar: 'qux' });
   });
+  it('should call the query multiple times if a pollInterval is passed', async () => {
+    const sendMessageMock = jest
+      .fn()
+      .mockImplementationOnce((_, callback) =>
+        callback({ data: { bar: 'baz' } }),
+      );
+    chrome.runtime.sendMessage = sendMessageMock;
+
+    const client = new FinchClient({
+      cache: new QueryCache(),
+    });
+
+    const wrapper = renderHook(
+      ({ foo }) => useQuery(testDoc, { variables: { foo }, pollInterval: 500 }),
+      {
+        initialProps: {
+          foo: 'bar',
+        },
+        wrapper: ({ children }) => {
+          return React.createElement(FinchProvider, {
+            // @ts-ignore
+            children,
+            client,
+          });
+        },
+      },
+    );
+
+    // Validate send message is being called multiple times is called
+    await wrapper.waitForNextUpdate();
+    expect(sendMessageMock).toBeCalledTimes(1);
+    await wrapper.waitForNextUpdate();
+    expect(sendMessageMock).toBeCalledTimes(2);
+    act(() => {
+      wrapper.result.current.stopPolling();
+    });
+  });
+  it('should allow the controlling of polling by the start and stop polling functions', async () => {
+    const sendMessageMock = jest
+      .fn()
+      .mockImplementationOnce((_, callback) =>
+        callback({ data: { bar: 'baz' } }),
+      );
+    chrome.runtime.sendMessage = sendMessageMock;
+
+    const client = new FinchClient({
+      cache: new QueryCache(),
+    });
+
+    const wrapper = renderHook(
+      ({ foo }) =>
+        useQuery(testDoc, {
+          variables: { foo },
+          pollInterval: 500,
+          poll: false,
+        }),
+      {
+        initialProps: {
+          foo: 'bar',
+        },
+        wrapper: ({ children }) => {
+          return React.createElement(FinchProvider, {
+            // @ts-ignore
+            children,
+            client,
+          });
+        },
+      },
+    );
+    // Validate send message is being called initially
+    await wrapper.waitForNextUpdate();
+    expect(sendMessageMock).toBeCalledTimes(1);
+
+    // Start polling
+    act(() => {
+      wrapper.result.current.startPolling();
+    });
+
+    // Validate send message is being called more times after polling has started
+    await wrapper.waitFor(() => expect(sendMessageMock).toBeCalledTimes(2));
+    await wrapper.waitFor(() => expect(sendMessageMock).toBeCalledTimes(3));
+
+    // Stop polling
+    act(() => {
+      wrapper.result.current.stopPolling();
+    });
+
+    expect(() => expect(sendMessageMock).toBeCalledTimes(4)).toThrow(/3/);
+  });
 });
