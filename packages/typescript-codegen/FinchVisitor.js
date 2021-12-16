@@ -66,6 +66,8 @@ class FinchVisitor extends ClientSideBaseVisitor {
       return `export const use${operationName} = (config?: {
         variables?: ${operationVariablesTypes};
         skip?: Boolean;
+        pollInterval?: number;
+        poll?: boolean;
       }) => use${operationType}<${operationResultType}, ${operationVariablesTypes}>(${documentVariableName}, config);`;
     }
     if (operationType === 'Mutation') {
