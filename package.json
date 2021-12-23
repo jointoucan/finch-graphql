@@ -26,5 +26,34 @@
     "test": "yarn lerna exec \"yarn test\"",
     "compile": "yarn lerna exec \"yarn compile\"",
     "lint": "eslint -c ./.eslintrc.js **/{src,app}/**/*.{ts,tsx,js} --no-error-on-unmatched-pattern"
+  },
+  "devDependencies": {
+    "turbo": "^1.0.20"
+  },
+  "turbo": {
+    "baseBranch": "origin/master",
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "dist/**",
+          "build/**"
+        ]
+      },
+      "test": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": []
+      },
+      "lint": {
+        "outputs": []
+      },
+      "dev": {
+        "cache": false
+      }
+    }
   }
 }
