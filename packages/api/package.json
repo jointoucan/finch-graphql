@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@finch-graphql/browser-polyfill": "^2.1.0",
+    "@finch-graphql/types": "^2.1.0",
     "@graphql-tools/schema": "^7.1.2",
     "graphql-middleware": "^6.0.4",
     "uuid": "^8.3.2"

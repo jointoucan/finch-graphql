@@ -12,6 +12,8 @@ export enum FinchMessageSource {
   ExternalMessage = 'external-message',
 }
 
+export const FinchDefaultPortName = '_finchMessagePort';
+
 export type GenericVariables = { [key: string]: any };
 export type FinchContextObj = {
   source: FinchMessageSource;

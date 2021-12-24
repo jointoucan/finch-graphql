@@ -27,6 +27,7 @@ import {
 import { NoIntrospection } from './NoIntrospection';
 import { FinchDevtools } from './FinchDevtools';
 import { v4 } from 'uuid';
+import { FinchPortManager } from './FinchPortManager';
 
 export class FinchApi {
   schema: GraphQLSchema;
@@ -36,6 +37,7 @@ export class FinchApi {
   disableIntrospection: boolean;
   rules: any[];
   devtools: FinchDevtools;
+  portManager: FinchPortManager;
   constructor({
     context,
     attachMessages,
@@ -60,6 +62,10 @@ export class FinchApi {
     this.devtools = new FinchDevtools({
       autoListen: !disableDevtools,
       messageKey: disableIntrospection ? undefined : this.messageKey,
+    });
+    this.portManager = new FinchPortManager({
+      onDevtoolMessage: async () => ({}),
+      onMessage: this.onMessage,
     });
 
     if (disableIntrospection) {
