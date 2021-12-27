@@ -46,7 +46,7 @@ import { FinchConnection, FinchDefaultPortName } from '@finch-graphql/types';
  * });
  * ```
  *
- * To see all the options visit the [docs](https://jointoucan.github.io/finch-graphql/).
+ * To see all the options visit the [docs](https://jointoucan.github.io/finch-graphql/docs/api-ref).
  */
 export class FinchApi {
   schema: GraphQLSchema;
@@ -85,11 +85,13 @@ export class FinchApi {
 
     /**
      * Setup connection to the clients
+     * defaults to a port connection when no connection is passed.
      */
     this.connection = connection ?? new FinchPortConnection();
 
     if (this.connection) {
       this.connection.addMessageListener(this.onMessage);
+      this.connection.onStart();
     }
 
     /**
@@ -101,6 +103,7 @@ export class FinchApi {
         connectionType: this.connection.type,
         messagePortName: this.messagePortName,
       });
+      this.devtools.onStart();
     }
 
     if (disableIntrospection) {

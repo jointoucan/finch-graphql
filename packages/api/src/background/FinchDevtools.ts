@@ -5,7 +5,7 @@ import {
   FinchResponseMessage,
   FinchDevToolsMessageType,
 } from './types';
-import { FinchPortConnection } from '.';
+import { FinchPortConnection } from './FinchPortConnection';
 import { AnyFinchMessage, FinchConnectionType } from '@finch-graphql/types';
 
 /**
@@ -56,16 +56,7 @@ export class FinchDevtools extends FinchPortConnection {
     this.connectionType = connectionType;
     this.messageKey = messageKey;
     this.messagePortName = messagePortName;
-    this.messageListener = async (
-      msg: AnyFinchMessage,
-      sender: browser.runtime.MessageSender,
-    ) => {
-      const port = this.messagePorts.find(
-        thisPort => thisPort.sender.tab.id === sender.tab.id,
-      );
-      if (!port) {
-        return {};
-      }
+    this.messageListener = async (msg: AnyFinchMessage) => {
       switch (msg.type) {
         /**
          * RequestMessageKey message is devtools trying to auto configure the
