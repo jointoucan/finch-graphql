@@ -8,6 +8,8 @@ export enum FinchDevToolsMessageType {
   MessageKey = 'message key',
   HealthCheck = 'health check',
   HealthCheckOk = 'health check ok',
+  RequestConnectionInfo = 'request connection info',
+  ConnectionInfo = 'connection info',
 }
 
 export interface FinchRequestMessageKey {

@@ -12,6 +12,11 @@ export enum FinchMessageSource {
   ExternalMessage = 'external-message',
 }
 
+export enum FinchConnectionType {
+  Port = 'port',
+  Message = 'message',
+}
+
 export const FinchDefaultPortName = '_finchMessagePort';
 
 export type GenericVariables = { [key: string]: any };
@@ -65,4 +70,43 @@ export interface FinchQueryOptions {
 export interface FinchExecutionResults<Query> {
   data?: Query;
   readonly errors?: GraphQLError[];
+}
+
+export enum FinchDevToolsMessageType {
+  Start = 'start',
+  Response = 'response',
+  RequestMessageKey = 'request message key',
+  MessageKey = 'message key',
+  HealthCheck = 'health check',
+  HealthCheckOk = 'health check ok',
+}
+
+export interface FinchRequestMessageKey {
+  type: FinchDevToolsMessageType.RequestMessageKey;
+}
+
+export interface FinchRequestHealthCheck {
+  type: FinchDevToolsMessageType.HealthCheck;
+}
+
+export type FinchDevtoolsIncomingMessage =
+  | FinchRequestMessageKey
+  | FinchRequestHealthCheck;
+
+export type AnyFinchMessage = (
+  | FinchDevtoolsIncomingMessage
+  | FinchMessage<unknown>
+) & {
+  id: string;
+};
+
+export type FinchMessageHandler = (
+  message: AnyFinchMessage,
+  sender: chrome.runtime.MessageSender | browser.runtime.MessageSender,
+) => Promise<object>;
+
+export interface FinchConnection {
+  onStart(): () => void;
+  addMessageListener(listener: FinchMessageHandler): void;
+  type: FinchConnectionType;
 }
