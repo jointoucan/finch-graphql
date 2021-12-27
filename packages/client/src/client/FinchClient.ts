@@ -7,7 +7,7 @@ import {
   GenericVariables,
 } from '@finch-graphql/types';
 import { isDocumentNode } from '../utils';
-import { messageCreator } from './client';
+import { messageCreator, queryApi } from './client';
 import { connectPort } from '@finch-graphql/browser-polyfill';
 import { v4 } from 'uuid';
 
@@ -16,6 +16,7 @@ interface FinchClientOptions {
   id?: string;
   messageKey?: string;
   portName?: string;
+  useMessages?: boolean;
 }
 
 enum FinchClientStatus {
@@ -39,6 +40,7 @@ export class FinchClient {
   private port: browser.runtime.Port | chrome.runtime.Port | null;
   private portName = FinchDefaultPortName;
   private portReconnectTimeout = 1000;
+  private useMessages: boolean;
   public status = FinchClientStatus.Idle;
 
   /**
@@ -54,14 +56,19 @@ export class FinchClient {
     this.id = options.id;
     this.messageKey = options.messageKey;
     this.portName = options.portName || this.portName;
+    this.useMessages = options.useMessages ?? false;
   }
 
   start() {
     if (this.status !== FinchClientStatus.Idle) {
       return;
     }
-    this.status = FinchClientStatus.Connecting;
-    this.connectPort();
+    if (this.useMessages) {
+      this.status = FinchClientStatus.Connected;
+    } else {
+      this.status = FinchClientStatus.Connecting;
+      this.connectPort();
+    }
   }
 
   stop() {
@@ -94,7 +101,7 @@ export class FinchClient {
     });
   }
 
-  async queryApi<
+  private queryApiViaPort<
     Query extends {} = {},
     Variables extends GenericVariables = {}
   >(
@@ -129,6 +136,24 @@ export class FinchClient {
 
       this.port?.onMessage.addListener(onMessage);
     });
+  }
+
+  async queryApi<
+    Query extends {} = {},
+    Variables extends GenericVariables = {}
+  >(
+    query: string | DocumentNode,
+    variables?: Variables,
+    options: FinchQueryOptions = {},
+  ): Promise<{
+    id?: string;
+    data: Query | null;
+    errors?: GraphQLFormattedError[];
+  }> {
+    if (this.useMessages) {
+      return queryApi<Query, Variables>(query, variables, options);
+    }
+    return this.queryApiViaPort<Query, Variables>(query, variables, options);
   }
 
   /**
