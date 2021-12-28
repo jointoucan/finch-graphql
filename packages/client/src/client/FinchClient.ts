@@ -111,7 +111,6 @@ export class FinchClient {
     variables?: Variables,
     options: FinchQueryOptions = {},
   ): Promise<{
-    id: string;
     data: Query | null;
     errors?: GraphQLFormattedError[];
   }> {
@@ -127,7 +126,6 @@ export class FinchClient {
 
       const requestTimeout = setTimeout(() => {
         resolve({
-          id: messageId,
           data: null,
           errors: [
             {
@@ -137,12 +135,18 @@ export class FinchClient {
         });
       }, this.messageTimeout);
 
-      const onMessage = (response: {
+      const onMessage = ({
+        id,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        external,
+        ...response
+      }: {
         id: string;
+        external: boolean;
         data: Query | null;
         errors?: GraphQLFormattedError[];
       }) => {
-        if (response.id === messageId) {
+        if (id === messageId) {
           clearTimeout(requestTimeout);
           this.port?.onMessage.removeListener(onMessage);
           resolve(response);

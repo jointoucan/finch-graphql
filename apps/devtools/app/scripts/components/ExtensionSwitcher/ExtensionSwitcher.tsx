@@ -12,6 +12,7 @@ import { useRef, FC } from 'react';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { useGetExtensionQuery } from '../../schema';
 import { CircleIcon, InfoIcon, RefreshIcon } from '../Icons';
+import { ConnectionInfo } from '../types';
 import { CurrentExtension } from './CurrentExtension';
 import { ExtensionList } from './ExtensionList';
 import { ExtensionProfileForm } from './ExtensionProfileForm';
@@ -20,17 +21,15 @@ import { NoPermissionDrawer } from './NoPermissionDrawer';
 interface ExtensionSwitcherProps {
   isConnected: boolean;
   extensionId?: string;
-  messageKey: string;
-  setMessageKey: (messageKey: string) => void;
   setExtensionId: (extensionId: string) => void;
+  connectionInfo?: ConnectionInfo;
 }
 
 export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
   isConnected,
   extensionId,
-  messageKey,
-  setMessageKey,
   setExtensionId,
+  connectionInfo,
 }) => {
   const scheme = useColorScheme();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -132,15 +131,15 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
                   <CurrentExtension
                     {...extensionInfo}
                     isConnected={isConnected}
+                    connectionInfo={connectionInfo}
                   >
                     <ExtensionProfileForm
                       extensionId={extensionId}
                       onExtensionIdChange={key => {
-                        setMessageKey(key);
+                        setExtensionId(key);
                       }}
                       readOnlyExtensionId
-                      messageKey={messageKey}
-                      onMessageKeyChange={setMessageKey}
+                      connectionInfo={connectionInfo}
                     />
                   </CurrentExtension>
                 )}
@@ -155,8 +154,7 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
                 <ExtensionProfileForm
                   extensionId={extensionId}
                   onExtensionIdChange={setExtensionId}
-                  messageKey={messageKey}
-                  onMessageKeyChange={setMessageKey}
+                  connectionInfo={connectionInfo}
                 />
               </NoPermissionDrawer>
             )}

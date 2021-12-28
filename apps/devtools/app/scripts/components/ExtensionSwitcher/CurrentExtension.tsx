@@ -1,7 +1,9 @@
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Heading, Text } from '@chakra-ui/react';
+import { FinchConnectionType } from '@finch-graphql/types';
 import { FC } from 'react';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { CircleIcon } from '../Icons';
+import { ConnectionInfo } from '../types';
 
 interface CurrentExtensionProps {
   id: string;
@@ -10,7 +12,25 @@ interface CurrentExtensionProps {
   icon?: string;
   enabled: boolean;
   isConnected: boolean;
+  connectionInfo?: ConnectionInfo;
 }
+
+const CurrentExtensionInfoItem: FC<
+  { label: string; value: string } & BoxProps
+> = ({ label, value, ...boxProps }) => (
+  <Box mb={2} {...boxProps}>
+    <Text>{label}</Text>
+    <Heading
+      size="sm"
+      whiteSpace="nowrap"
+      textOverflow="ellipsis"
+      overflow="hidden"
+      maxWidth="250px"
+    >
+      {value}
+    </Heading>
+  </Box>
+);
 
 export const CurrentExtension: FC<CurrentExtensionProps> = ({
   icon,
@@ -18,6 +38,7 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
   version,
   isConnected,
   children,
+  connectionInfo,
 }) => {
   const scheme = useColorScheme();
   return (
@@ -65,7 +86,26 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
             {name}
           </Heading>
           <Text>v{version}</Text>
-          {children}
+          <Box mb={2}>{children}</Box>
+          {connectionInfo && connectionInfo.connectionType && (
+            <>
+              <CurrentExtensionInfoItem
+                label="Connection Type"
+                value={connectionInfo.connectionType}
+              />
+              {connectionInfo.connectionType === FinchConnectionType.Message ? (
+                <CurrentExtensionInfoItem
+                  label="Message Key"
+                  value={connectionInfo.messageKey}
+                />
+              ) : (
+                <CurrentExtensionInfoItem
+                  label="Port Name"
+                  value={connectionInfo.messagePortName}
+                />
+              )}
+            </>
+          )}
         </Box>
       </Box>
     </Box>

@@ -110,6 +110,7 @@ export const DevtoolsApp = () => {
           setMessageKey={setMessageKey}
           setExtensionId={setExtensionId}
           messageKey={messageKey}
+          connectionInfo={extensionProfile}
         />
         <TabPanels display="flex" flexDirection="column" height="100%">
           <TabPanel p="0" height="100%">
