@@ -41,7 +41,7 @@ export class FinchPortConnection implements FinchConnection {
   /**
    * This allows devtools to know what type of connection this is.
    */
-  type: FinchConnectionType.Port;
+  public type = FinchConnectionType.Port;
   /**
    * constructor pretty much sets up the message listener, and configures the message port names.
    * @param options.messagePortName is the port name

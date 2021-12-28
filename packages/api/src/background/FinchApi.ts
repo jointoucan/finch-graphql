@@ -21,10 +21,6 @@ import {
   FinchContextObj,
   FinchExecutionResults,
 } from '../types';
-import {
-  addExternalMessageListener,
-  addMessageListener,
-} from '@finch-graphql/browser-polyfill';
 import { NoIntrospection } from './NoIntrospection';
 import { FinchDevtools } from './FinchDevtools';
 import { v4 } from 'uuid';
@@ -60,8 +56,6 @@ export class FinchApi {
   connection: FinchConnection;
   constructor({
     context,
-    attachMessages,
-    attachExternalMessages,
     messageKey,
     messagePortName,
     onQueryResponse = () => {},
@@ -87,7 +81,13 @@ export class FinchApi {
      * Setup connection to the clients
      * defaults to a port connection when no connection is passed.
      */
-    this.connection = connection ?? new FinchPortConnection();
+    this.connection =
+      connection ??
+      new FinchPortConnection({
+        messagePortName: this.messagePortName,
+        // Supported out of box for devtools
+        external: true,
+      });
 
     if (this.connection) {
       this.connection.addMessageListener(this.onMessage);
@@ -101,24 +101,15 @@ export class FinchApi {
       this.devtools = new FinchDevtools({
         messageKey: disableIntrospection ? undefined : this.messageKey,
         connectionType: this.connection.type,
-        messagePortName: this.messagePortName,
+        messagePortName: disableIntrospection
+          ? undefined
+          : this.messagePortName,
       });
       this.devtools.onStart();
     }
 
     if (disableIntrospection) {
       this.rules.unshift(NoIntrospection);
-    }
-
-    const attachOptions = {
-      messageKey: this.messageKey,
-    };
-
-    if (attachMessages) {
-      addMessageListener(this.onMessage, attachOptions);
-    }
-    if (attachExternalMessages) {
-      addExternalMessageListener(this.onExternalMessage, attachOptions);
     }
   }
 

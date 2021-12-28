@@ -1,6 +1,7 @@
 import { FinchDevToolsMessageType } from '@finch-graphql/api';
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import { FinchContextObj } from '@finch-graphql/api';
+import { FinchConnectionType } from '@finch-graphql/types';
 
 export type FinchDevtoolsIncomingMessage =
   | {
@@ -21,7 +22,13 @@ export type FinchDevtoolsIncomingMessage =
       };
       id: string;
     }
-  | { type: FinchDevToolsMessageType.MessageKey; messageKey: string };
+  | { type: FinchDevToolsMessageType.MessageKey; messageKey: string }
+  | {
+      type: FinchDevToolsMessageType.ConnectionInfo;
+      connectionType: FinchConnectionType;
+      messageKey?: string;
+      messagePortName?: string;
+    };
 
 export type FinchDevtoolsMessage = {
   type: FinchDevToolsMessageType;

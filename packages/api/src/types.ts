@@ -41,8 +41,6 @@ interface QueryResponseMeta {
 
 export type FinchApiOptions = {
   context?: FinchContext;
-  attachMessages?: boolean;
-  attachExternalMessages?: boolean;
   typeDefs: MakeExecSchemaOptions['typeDefs'] | DocumentNode[];
   messageKey?: string;
   messagePortName?: string;

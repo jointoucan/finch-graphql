@@ -17,6 +17,7 @@ interface FinchClientOptions {
   messageKey?: string;
   portName?: string;
   useMessages?: boolean;
+  messageTimeout?: number;
 }
 
 enum FinchClientStatus {
@@ -25,8 +26,6 @@ enum FinchClientStatus {
   Connecting = 'connecting',
   Idle = 'idle',
 }
-
-const DEFAULT_TIMEOUT = 1000;
 
 /**
  * FinchClient is a class that constructs a client that is able to query
@@ -41,6 +40,7 @@ export class FinchClient {
   private portName = FinchDefaultPortName;
   private portReconnectTimeout = 1000;
   private useMessages: boolean;
+  private messageTimeout = 5000;
   public status = FinchClientStatus.Idle;
 
   /**
@@ -50,6 +50,7 @@ export class FinchClient {
    * @param options.id A identifier for the extension to connect to, this is used for external request
    * @param options.messageKey If there is a custom message key this is where you would pass it.
    * @param options.disablePort Disabled the port connection
+   * @param options.messageTimeout The timeout for the message
    */
   constructor(options: FinchClientOptions = {}) {
     this.cache = options.cache;
@@ -57,6 +58,7 @@ export class FinchClient {
     this.messageKey = options.messageKey;
     this.portName = options.portName || this.portName;
     this.useMessages = options.useMessages ?? false;
+    this.messageTimeout = options.messageTimeout ?? this.messageTimeout;
   }
 
   start() {
@@ -96,7 +98,7 @@ export class FinchClient {
         }
         console.warn(`Reattempting reconnect to background script`);
         this.connectPort();
-      }, DEFAULT_TIMEOUT);
+      }, this.portReconnectTimeout);
       this.port = null;
     });
   }
@@ -122,13 +124,26 @@ export class FinchClient {
         !!this.id,
       );
       this.port?.postMessage({ id: messageId, ...decoratedMessage });
-      // TODO: add a timeout for the request
+
+      const requestTimeout = setTimeout(() => {
+        resolve({
+          id: messageId,
+          data: null,
+          errors: [
+            {
+              message: `Timed out waiting for response from background script`,
+            },
+          ],
+        });
+      }, this.messageTimeout);
+
       const onMessage = (response: {
         id: string;
         data: Query | null;
         errors?: GraphQLFormattedError[];
       }) => {
         if (response.id === messageId) {
+          clearTimeout(requestTimeout);
           this.port?.onMessage.removeListener(onMessage);
           resolve(response);
         }

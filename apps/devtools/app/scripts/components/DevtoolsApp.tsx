@@ -1,4 +1,4 @@
-import { queryApi } from '@finch-graphql/react';
+import { FinchClient, FinchProvider } from '@finch-graphql/react';
 import { FinchMessageKey } from '@finch-graphql/types';
 import { useMemo, useState } from 'react';
 import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react';
@@ -10,38 +10,47 @@ import { MessagesViewer } from './MessageViewer';
 import { FinchDevtoolsMessage } from './MessageViewer/types';
 import { PortConnection } from './PortConnection';
 import { useCallback } from 'react';
+import { ConnectionInfo } from './types';
+import { FinchConnectionType } from '@finch-graphql/api';
 
-export const graphQLFetcher = ({
-  messageKey,
-  extensionId,
-}: {
-  messageKey: string;
-  extensionId: string;
-}): Fetcher => async ({ query, variables }) => {
-  return queryApi(query, variables || {}, {
-    messageKey,
-    id: extensionId,
-  });
-};
+const client = new FinchClient();
+client.start();
 
 export const DevtoolsApp = () => {
   const [extensionId, setExtensionId] = useLocalStorage(
     StorageKey.ExtensionId,
     '',
   );
-  const [extensionProfile, setExtensionProfile] = useLocalStorage<{
-    messageKey: string;
-    nickName: null | string;
-  }>(`${StorageKey.ExtensionProfilePrefix}${extensionId}`, {
-    messageKey: FinchMessageKey.Generic,
-    nickName: null,
-  });
+  const [
+    extensionProfile,
+    setExtensionProfile,
+  ] = useLocalStorage<ConnectionInfo>(
+    `${StorageKey.ExtensionProfilePrefix}${extensionId}`,
+    {
+      messageKey: FinchMessageKey.Generic,
+      nickName: null,
+    },
+  );
   const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
   const messageKey = extensionProfile.messageKey;
+  const connectionType = extensionProfile.connectionType;
+  const messagePortName = extensionProfile.messagePortName;
+
+  // TODO need to destroy the client when new on is created
+  const externalClient = useMemo(() => {
+    const thisClient = new FinchClient({
+      messageKey,
+      portName: messagePortName,
+      id: extensionId,
+      useMessages: FinchConnectionType.Message === connectionType,
+    });
+    thisClient.start();
+    return thisClient;
+  }, [extensionId, messageKey, connectionType, messagePortName]);
 
   const setMessageKey = useCallback(
     (updatedMessageKey: string) => {
@@ -54,50 +63,69 @@ export const DevtoolsApp = () => {
     [extensionId, extensionProfile],
   );
 
+  const graphQLFetcher = useCallback(
+    ({
+      messageKey: fetcherMessageKey,
+      extensionId: fetcherExtensionId,
+    }: {
+      messageKey: string;
+      extensionId: string;
+    }): Fetcher => async ({ query, variables }) => {
+      return externalClient.queryApi(query, variables || {}, {
+        messageKey: fetcherMessageKey,
+        id: fetcherExtensionId,
+      });
+    },
+    [externalClient],
+  );
+
   const fetcher = useMemo(() => {
     return graphQLFetcher({ messageKey, extensionId });
   }, [messageKey, extensionId]);
 
   return (
-    <Tabs
-      colorScheme="blue"
-      onChange={index => setTabIndex(index)}
-      defaultIndex={tabIndex}
-      display="flex"
-      flexDirection="column"
-      height="100%"
-      isLazy
-    >
-      <PortConnection
-        extensionId={extensionId}
-        setMessages={setMessages}
-        isRecording={isRecording}
-        onDisconnected={() => setIsConnected(false)}
-        onConnected={() => setIsConnected(true)}
-        setMessageKey={setMessageKey}
-      />
-      <Header
-        isConnected={isConnected}
-        isRecording={isRecording}
-        extensionId={extensionId}
-        setMessageKey={setMessageKey}
-        setExtensionId={setExtensionId}
-        messageKey={messageKey}
-      />
-      <TabPanels display="flex" flexDirection="column" height="100%">
-        <TabPanel p="0" height="100%">
-          <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
-        </TabPanel>
-        <TabPanel p="0" height="100%">
-          <MessagesViewer
-            extensionId={extensionId}
-            isRecording={isRecording}
-            setIsRecording={setIsRecording}
-            messages={messages}
-            setMessages={setMessages}
-          />
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
+    <FinchProvider client={client}>
+      <Tabs
+        colorScheme="blue"
+        onChange={index => setTabIndex(index)}
+        defaultIndex={tabIndex}
+        display="flex"
+        flexDirection="column"
+        height="100%"
+        isLazy
+      >
+        <PortConnection
+          extensionId={extensionId}
+          setMessages={setMessages}
+          isRecording={isRecording}
+          onDisconnected={() => setIsConnected(false)}
+          onConnected={() => setIsConnected(true)}
+          setMessageKey={setMessageKey}
+          setExtensionConnectionInfo={setExtensionProfile}
+        />
+        <Header
+          isConnected={isConnected}
+          isRecording={isRecording}
+          extensionId={extensionId}
+          setMessageKey={setMessageKey}
+          setExtensionId={setExtensionId}
+          messageKey={messageKey}
+        />
+        <TabPanels display="flex" flexDirection="column" height="100%">
+          <TabPanel p="0" height="100%">
+            <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
+          </TabPanel>
+          <TabPanel p="0" height="100%">
+            <MessagesViewer
+              extensionId={extensionId}
+              isRecording={isRecording}
+              setIsRecording={setIsRecording}
+              messages={messages}
+              setMessages={setMessages}
+            />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </FinchProvider>
   );
 };

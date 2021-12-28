@@ -19,25 +19,6 @@ export class FinchDevtools extends FinchPortConnection {
    * to the Finch GraphQL API.
    */
   static portName = '_finchDevtools';
-  /**
-   * connectionType of the normal messages, used to detect how to connect to the extension.
-   */
-  private connectionType: FinchConnectionType;
-  /**
-   * if the connection is message based, this will be the message key that is used to connect
-   */
-  private messageKey?: string;
-  /**
-   * if the messaging is port based, this will be populated with the port name.
-   */
-  private messagePortName?: string;
-  /**
-   * listenForConnections will listen for connections from the Finch devtools
-   * if connected it will wait for the port to disconnect before cleaning up.
-   * This method also set up a message handler that will listen for incoming messages
-   * from devtools. This can be used for things like getting message keys of an extension
-   * that allows auto connection / this will only be turned on when introspection is on.
-   */
 
   constructor({
     connectionType,
@@ -53,9 +34,7 @@ export class FinchDevtools extends FinchPortConnection {
       // Needed to connect to external port.
       external: true,
     });
-    this.connectionType = connectionType;
-    this.messageKey = messageKey;
-    this.messagePortName = messagePortName;
+
     this.messageListener = async (msg: AnyFinchMessage) => {
       switch (msg.type) {
         /**
@@ -63,10 +42,10 @@ export class FinchDevtools extends FinchPortConnection {
          * message key of the application.
          */
         case FinchDevToolsMessageType.RequestMessageKey:
-          if (this.messageKey) {
+          if (messageKey) {
             return {
               type: FinchDevToolsMessageType.MessageKey,
-              messageKey: this.messageKey,
+              messageKey,
             };
           }
           break;
@@ -82,9 +61,9 @@ export class FinchDevtools extends FinchPortConnection {
         case FinchDevToolsMessageType.RequestConnectionInfo:
           return {
             type: FinchDevToolsMessageType.ConnectionInfo,
-            messageKey: this.messageKey,
-            messagePortName: this.messagePortName,
-            connectionType: this.connectionType,
+            messageKey,
+            messagePortName,
+            connectionType,
           };
 
         default:

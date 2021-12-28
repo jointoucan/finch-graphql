@@ -8,7 +8,7 @@ export class FinchNullConnection implements FinchConnection {
   /**
    * defaults to message connections since this is usually turned off to enable manually connecting.
    */
-  type: FinchConnectionType.Message;
+  public type = FinchConnectionType.Message;
   /**
    * onStart interfaces with the FinchApi
    **/
