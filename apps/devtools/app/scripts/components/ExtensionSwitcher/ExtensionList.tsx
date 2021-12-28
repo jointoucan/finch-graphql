@@ -22,8 +22,6 @@ export const ExtensionList: FC<{
           borderBottomColor={scheme.border}
           px={2}
           py={1}
-          position="sticky"
-          top={hasCurrentExtension ? 245 : 0}
           backgroundColor={scheme.border}
           zIndex={10}
         >

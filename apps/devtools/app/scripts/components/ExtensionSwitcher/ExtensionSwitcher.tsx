@@ -128,26 +128,28 @@ export const ExtensionSwitcher: FC<ExtensionSwitcherProps> = ({
             {hasManagementPermission ? (
               <>
                 {extensionInfo && (
-                  <CurrentExtension
-                    {...extensionInfo}
-                    isConnected={isConnected}
-                    connectionInfo={connectionInfo}
-                  >
-                    <ExtensionProfileForm
-                      extensionId={extensionId}
-                      onExtensionIdChange={key => {
-                        setExtensionId(key);
-                      }}
-                      readOnlyExtensionId
+                  <>
+                    <CurrentExtension
+                      {...extensionInfo}
+                      isConnected={isConnected}
                       connectionInfo={connectionInfo}
+                    >
+                      <ExtensionProfileForm
+                        extensionId={extensionId}
+                        onExtensionIdChange={key => {
+                          setExtensionId(key);
+                        }}
+                        readOnlyExtensionId
+                        connectionInfo={connectionInfo}
+                      />
+                    </CurrentExtension>
+                    <ExtensionList
+                      hasCurrentExtension={!!extensionInfo}
+                      currentExtensionId={extensionId}
+                      setExtensionId={setExtensionId}
                     />
-                  </CurrentExtension>
+                  </>
                 )}
-                <ExtensionList
-                  hasCurrentExtension={!!extensionInfo}
-                  currentExtensionId={extensionId}
-                  setExtensionId={setExtensionId}
-                />
               </>
             ) : (
               <NoPermissionDrawer>
