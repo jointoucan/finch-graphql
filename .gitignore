@@ -8,3 +8,6 @@ coverage
 build
 tsconfig.tsbuildinfo
 .turbo
+
+# user settings
+.vscode
