@@ -41,14 +41,12 @@ export const DevtoolsApp = () => {
 
   // TODO need to destroy the client when new on is created
   const externalClient = useMemo(() => {
-    const thisClient = new FinchClient({
+    return new FinchClient({
       messageKey,
       portName: messagePortName,
       id: extensionId,
       useMessages: FinchConnectionType.Message === connectionType,
     });
-    thisClient.start();
-    return thisClient;
   }, [extensionId, messageKey, connectionType, messagePortName]);
 
   const setMessageKey = useCallback(
