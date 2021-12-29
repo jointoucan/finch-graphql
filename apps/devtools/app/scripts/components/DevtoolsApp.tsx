@@ -14,7 +14,6 @@ import { ConnectionInfo } from './types';
 import { FinchConnectionType } from '@finch-graphql/api';
 
 const client = new FinchClient();
-client.start();
 
 export const DevtoolsApp = () => {
   const [extensionId, setExtensionId] = useLocalStorage(

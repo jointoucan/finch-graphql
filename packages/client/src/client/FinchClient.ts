@@ -18,6 +18,7 @@ interface FinchClientOptions {
   portName?: string;
   useMessages?: boolean;
   messageTimeout?: number;
+  autoStart?: boolean;
 }
 
 enum FinchClientStatus {
@@ -52,13 +53,24 @@ export class FinchClient {
    * @param options.disablePort Disabled the port connection
    * @param options.messageTimeout The timeout for the message
    */
-  constructor(options: FinchClientOptions = {}) {
-    this.cache = options.cache;
-    this.id = options.id;
-    this.messageKey = options.messageKey;
-    this.portName = options.portName || this.portName;
-    this.useMessages = options.useMessages ?? false;
-    this.messageTimeout = options.messageTimeout ?? this.messageTimeout;
+  constructor({
+    cache,
+    id,
+    messageKey,
+    portName,
+    useMessages,
+    messageTimeout,
+    autoStart = true,
+  }: FinchClientOptions = {}) {
+    this.cache = cache;
+    this.id = id;
+    this.messageKey = messageKey;
+    this.portName = portName || this.portName;
+    this.useMessages = useMessages ?? false;
+    this.messageTimeout = messageTimeout ?? this.messageTimeout;
+    if (autoStart) {
+      this.start();
+    }
   }
 
   start() {

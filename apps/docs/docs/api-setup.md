@@ -76,21 +76,6 @@ The exported **resolvers** variable can now be passed to **FinchApi** to be able
 
 Read more about resolvers in the [official GraphQL docs](https://graphql.org/learn/execution/#root-fields-resolvers).
 
-### Attaching messaging
-
-To be able to start querying the GraphQL API you will need to attach it to messages so when a message comes into the background script, Finch can determine if it should handle the message.
-
-```typescript
-const api = new FinchApi({
-  typeDefs,
-  resolver,
-  // auto attach messages
-  attachMessages: true,
-});
-```
-
-Finch GraphQL has a built in way to attach messages. In the example above we pass **attachMessages** as _true_ to be able to auto attach messages to the browser messaging API. For projects with existing messages you will probably want to avoid this because it may interfere with responses to other messages. There is another way you can attach to the messaging API without interfering.
-
 ```typescript
 import { FinchMessageKey } from '@finch-graphql/api';
 import { api } from './graphql-api';

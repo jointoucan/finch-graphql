@@ -31,6 +31,10 @@ The `options` parameter is an object that can be used to configure the client, t
 
 `options.cache` is an instance of FinchCache. This is used to store cached responses, and be able to sync all identical requests to the same response.
 
+`options?.useMessages` is a boolean that controls if the client should use messages to communicate with the extension. The default behavior is to use ports for messaging.
+
+`options?.autoStart` is a boolean that controls if the client should connect the port right away. By default this is true, but you can turn it off and call `client.start()` to start the connection.
+
 ### FinchClient::query
 
 `query` queries the Api and returns a properly typed response. This also has the side effect of setting cache and updating any queries that subscribe to the cache.
@@ -62,3 +66,11 @@ const unsubscribe = await client.subscribe(query, variables (updatedInfo) => {
 ```
 
 The options of the mutation method are used to make configure the query to hit a different API then the one specified in the constructor, and is not needed in most cases.
+
+### FinchClient::start
+
+This starts the finch client, you do not need to call this if you have not set `autoStart` to false. This will create a port to the background process if one does not exist.
+
+### FinchClient::stop
+
+This disconnects the client from the background process.
