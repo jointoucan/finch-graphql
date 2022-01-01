@@ -54,6 +54,7 @@ export class FinchApi {
   rules: ValidationRule[];
   devtools?: FinchDevtools;
   connection: FinchConnection;
+  closeConnection?: () => void;
   constructor({
     context,
     messageKey,
@@ -91,7 +92,7 @@ export class FinchApi {
 
     if (this.connection) {
       this.connection.addMessageListener(this.onMessage);
-      this.connection.onStart();
+      this.closeConnection = this.connection.onStart();
     }
 
     /**
@@ -240,5 +241,9 @@ export class FinchApi {
         sender,
       });
     }
+  }
+
+  close() {
+    this.closeConnection?.();
   }
 }

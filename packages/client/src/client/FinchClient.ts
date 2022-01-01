@@ -134,6 +134,7 @@ export class FinchClient {
         options.messageKey,
         !!this.id,
       );
+
       this.port?.postMessage({ id: messageId, ...decoratedMessage });
 
       const requestTimeout = setTimeout(() => {
