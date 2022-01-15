@@ -1,14 +1,31 @@
-import { DocumentNode } from 'graphql';
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import gql from 'graphql-tag';
 import { FinchCache, Listener } from './cache';
-import { FinchQueryOptions, GenericVariables } from '@finch-graphql/types';
+import {
+  FinchDefaultPortName,
+  FinchQueryOptions,
+  GenericVariables,
+} from '@finch-graphql/types';
 import { isDocumentNode } from '../utils';
-import { queryApi } from './client';
+import { messageCreator, queryApi } from './client';
+import { connectPort } from '@finch-graphql/browser-polyfill';
+import { v4 } from 'uuid';
 
 interface FinchClientOptions {
   cache?: FinchCache;
   id?: string;
   messageKey?: string;
+  portName?: string;
+  useMessages?: boolean;
+  messageTimeout?: number;
+  autoStart?: boolean;
+}
+
+enum FinchClientStatus {
+  Disconnected = 'disconnected',
+  Connected = 'connected',
+  Connecting = 'connecting',
+  Idle = 'idle',
 }
 
 /**
@@ -20,6 +37,12 @@ export class FinchClient {
   private cache: FinchCache | undefined;
   private id: string | undefined;
   private messageKey: string | undefined;
+  private port: browser.runtime.Port | chrome.runtime.Port | null;
+  private portName = FinchDefaultPortName;
+  private portReconnectTimeout = 1000;
+  private useMessages: boolean;
+  private messageTimeout = 5000;
+  public status = FinchClientStatus.Idle;
 
   /**
    *
@@ -27,11 +50,142 @@ export class FinchClient {
    * @param options.cache An optional FinchCache instance
    * @param options.id A identifier for the extension to connect to, this is used for external request
    * @param options.messageKey If there is a custom message key this is where you would pass it.
+   * @param options.disablePort Disabled the port connection
+   * @param options.messageTimeout The timeout for the message
    */
-  constructor(options: FinchClientOptions = {}) {
-    this.cache = options.cache;
-    this.id = options.id;
-    this.messageKey = options.messageKey;
+  constructor({
+    cache,
+    id,
+    messageKey,
+    portName,
+    useMessages,
+    messageTimeout,
+    autoStart = true,
+  }: FinchClientOptions = {}) {
+    this.cache = cache;
+    this.id = id;
+    this.messageKey = messageKey;
+    this.portName = portName || this.portName;
+    this.useMessages = useMessages ?? false;
+    this.messageTimeout = messageTimeout ?? this.messageTimeout;
+    if (autoStart) {
+      this.start();
+    }
+  }
+
+  start() {
+    if (this.status !== FinchClientStatus.Idle) {
+      return;
+    }
+    if (this.useMessages) {
+      this.status = FinchClientStatus.Connected;
+    } else {
+      this.status = FinchClientStatus.Connecting;
+      this.connectPort();
+    }
+  }
+
+  stop() {
+    this.port.disconnect();
+    // Timeout is to let the event fire before setting state
+    setTimeout(() => {
+      this.status = FinchClientStatus.Idle;
+      clearTimeout(this.portReconnectTimeout);
+    }, 0);
+  }
+
+  connectPort() {
+    const port = connectPort({
+      extensionId: this.id,
+      connectInfo: { name: this.portName },
+    });
+    this.port = port;
+    this.status = FinchClientStatus.Connected;
+
+    port.onDisconnect.addListener(() => {
+      this.status = FinchClientStatus.Disconnected;
+      this.portReconnectTimeout = window.setTimeout(() => {
+        if (this.status === FinchClientStatus.Idle) {
+          return;
+        }
+        console.warn(`Reattempting reconnect to background script`);
+        this.connectPort();
+      }, this.portReconnectTimeout);
+      this.port = null;
+    });
+  }
+
+  private queryApiViaPort<
+    Query extends {} = {},
+    Variables extends GenericVariables = {}
+  >(
+    query: string | DocumentNode,
+    variables?: Variables,
+    options: FinchQueryOptions = {},
+  ): Promise<{
+    data: Query | null;
+    errors?: GraphQLFormattedError[];
+  }> {
+    return new Promise(resolve => {
+      const messageId = v4();
+      const decoratedMessage = messageCreator(
+        query,
+        variables,
+        options.messageKey,
+        !!this.id,
+      );
+
+      this.port?.postMessage({ id: messageId, ...decoratedMessage });
+
+      const requestTimeout = setTimeout(() => {
+        resolve({
+          data: null,
+          errors: [
+            {
+              message: `Timed out waiting for response from background script`,
+            },
+          ],
+        });
+      }, this.messageTimeout);
+
+      const onMessage = ({
+        id,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        external,
+        ...response
+      }: {
+        id: string;
+        external: boolean;
+        data: Query | null;
+        errors?: GraphQLFormattedError[];
+      }) => {
+        if (id === messageId) {
+          clearTimeout(requestTimeout);
+          this.port?.onMessage.removeListener(onMessage);
+          resolve(response);
+        }
+      };
+
+      this.port?.onMessage.addListener(onMessage);
+    });
+  }
+
+  async queryApi<
+    Query extends {} = {},
+    Variables extends GenericVariables = {}
+  >(
+    query: string | DocumentNode,
+    variables?: Variables,
+    options: FinchQueryOptions = {},
+  ): Promise<{
+    id?: string;
+    data: Query | null;
+    errors?: GraphQLFormattedError[];
+  }> {
+    if (this.useMessages) {
+      return queryApi<Query, Variables>(query, variables, options);
+    }
+    return this.queryApiViaPort<Query, Variables>(query, variables, options);
   }
 
   /**
@@ -50,11 +204,15 @@ export class FinchClient {
     options: FinchQueryOptions = {},
   ) {
     const documentNode = isDocumentNode(query) ? query : gql(query);
-    const result = await queryApi<Query, Variables>(documentNode, variables, {
-      id: this.id,
-      messageKey: this.messageKey,
-      ...options,
-    });
+    const result = await this.queryApi<Query, Variables>(
+      documentNode,
+      variables,
+      {
+        id: this.id,
+        messageKey: this.messageKey,
+        ...options,
+      },
+    );
 
     if (this.cache && result?.data) {
       this.cache.setCache(documentNode, variables, result.data);
@@ -77,11 +235,15 @@ export class FinchClient {
     options: FinchQueryOptions = {},
   ) {
     const documentNode = isDocumentNode(mutation) ? mutation : gql(mutation);
-    const result = await queryApi<Query, Variables>(documentNode, variables, {
-      id: this.id,
-      messageKey: this.messageKey,
-      ...options,
-    });
+    const result = await this.queryApi<Query, Variables>(
+      documentNode,
+      variables,
+      {
+        id: this.id,
+        messageKey: this.messageKey,
+        ...options,
+      },
+    );
 
     return result;
   }

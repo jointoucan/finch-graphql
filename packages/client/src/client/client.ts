@@ -16,7 +16,7 @@ import { isDocumentNode } from '../utils';
  * @param messageKey optional message key that will get sent to background script
  * @returns the custom message object for this query
  */
-const messageCreator = <Variables extends GenericVariables = {}>(
+export const messageCreator = <Variables extends GenericVariables = {}>(
   query: string | DocumentNode,
   variables: Variables,
   messageKey?: string,

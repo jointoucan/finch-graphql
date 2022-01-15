@@ -117,6 +117,72 @@ export const getExtensionId = () => {
 };
 
 /**
+ * onConnect is a proxy for port connection listeners
+ */
+export const onConnect = (
+  callback: (port: browser.runtime.Port | chrome.runtime.Port) => void,
+) => {
+  try {
+    if (
+      typeof chrome !== 'undefined' &&
+      typeof chrome.runtime.onConnect !== 'undefined'
+    ) {
+      return chrome.runtime.onConnect.addListener(callback);
+    }
+    return browser.runtime.onConnect.addListener(callback);
+  } catch (e) {
+    console.warn(`Unable to listen to external port connections:`, e.message);
+  }
+};
+
+/**
+ * removeConnectListener is a proxy for port connection listeners
+ */
+export const removeConnectListener = (
+  callback: (port: browser.runtime.Port | chrome.runtime.Port) => void,
+) => {
+  try {
+    if (
+      typeof chrome !== 'undefined' &&
+      typeof chrome.runtime.onConnect !== 'undefined'
+    ) {
+      return chrome.runtime.onConnect.removeListener(callback);
+    }
+    return browser.runtime.onConnect.removeListener(callback);
+  } catch (e) {
+    console.warn(
+      `Unable to remove listener to external port connections:`,
+      e.message,
+    );
+  }
+};
+
+type ConnectInfo = chrome.runtime.ConnectInfo;
+
+export function connectPort({
+  extensionId,
+  connectInfo,
+}: {
+  extensionId?: string;
+  connectInfo?: ConnectInfo;
+}): browser.runtime.Port | chrome.runtime.Port {
+  let args: [string, ConnectInfo | undefined] | [ConnectInfo | undefined];
+  if (typeof extensionId === 'string') {
+    args = [extensionId, connectInfo];
+  } else {
+    args = [connectInfo];
+  }
+  try {
+    if (typeof chrome !== 'undefined') {
+      return chrome.runtime.connect.apply(chrome.runtime, args);
+    }
+    return browser.runtime.connect.apply(browser.runtime, args);
+  } catch (e) {
+    console.warn(`Unable to connect to port:`, e.message);
+  }
+}
+
+/**
  * onConnectExternal is a proxy for external port connection listeners
  */
 export const onConnectExternal = (

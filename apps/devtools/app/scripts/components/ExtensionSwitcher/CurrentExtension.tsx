@@ -1,7 +1,19 @@
-import { Box, Heading, Text } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Heading,
+  Text,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+} from '@chakra-ui/react';
+import { FinchConnectionType, FinchMessageKey } from '@finch-graphql/types';
 import { FC } from 'react';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { CircleIcon } from '../Icons';
+import { ConnectionInfo } from '../types';
 
 interface CurrentExtensionProps {
   id: string;
@@ -10,7 +22,25 @@ interface CurrentExtensionProps {
   icon?: string;
   enabled: boolean;
   isConnected: boolean;
+  connectionInfo?: ConnectionInfo;
 }
+
+const CurrentExtensionInfoItem: FC<
+  { label: string; value: string } & BoxProps
+> = ({ label, value, ...boxProps }) => (
+  <Box mb={2} {...boxProps}>
+    <Text>{label}</Text>
+    <Heading
+      size="sm"
+      whiteSpace="nowrap"
+      textOverflow="ellipsis"
+      overflow="hidden"
+      maxWidth="250px"
+    >
+      {value}
+    </Heading>
+  </Box>
+);
 
 export const CurrentExtension: FC<CurrentExtensionProps> = ({
   icon,
@@ -18,8 +48,10 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
   version,
   isConnected,
   children,
+  connectionInfo,
 }) => {
   const scheme = useColorScheme();
+
   return (
     <Box position="sticky" top={0} zIndex={10}>
       <Box
@@ -60,12 +92,45 @@ export const CurrentExtension: FC<CurrentExtensionProps> = ({
             whiteSpace="nowrap"
             textOverflow="ellipsis"
             overflow="hidden"
-            maxWidth="250px"
+            maxWidth="100%"
           >
             {name}
           </Heading>
           <Text>v{version}</Text>
-          {children}
+          <Accordion allowToggle>
+            <AccordionItem css={{ border: 'none' }}>
+              <Text>
+                <AccordionButton p={0} fontSize="sm" fontWeight="bold">
+                  Connection Info
+                  <AccordionIcon />
+                </AccordionButton>
+              </Text>
+              <AccordionPanel pb={2} pl={0}>
+                <>
+                  <CurrentExtensionInfoItem
+                    mt={2}
+                    label="Connection Type"
+                    value={connectionInfo?.connectionType ?? 'message'}
+                  />
+                  {connectionInfo?.connectionType !==
+                  FinchConnectionType.Port ? (
+                    <CurrentExtensionInfoItem
+                      label="Message Key"
+                      value={
+                        connectionInfo?.messageKey ?? FinchMessageKey.Generic
+                      }
+                    />
+                  ) : (
+                    <CurrentExtensionInfoItem
+                      label="Port Name"
+                      value={connectionInfo?.messagePortName}
+                    />
+                  )}
+                </>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          <Box mb={2}>{children}</Box>
         </Box>
       </Box>
     </Box>

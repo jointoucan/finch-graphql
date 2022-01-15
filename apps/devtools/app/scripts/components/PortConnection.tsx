@@ -6,6 +6,7 @@ import {
   FinchDevtoolsMessage,
 } from './MessageViewer/types';
 import { useEffect } from 'react';
+import { ConnectionInfo } from './types';
 
 interface PortConnectionProps {
   extensionId: string;
@@ -14,6 +15,7 @@ interface PortConnectionProps {
   isRecording: boolean;
   onDisconnected: () => void;
   onConnected: () => void;
+  setExtensionConnectionInfo: Dispatch<SetStateAction<ConnectionInfo>>;
 }
 
 /**
@@ -27,6 +29,7 @@ export const PortConnection: FC<PortConnectionProps> = ({
   isRecording,
   onDisconnected,
   onConnected,
+  setExtensionConnectionInfo,
 }) => {
   const port = usePort({
     extensionId,
@@ -60,6 +63,14 @@ export const PortConnection: FC<PortConnectionProps> = ({
         case FinchDevToolsMessageType.MessageKey:
           setMessageKey(message.messageKey);
           break;
+        case FinchDevToolsMessageType.ConnectionInfo:
+          setExtensionConnectionInfo(existingInfo => ({
+            ...existingInfo,
+            messageKey: message.messageKey,
+            messagePortName: message.messagePortName,
+            connectionType: message.connectionType,
+          }));
+          break;
       }
     },
   });
@@ -69,7 +80,9 @@ export const PortConnection: FC<PortConnectionProps> = ({
       /**
        * request the current ports message key to auto configure the project.
        */
-      port.postMessage({ type: FinchDevToolsMessageType.RequestMessageKey });
+      port.postMessage({
+        type: FinchDevToolsMessageType.RequestConnectionInfo,
+      });
       onConnected();
     } else {
       onDisconnected();

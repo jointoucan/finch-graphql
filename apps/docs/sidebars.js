@@ -8,7 +8,7 @@ module.exports = {
       'website-setup',
     ],
     ['API Reference']: ['api-ref', 'client-ref', 'react-ref'],
-    ['Further integrations']: ['devtools', 'typescript-codegen'],
-    ['Whats new?']: ['finch-v2'],
+    ['Guides']: ['testing', 'devtools', 'typescript-codegen'],
+    ['Whats new?']: ['finch-v3'],
   },
 };

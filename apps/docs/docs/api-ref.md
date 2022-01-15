@@ -29,11 +29,11 @@ The `options` is the only param to the constructor of the FinchApi class.
 
 `options.context` is an object with the context of the API. This is the context of the GraphQL query and you can use it to pass data to the resolvers.
 
-`options.attachMessages` is a boolean that defines if the api should attach the extensions messaging system automatically. This should be false if you need hook this up manually.
-
-`options.attachExternalMessages` is a boolean that defines if the api should attach the extensions external messaging system automatically. This should be false if you need hook this up manually.
+`options.connection` is a instance of a connection class. This can be used to create a way to list for messages. By default this will create a port connection via the `FinchPortConnection` class. To use traditional message passing you can use the `FinchMessageConnection` class. To turn off all auto connection mechanisms you can use the `FinchNullConnection` class.
 
 `options.messageKey` this is a string that controls the key of the message, this is used to identify the message in the messaging system is coming from the right location.
+
+`options.messagePortName` this is a string that controls the name of the message port. This is used to identify the message port in the messaging system.
 
 `options.disableIntrospection` is a boolean that disables the introspection of the API. This is useful if you allow you production application connect to the public devtool.
 
@@ -73,4 +73,59 @@ browser.runtime.onExternalMessage.addListener(
     return api.onExternalMessage(message, sender);
   },
 );
+```
+
+### FinchPortConnection
+
+Ports connections are automatically created but in case you want to control all the options passed to FinchPortConnection you can use this class and pass it to the connection option of `FinchApi`.
+
+```typescript
+import { FinchPortConnection, FinchApi } from '@finch-graphql/api';
+
+const api = new FinchApi({
+  ...
+  connection: new FinchPortConnection({
+    messagePortName: 'ITS_A_SECRET',
+    external: false,
+  }),
+});
+```
+
+There is only a few options available for the port connection.
+
+`options.messagePortName` is a string that is the name of the message port. Default is `_finchMessagePort`.
+
+`options.external` is a boolean that controls if we should listen to the external message port or not.
+
+### FinchMessageConnection
+
+FinchMessageConnection is a connection class that is used to create a connection to the extension using async message. This is how 2.x versions of Finch worked. If you do not need any long lasting connections you may want to pass this FinchMessageConnection class to the connection option of `FinchApi`.
+
+```typescript
+import { FinchMessageConnection, FinchApi } from '@finch-graphql/api';
+
+const api = new FinchApi({
+  ...
+  connection: new FinchMessageConnection({
+    messageKey: 'ITS_A_SECRET',
+    external: false,
+  }),
+});
+```
+
+`options.messageKey` is a string that is the key of the message. Default is `Finch-message`.
+
+`options.external` is a boolean that controls if we should listen to the external message port or not.
+
+### FinchNullConnection
+
+This is a connection class that is used to disable all connection mechanisms. This is useful if you need to handle messages from the extension manually. Auto connection for messages my cause issues in other message listeners.
+
+```typescript
+import { FinchNullConnection, FinchApi } from '@finch-graphql/api';
+
+const api = new FinchApi({
+  ...
+  connection: new FinchNullConnection(),
+});
 ```

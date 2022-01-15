@@ -5,6 +5,5 @@ import { typeDefs } from './typeDefs';
 new FinchApi({
   typeDefs: typeDefs,
   resolvers: resolvers,
-  attachMessages: true,
-  attachExternalMessages: true,
+  disableDevtools: true,
 });

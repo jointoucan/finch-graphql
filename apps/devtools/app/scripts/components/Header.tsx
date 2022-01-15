@@ -3,21 +3,22 @@ import { TabList, Tab, Box } from '@chakra-ui/react';
 import { CircleIcon } from './Icons';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { ExtensionSwitcher } from './ExtensionSwitcher';
+import { ConnectionInfo } from './types';
 
 export const Header: React.FC<{
   isRecording: boolean;
   isConnected: boolean;
   extensionId?: string;
   messageKey: string;
+  connectionInfo?: ConnectionInfo;
   setMessageKey: (messageKey: string) => void;
   setExtensionId: (extensionId: string) => void;
 }> = ({
   isRecording,
   isConnected,
   extensionId,
-  setMessageKey,
   setExtensionId,
-  messageKey,
+  connectionInfo,
 }) => {
   const scheme = useColorScheme();
   return (
@@ -60,9 +61,8 @@ export const Header: React.FC<{
           <ExtensionSwitcher
             isConnected={isConnected}
             extensionId={extensionId}
-            setMessageKey={setMessageKey}
             setExtensionId={setExtensionId}
-            messageKey={messageKey}
+            connectionInfo={connectionInfo}
           />
           <Box pr={2} />
         </Box>

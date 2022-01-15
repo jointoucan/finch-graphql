@@ -32,4 +32,7 @@ const colors = {
   },
 };
 
-export const theme = extendTheme({ config, colors });
+export const theme = extendTheme({
+  config,
+  colors,
+});

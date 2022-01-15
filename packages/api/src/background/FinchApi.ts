@@ -5,6 +5,7 @@ import {
   DocumentNode,
   print,
   GraphQLError,
+  ValidationRule,
 } from 'graphql';
 import gql from 'graphql-tag';
 import { applyMiddleware } from 'graphql-middleware';
@@ -20,31 +21,49 @@ import {
   FinchContextObj,
   FinchExecutionResults,
 } from '../types';
-import {
-  addExternalMessageListener,
-  addMessageListener,
-} from '@finch-graphql/browser-polyfill';
 import { NoIntrospection } from './NoIntrospection';
 import { FinchDevtools } from './FinchDevtools';
 import { v4 } from 'uuid';
+import { FinchPortConnection } from './FinchPortConnection';
+import { FinchConnection, FinchDefaultPortName } from '@finch-graphql/types';
 
+/**
+ * FinchApi is the main class that is used to create an executable graphql schema and
+ * connect to any incoming connections. If you would like to turn off auto connection please
+ * pass an instance of FinchNullConnection to turn of auto connection. The main two keys to pass
+ * to the FinchApi are `typeDefs` and `schema`. This defines the GraphQL API of your extension.
+ *
+ * ```typescript
+ * import { FinchApi } from '@finch-graphql/api';
+ *
+ * const graphqlAPI = new FinchApi({
+ *  typeDefs,
+ *  schema,
+ * });
+ * ```
+ *
+ * To see all the options visit the [docs](https://jointoucan.github.io/finch-graphql/docs/api-ref).
+ */
 export class FinchApi {
   schema: GraphQLSchema;
   context: FinchContext;
   onQueryResponse: FinchApiOptions['onQueryResponse'];
   messageKey?: string;
+  messagePortName?: string;
   disableIntrospection: boolean;
-  rules: any[];
-  devtools: FinchDevtools;
+  rules: ValidationRule[];
+  devtools?: FinchDevtools;
+  connection: FinchConnection;
+  closeConnection?: () => void;
   constructor({
     context,
-    attachMessages,
-    attachExternalMessages,
     messageKey,
+    messagePortName,
     onQueryResponse = () => {},
     disableIntrospection,
     validationRules = [],
     disableDevtools = false,
+    connection,
     ...options
   }: FinchApiOptions) {
     this.schema = makeExecutableSchema(options);
@@ -53,28 +72,45 @@ export class FinchApi {
     }
     this.context = context ?? { source: FinchMessageSource.Internal };
     this.messageKey = messageKey ?? FinchMessageKey.Generic;
+    this.messagePortName = messagePortName ?? FinchDefaultPortName;
     this.onQueryResponse = onQueryResponse;
     this.onMessage = this.onMessage.bind(this);
     this.onExternalMessage = this.onExternalMessage.bind(this);
     this.rules = validationRules;
-    this.devtools = new FinchDevtools({
-      autoListen: !disableDevtools,
-      messageKey: disableIntrospection ? undefined : this.messageKey,
-    });
+
+    /**
+     * Setup connection to the clients
+     * defaults to a port connection when no connection is passed.
+     */
+    this.connection =
+      connection ??
+      new FinchPortConnection({
+        messagePortName: this.messagePortName,
+        // Supported out of box for devtools
+        external: true,
+      });
+
+    if (this.connection) {
+      this.connection.addMessageListener(this.onMessage);
+      this.closeConnection = this.connection.onStart();
+    }
+
+    /**
+     * Setup devtools if enabled
+     */
+    if (!disableDevtools) {
+      this.devtools = new FinchDevtools({
+        messageKey: disableIntrospection ? undefined : this.messageKey,
+        connectionType: this.connection.type,
+        messagePortName: disableIntrospection
+          ? undefined
+          : this.messagePortName,
+      });
+      this.devtools.onStart();
+    }
 
     if (disableIntrospection) {
       this.rules.unshift(NoIntrospection);
-    }
-
-    const attachOptions = {
-      messageKey: this.messageKey,
-    };
-
-    if (attachMessages) {
-      addMessageListener(this.onMessage, attachOptions);
-    }
-    if (attachExternalMessages) {
-      addExternalMessageListener(this.onExternalMessage, attachOptions);
     }
   }
 
@@ -118,7 +154,7 @@ export class FinchApi {
 
     // Send initial query to devtools
     try {
-      this.devtools.onStart({
+      this.devtools.startQuery({
         id,
         query: documentNode,
         variables,
@@ -168,7 +204,7 @@ export class FinchApi {
 
     // Send response to devtools
     try {
-      this.devtools.onResponse({
+      this.devtools.queryResponse({
         id,
         timeTaken,
         response,
@@ -205,5 +241,9 @@ export class FinchApi {
         sender,
       });
     }
+  }
+
+  close() {
+    this.closeConnection?.();
   }
 }

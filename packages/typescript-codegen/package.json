@@ -1,6 +1,6 @@
 {
   "name": "finch-typescript-codegen",
-  "version": "2.0.3",
+  "version": "2.0.4-alpha.0",
   "main": "FinchVisitor.js",
   "dependencies": {
     "@graphql-codegen/visitor-plugin-common": "^1.19.1",
