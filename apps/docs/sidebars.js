@@ -9,6 +9,6 @@ module.exports = {
     ],
     ['API Reference']: ['api-ref', 'client-ref', 'react-ref'],
     ['Guides']: ['testing', 'devtools', 'typescript-codegen'],
-    ['Whats new?']: ['finch-v2'],
+    ['Whats new?']: ['finch-v3'],
   },
 };
