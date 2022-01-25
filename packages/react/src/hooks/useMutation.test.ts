@@ -27,7 +27,15 @@ describe('useMutation', () => {
       });
     chrome.runtime.sendMessage = sendMessageMock;
 
-    const wrapper = renderHook(() => useMutation(testDoc));
+    const wrapper = renderHook(() => useMutation(testDoc), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({ useMessages: true }),
+        });
+      },
+    });
 
     await act(async () => {
       await wrapper.result.current[0]({});
@@ -50,7 +58,15 @@ describe('useMutation', () => {
     chrome.runtime.sendMessage = sendMessageMock;
     chrome.runtime.lastError = new Error('foo');
 
-    const wrapper = renderHook(() => useMutation(testDoc));
+    const wrapper = renderHook(() => useMutation(testDoc), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({ useMessages: true }),
+        });
+      },
+    });
 
     await act(async () => {
       await wrapper.result.current[0]({});
@@ -69,7 +85,7 @@ describe('useMutation', () => {
         return React.createElement(FinchProvider, {
           // @ts-ignore
           children,
-          client: new FinchClient({ id: 'foo' }),
+          client: new FinchClient({ id: 'foo', useMessages: true }),
         });
       },
     });

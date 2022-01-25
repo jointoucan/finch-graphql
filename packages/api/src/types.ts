@@ -1,6 +1,7 @@
 import { DocumentNode, ExecutionResult, GraphQLError } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { applyMiddleware } from 'graphql-middleware';
+import { FinchConnection } from '@finch-graphql/types';
 
 export enum FinchMessageKey {
   Generic = 'Finch-message',
@@ -10,6 +11,11 @@ export enum FinchMessageSource {
   Internal = 'internal',
   Message = 'message',
   ExternalMessage = 'external-message',
+}
+
+export enum FinchConnectionType {
+  Port = 'port',
+  Message = 'message',
 }
 
 export type GenericVariables = { [key: string]: any };
@@ -35,15 +41,15 @@ interface QueryResponseMeta {
 
 export type FinchApiOptions = {
   context?: FinchContext;
-  attachMessages?: boolean;
-  attachExternalMessages?: boolean;
   typeDefs: MakeExecSchemaOptions['typeDefs'] | DocumentNode[];
   messageKey?: string;
+  messagePortName?: string;
   onQueryResponse?: (meta: QueryResponseMeta) => void;
   disableIntrospection?: boolean;
   validationRules?: Array<any>;
   middleware?: Array<Parameters<typeof applyMiddleware>[1]>;
   disableDevtools?: boolean;
+  connection?: FinchConnection;
 } & MakeExecSchemaOptions;
 
 export interface FinchMessage<Variables extends GenericVariables = {}> {

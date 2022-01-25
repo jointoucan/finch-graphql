@@ -1,6 +1,6 @@
 {
   "name": "@finch-graphql/types",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "description": "Graphql api for your background script of a web extension",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,5 +48,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "2719e2c70f828791c86d78120317229d35c3393e"
 }

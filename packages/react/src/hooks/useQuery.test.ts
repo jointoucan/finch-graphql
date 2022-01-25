@@ -27,7 +27,15 @@ describe('useQuery', () => {
       });
     chrome.runtime.sendMessage = sendMessageMock;
 
-    const wrapper = renderHook(() => useQuery(testDoc, {}));
+    const wrapper = renderHook(() => useQuery(testDoc, {}), {
+      wrapper: ({ children }) => {
+        return React.createElement(FinchProvider, {
+          // @ts-ignore
+          children,
+          client: new FinchClient({ useMessages: true }),
+        });
+      },
+    });
 
     await wrapper.waitForNextUpdate();
 
@@ -53,7 +61,7 @@ describe('useQuery', () => {
         return React.createElement(FinchProvider, {
           // @ts-ignore
           children,
-          client: new FinchClient(),
+          client: new FinchClient({ useMessages: true }),
         });
       },
     });
@@ -77,7 +85,7 @@ describe('useQuery', () => {
         return React.createElement(FinchProvider, {
           // @ts-ignore
           children,
-          client: new FinchClient(),
+          client: new FinchClient({ useMessages: true }),
         });
       },
     });
@@ -110,7 +118,7 @@ describe('useQuery', () => {
         return React.createElement(FinchProvider, {
           // @ts-ignore
           children,
-          client: new FinchClient(),
+          client: new FinchClient({ useMessages: true }),
         });
       },
     });
@@ -144,7 +152,7 @@ describe('useQuery', () => {
         return React.createElement(FinchProvider, {
           // @ts-ignore
           children,
-          client: new FinchClient({ id: 'foo' }),
+          client: new FinchClient({ id: 'foo', useMessages: true }),
         });
       },
     });
@@ -170,7 +178,7 @@ describe('useQuery', () => {
           return React.createElement(FinchProvider, {
             // @ts-ignore
             children,
-            client: new FinchClient({ id: 'foo' }),
+            client: new FinchClient({ id: 'foo', useMessages: true }),
           });
         },
       },
@@ -196,6 +204,7 @@ describe('useQuery', () => {
 
     const client = new FinchClient({
       cache: new QueryCache(),
+      useMessages: true,
     });
 
     const wrapper = renderHook(
@@ -240,6 +249,7 @@ describe('useQuery', () => {
 
     const client = new FinchClient({
       cache: new QueryCache(),
+      useMessages: true,
     });
 
     const wrapper = renderHook(
@@ -277,6 +287,7 @@ describe('useQuery', () => {
 
     const client = new FinchClient({
       cache: new QueryCache(),
+      useMessages: true,
     });
 
     const wrapper = renderHook(

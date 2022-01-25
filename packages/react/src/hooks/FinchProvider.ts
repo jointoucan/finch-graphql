@@ -6,7 +6,7 @@ interface FinchProviderProps {
 }
 
 const context = createContext<FinchProviderProps>({
-  client: new FinchClient({}),
+  client: new FinchClient({ autoStart: false }),
 });
 const { Provider } = context;
 

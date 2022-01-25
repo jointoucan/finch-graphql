@@ -2,29 +2,53 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/types",
-      "packages/browser-polyfill",
-      "packages/client",
-      "packages/react",
-      "packages/api",
-      "packages/typescript-codegen",
-      "packages/devtools",
-      "packages/docs"
+      "packages/*",
+      "apps/*"
     ],
     "nohoist": [
       "**/html-minifier-terser"
     ]
   },
-  "dependencies": {
-    "lerna": "^4.0.0"
-  },
   "name": "finch-graphql-packages",
   "scripts": {
-    "build": "yarn lerna exec \"yarn build\"",
+    "build": "yarn turbo run build",
+    "dev": "yarn turbo run dev",
     "devtools": "yarn workspace finch-graphql-devtools dev chrome",
     "docs": "yarn workspace finch-docs start",
-    "test": "yarn lerna exec \"yarn test\"",
-    "compile": "yarn lerna exec \"yarn compile\"",
+    "test": "yarn turbo run test",
+    "compile": "yarn turbo run compile",
     "lint": "eslint -c ./.eslintrc.js **/{src,app}/**/*.{ts,tsx,js} --no-error-on-unmatched-pattern"
+  },
+  "devDependencies": {
+    "turbo": "^1.0.20"
+  },
+  "turbo": {
+    "baseBranch": "origin/master",
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "dist/**",
+          "build/**"
+        ]
+      },
+      "test": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": []
+      },
+      "lint": {
+        "outputs": []
+      },
+      "compile": {
+        "outputs": []
+      },
+      "dev": {
+        "cache": false
+      }
+    }
   }
 }
