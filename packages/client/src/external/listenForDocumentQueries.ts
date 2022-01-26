@@ -5,7 +5,7 @@ import { FinchDocumentEventNames, FinchRequestEvent } from './types';
 import { sendResponse } from './listenForExternalRequests';
 
 /**
- * **DEPRECATED** use listenForExternalRequests instead, this method
+ * `DEPRECATED` use `listenForExternalRequests` instead, this method
  * will be removed in a future version, and only supports async messages.
  *
  * listenForDocumentQueries binds to document events so websites can
