@@ -1,6 +1,6 @@
 {
   "name": "@finch-graphql/client",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Graphql api for your background script of a web extension",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -49,8 +49,8 @@
     "graphql": "^15.5.0"
   },
   "dependencies": {
-    "@finch-graphql/browser-polyfill": "^3.1.0",
-    "@finch-graphql/types": "^3.1.0",
+    "@finch-graphql/browser-polyfill": "^3.1.1",
+    "@finch-graphql/types": "^3.1.1",
     "graphql-tag": "^2.11.0",
     "uuid": "^8.3.2"
   },
