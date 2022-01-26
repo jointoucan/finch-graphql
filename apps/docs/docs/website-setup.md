@@ -26,12 +26,14 @@ If you are planning support more browsers you will need to setup a script that w
 
 > The reason you would want to setup a different script to inject is because you would want to have better control to which site are able to communicate with the background script.
 
-To setup the proxy all you need to do is listen for documents events. Finch GraphQL has a helper method to do that.
+To setup the proxy all you need to do is listen for post message events and send them with the client. Finch GraphQL has a helper method to do that for you.
 
 ```typescript
-import { listenForDocumentQueries } from '@finch-graphql/client';
+import { listenForExternalRequests, FinchClient } from '@finch-graphql/client';
 
-listenForDocumentQueries();
+listenForExternalRequests({
+  client: new FinchClient({ ... }),
+});
 ```
 
 Then make sure this gets injected into the proper site that you want to communicate with. You can do this through the manifest file.
