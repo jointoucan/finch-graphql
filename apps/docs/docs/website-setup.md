@@ -29,9 +29,11 @@ If you are planning support more browsers you will need to setup a script that w
 To setup the proxy all you need to do is listen for documents events. Finch GraphQL has a helper method to do that.
 
 ```typescript
-import { listenForDocumentQueries } from '@finch-graphql/client';
+import { listenForExternalRequests, FinchClient } from '@finch-graphql/client';
 
-listenForDocumentQueries();
+listenForExternalRequests({
+  client: new FinchClient({ ... }),
+});
 ```
 
 Then make sure this gets injected into the proper site that you want to communicate with. You can do this through the manifest file.
