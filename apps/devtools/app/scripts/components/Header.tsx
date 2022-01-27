@@ -1,25 +1,21 @@
-import { Image } from './Image';
 import { TabList, Tab, Box } from '@chakra-ui/react';
+import { useAtom } from 'jotai';
+import { Image } from './Image';
 import { CircleIcon } from './Icons';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { ExtensionSwitcher } from './ExtensionSwitcher';
 import { ConnectionInfo } from './types';
+import { isRecordingAtom } from '../atoms/devtool';
 
 export const Header: React.FC<{
-  isRecording: boolean;
   isConnected: boolean;
   extensionId?: string;
   messageKey: string;
   connectionInfo?: ConnectionInfo;
   setMessageKey: (messageKey: string) => void;
   setExtensionId: (extensionId: string) => void;
-}> = ({
-  isRecording,
-  isConnected,
-  extensionId,
-  setExtensionId,
-  connectionInfo,
-}) => {
+}> = ({ isConnected, extensionId, setExtensionId, connectionInfo }) => {
+  const [isRecording] = useAtom(isRecordingAtom);
   const scheme = useColorScheme();
   return (
     <Box

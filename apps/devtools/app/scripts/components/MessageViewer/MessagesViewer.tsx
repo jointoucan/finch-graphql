@@ -1,26 +1,38 @@
-import React, { useState } from 'react';
-import { Box } from '@chakra-ui/react';
+import React, { useRef, useState } from 'react';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  Box,
+  Heading,
+  AccordionIcon,
+} from '@chakra-ui/react';
+import { useAtom } from 'jotai';
 import { MessageContent } from './MessageContent';
 import { MessagesSidebar } from './MessageSidebar';
 import { MessagesFilterBar } from './MessagesFilterBar';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { FinchDevtoolsMessage } from './types';
+
 import { useColorScheme } from '../../hooks/useColorScheme';
+import { MessageTimeline } from './MessageTimeline';
+import { MessageTimelineMeta } from './MessageTimeline/types';
+import { clearMessagesAtom, messagesAtom } from '../../atoms/messages';
+import { isRecordingAtom, recordingAtAtom } from '../../atoms/devtool';
 
 interface MessageViewerProps {
   extensionId: string;
-  isRecording: boolean;
-  setIsRecording: React.Dispatch<boolean>;
-  messages: FinchDevtoolsMessage[];
-  setMessages: React.Dispatch<FinchDevtoolsMessage[]>;
 }
 
-export const MessagesViewer: React.FC<MessageViewerProps> = ({
-  isRecording,
-  setIsRecording,
-  messages,
-  setMessages,
-}) => {
+export const MessagesViewer: React.FC<MessageViewerProps> = ({}) => {
+  const [startedRecordingAt, setRecordingAt] = useAtom(recordingAtAtom);
+  const ref = useRef<MessageTimelineMeta>({
+    startedRecordingAt,
+    currentTime: null,
+  });
+  const [messages] = useAtom(messagesAtom);
+  const [isRecording] = useAtom(isRecordingAtom);
+  const [, clearMessages] = useAtom(clearMessagesAtom);
   const scheme = useColorScheme();
   const [currentTabFilter, setCurrentTabFilter] = useLocalStorage(
     'messages:currentTabFilter',
@@ -59,6 +71,10 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       return true;
     });
 
+  if (startedRecordingAt) {
+    ref.current.startedRecordingAt = startedRecordingAt;
+  }
+
   return (
     <Box
       display="flex"
@@ -68,9 +84,7 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
       backgroundColor={scheme.background}
     >
       <MessagesFilterBar
-        onClearMessage={() => {
-          setMessages([]);
-        }}
+        onClearMessage={clearMessages}
         currentTabOnly={currentTabFilter}
         onToggleCurrentTabFilter={() => {
           setCurrentTabFilter(!currentTabFilter);
@@ -80,7 +94,7 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
           setFilterString(e.currentTarget.value);
         }}
         isRecording={isRecording}
-        onToggleRecording={() => setIsRecording(!isRecording)}
+        onToggleRecording={() => setRecordingAt(isRecording ? 0 : Date.now())}
       />
       <Box display="flex" flex="1" backgroundColor={scheme.background}>
         <MessagesSidebar
@@ -94,10 +108,35 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({
           flex={0}
           zIndex={2}
         />
-        <MessageContent
-          message={selectedQueryMessage}
-          isRecording={isRecording}
-        />
+        <Box display="flex" flexDirection="column" width="70vw">
+          <Accordion allowToggle>
+            <AccordionItem>
+              {({ isExpanded }) => (
+                <>
+                  <AccordionButton>
+                    <Heading size="sm">Timeline</Heading>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel p={0}>
+                    {isExpanded && (
+                      <MessageTimeline
+                        activeMessageId={selectedQueryMessage?.id}
+                        isRecording={isRecording}
+                        messages={filteredMessages}
+                        startedRecordingAt={startedRecordingAt}
+                        selectQuery={selectQuery}
+                      />
+                    )}
+                  </AccordionPanel>
+                </>
+              )}
+            </AccordionItem>
+          </Accordion>
+          <MessageContent
+            message={selectedQueryMessage}
+            isRecording={isRecording}
+          />
+        </Box>
       </Box>
     </Box>
   );

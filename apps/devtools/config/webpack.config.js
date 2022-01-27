@@ -1,27 +1,27 @@
-const { paths } = require('./paths')
-const path = require('path')
-const fs = require('fs')
-const { promisify } = require('util')
-const webpack = require('webpack')
+const { paths } = require('./paths');
+const path = require('path');
+const fs = require('fs');
+const { promisify } = require('util');
+const webpack = require('webpack');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
-const ZipPlugin = require('zip-webpack-plugin')
-const { BrowserExtensionPlugin } = require('webpack-browser-extension-plugin')
-const WebpackBar = require('webpackbar')
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
+const { BrowserExtensionPlugin } = require('webpack-browser-extension-plugin');
+const WebpackBar = require('webpackbar');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
-const readFile = promisify(fs.readFile)
+const readFile = promisify(fs.readFile);
 
 /**
  * create webpack config to build extension.
  * @returns {Object} a webpack configuration
  */
 const createConfig = async () => {
-  const isBuild = process.env.NODE_ENV === 'production'
-  const isWatch = !isBuild
-  const mode = isBuild ? 'production' : 'development'
+  const isBuild = process.env.NODE_ENV === 'production';
+  const isWatch = !isBuild;
+  const mode = isBuild ? 'production' : 'development';
 
-  const manifest = JSON.parse(await readFile(paths.manifest, 'utf8'))
+  const manifest = JSON.parse(await readFile(paths.manifest, 'utf8'));
 
   return {
     mode,
@@ -50,6 +50,10 @@ const createConfig = async () => {
      */
     resolve: {
       extensions: ['.js', '.json', '.mjs', '.jsx', '.ts', '.tsx'],
+      alias: {
+        'react/jsx-runtime': paths['react/jsx-runtime'],
+        react: paths.react,
+      },
     },
     /**
      * Only add inline source maps when in development.
@@ -147,9 +151,9 @@ const createConfig = async () => {
       new FriendlyErrorsWebpackPlugin(),
       // Filter out all null values
     ].filter(x => x),
-  }
-}
+  };
+};
 
 module.exports = {
   createConfig,
-}
+};

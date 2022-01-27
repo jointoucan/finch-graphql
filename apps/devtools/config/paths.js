@@ -1,14 +1,14 @@
-const path = require('path')
+const path = require('path');
 
-const rootDir = path.resolve(__dirname, '../')
+const rootDir = path.resolve(__dirname, '../');
 
 const resolveRoot = (...paths) => {
-  return path.resolve(rootDir, ...paths)
-}
+  return path.resolve(rootDir, ...paths);
+};
 
 const resolveApp = filePath => {
-  return resolveRoot(rootDir, './app', filePath)
-}
+  return resolveRoot(rootDir, './app', filePath);
+};
 
 const paths = {
   appRoot: resolveApp('.'),
@@ -21,6 +21,8 @@ const paths = {
   localeDirectory: resolveApp('./_locales'),
   globalShim: resolveRoot('./scripts/global.js'),
   browserPolyfill: require.resolve('webextension-polyfill'),
-}
+  react: require.resolve('react'),
+  'react/jsx-runtime': require.resolve('react/jsx-runtime'),
+};
 
-module.exports = { paths }
+module.exports = { paths };
