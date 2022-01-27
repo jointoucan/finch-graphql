@@ -69,8 +69,6 @@ export const MessageTimeline: FC<MessageTimelineProps> = ({
 
   useEffect(() => {
     setContainerRect(container?.getBoundingClientRect());
-    // bind resize
-    // and respond to resize with new rect ( debounced )
   }, [container]);
 
   useEffect(() => {
