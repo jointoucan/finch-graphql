@@ -2,13 +2,13 @@ import { Box } from '@chakra-ui/react';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, CanvasRef } from 'react-scribble';
 import { MessageTimelineMeta } from './types';
-// import { MessageSpan } from './MessageSpan';
 import { TimelineDrawer } from './TimelineDrawer';
 import {
   MessageTimelineProps,
   RowMeta,
   MessageSpan as MessageSpanType,
 } from './types';
+import { useTimelineColors } from './colors';
 
 const makeRowMeta = (index: number): RowMeta => ({
   rowCursor: 0,
@@ -31,6 +31,7 @@ export const MessageTimeline: FC<MessageTimelineProps> = ({
     startedRecordingAt,
     currentTime: null,
   });
+  const colors = useTimelineColors();
   const canvas = useRef<CanvasRef<CanvasRenderingContext2D, unknown>>(null);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [containerRect, setContainerRect] = useState<DOMRect | null>(null);
@@ -49,7 +50,7 @@ export const MessageTimeline: FC<MessageTimelineProps> = ({
         initializedAt,
         id,
         rowIndex: eligibleRow,
-        color: activeMessageId === id ? '#F8C06D' : undefined,
+        color: activeMessageId === id ? colors.highlight : undefined,
       });
       rows[eligibleRow].rowCursor = initializedAt + (timeTaken ?? 0);
     });
@@ -130,7 +131,11 @@ export const MessageTimeline: FC<MessageTimelineProps> = ({
           width={containerRect?.width ?? 300}
           meta={ref}
         >
-          <TimelineDrawer />
+          <TimelineDrawer
+            spanColor={colors.span}
+            labelColor={colors.label}
+            borderColor={colors.border}
+          />
         </Canvas>
       </Box>
     </Box>
