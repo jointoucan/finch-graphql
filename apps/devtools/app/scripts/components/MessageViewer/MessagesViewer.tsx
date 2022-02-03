@@ -7,6 +7,7 @@ import {
   Box,
   Heading,
   AccordionIcon,
+  Tag,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { MessageContent } from './MessageContent';
@@ -114,7 +115,17 @@ export const MessagesViewer: React.FC<MessageViewerProps> = ({}) => {
               {({ isExpanded }) => (
                 <>
                   <AccordionButton>
-                    <Heading size="sm">Timeline</Heading>
+                    <Heading size="sm">
+                      Timeline
+                      <Tag
+                        size="sm"
+                        backgroundColor="teal.600"
+                        ml={2}
+                        color="grey.600"
+                      >
+                        BETA
+                      </Tag>
+                    </Heading>
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel p={0}>
