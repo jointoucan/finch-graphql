@@ -16,17 +16,20 @@ const makeRowMeta = (index: number): RowMeta => ({
   rowIndex: index,
 });
 
+/**
+ * MessageTimeline is a component that allows the user to see timing of the messages
+ * in comparison to the other messages. This helps know which messages are effecting or potentially blocking other messages.
+ * @param {Array<FinchDevtoolsMessage>} props.messages array of messages to display, filtered to what is to be viewed.
+ * @param {number | undefined} props.startedRecordingAt the timestamp of when recording has started
+ * @param {string | undefined} props.activeMessageId the message that is displayed
+ * @param {function} props.selectQuery a method that allows for the selecting an active message.
+ */
 export const MessageTimeline: FC<MessageTimelineProps> = ({
   messages,
   startedRecordingAt,
   activeMessageId,
   selectQuery,
 }) => {
-  /**
-   * To get this timeline to work with hovers, zooms and stuff we will needs to
-   * calculate a lot of stuff in the top level container. This would allow us to
-   * know when something is being hovered. Also the zooming of the timeline would
-   */
   const ref = useRef<MessageTimelineMeta>({
     startedRecordingAt,
     currentTime: null,
@@ -35,6 +38,11 @@ export const MessageTimeline: FC<MessageTimelineProps> = ({
   const canvas = useRef<CanvasRef<CanvasRenderingContext2D, unknown>>(null);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [containerRect, setContainerRect] = useState<DOMRect | null>(null);
+  /**
+   * This is the method that reduces the messages into a list of spans to be viewable
+   * in the timeline. Its essentially calculates the positioning base on the message compared
+   * to the other messages.
+   */
   const { timelineSpans, rowAmount } = useMemo(() => {
     const rows: Array<RowMeta> = [makeRowMeta(0)];
     messages.forEach(({ id, initializedAt, timeTaken }) => {
@@ -81,7 +89,9 @@ export const MessageTimeline: FC<MessageTimelineProps> = ({
   const spanStartingTime = timelineSpans[0]?.initializedAt;
   const lastSpan = timelineSpans[timelineSpans.length - 1];
   const spanLength = timelineSpans.length;
-  const startedRecording = startedRecordingAt || spanStartingTime - 1000;
+  const startedRecording = spanStartingTime
+    ? spanStartingTime - 1000
+    : startedRecordingAt;
   const currentTime = lastSpan
     ? lastSpan.initializedAt + lastSpan.timeTaken + 1000
     : Date.now();
@@ -110,7 +120,10 @@ export const MessageTimeline: FC<MessageTimelineProps> = ({
             const boundingRect = e.target.getBoundingClientRect();
             const localX = globalX - boundingRect.left;
             const localY = globalY - boundingRect.top;
-            // Detect the span we are over.
+            /**
+             * Some simple detection of which span is being clicked on.
+             * @todo this can be improved quite a bit, by adding padding and resolving closest to span.
+             */
             const selectedSpan = ref.current.spans?.find(
               span =>
                 span.x <= localX &&

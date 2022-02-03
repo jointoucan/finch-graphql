@@ -9,6 +9,10 @@ export interface Theme {
 }
 export type ColorSchemes = Record<ColorScheme, Theme>;
 
+/**
+ * This theme holds some colors that are outside of the current theme. The reason fo this is
+ * due to the issue of not having access to CSS variables inside the canvas.
+ */
 export const themes: ColorSchemes = {
   dark: {
     span: '#63b3ed',

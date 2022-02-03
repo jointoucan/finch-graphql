@@ -8,6 +8,13 @@ interface TimelineMarkersProps {
   labelColor: string;
 }
 
+/**
+ * TimelineDrawer this is a component that essentially draws all the shapes to the canvas.
+ * We currently use a library react-scribble that handles the draw. It gets called every draw.
+ * @param {string} props.spanColor The color of the spans that we draw, active spans will be colored differently.
+ * @param {string} props.borderColor The color of the border of the canvas.
+ * @param {string} props.labelColor The color of the labels on the canvas.
+ */
 export const TimelineDrawer: FC<TimelineMarkersProps> = ({
   spanColor,
   borderColor,
@@ -51,7 +58,10 @@ export const TimelineDrawer: FC<TimelineMarkersProps> = ({
         };
       });
 
-      // Render the spans
+      /**
+       * Renders the spans, calculates the x, y, width and height of the spans,
+       * relative to the size of the canvas.
+       */
       meta.current.spans = meta.current.spans.map(span => {
         const { initializedAt, timeTaken, rowIndex, color } = span;
         const offset = startedRecordingAt - initializedAt;
