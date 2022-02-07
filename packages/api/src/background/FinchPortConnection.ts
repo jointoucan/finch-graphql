@@ -135,9 +135,14 @@ export class FinchPortConnection implements FinchConnection {
      * modify the unbind method to remove the listeners that we created.
      */
     this.unbind = () => {
-      removeConnectListener(internalConnectionHandler);
-      if (external) {
-        removeConnectExternalListener(externalConnectionHandler);
+      try {
+        removeConnectListener(internalConnectionHandler);
+        if (external) {
+          removeConnectExternalListener(externalConnectionHandler);
+        }
+      } catch (e) {
+        // catching when port has already been disconnected.
+        // do nothing.
       }
     };
   }
