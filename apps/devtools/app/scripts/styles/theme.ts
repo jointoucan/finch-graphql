@@ -35,4 +35,23 @@ const colors = {
 export const theme = extendTheme({
   config,
   colors,
+  styles: {
+    global: {
+      '*': {
+        '&::-webkit-scrollbar': {
+          width: '1px',
+          height: '1px',
+        },
+        '&::-webkit-scrollbar-track': {
+          backgroundColor: 'transparent',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: 'var(--border-color)',
+        },
+        '&::-webkit-scrollbar-corner': {
+          backgroundColor: 'transparent',
+        },
+      },
+    },
+  },
 });

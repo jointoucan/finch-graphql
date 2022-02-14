@@ -1,18 +1,14 @@
-import { FC, Dispatch, SetStateAction } from 'react';
+import { FC, Dispatch, SetStateAction, useEffect } from 'react';
 import { FinchDevtools, FinchDevToolsMessageType } from '@finch-graphql/api';
+import { useAtom } from 'jotai';
 import { usePort } from '../hooks/usePort';
-import {
-  FinchDevtoolsIncomingMessage,
-  FinchDevtoolsMessage,
-} from './MessageViewer/types';
-import { useEffect } from 'react';
+import { FinchDevtoolsIncomingMessage } from './MessageViewer/types';
 import { ConnectionInfo } from './types';
+import { createMessageAtom, updateMessageAtom } from '../atoms/messages';
 
 interface PortConnectionProps {
   extensionId: string;
-  setMessages: Dispatch<SetStateAction<FinchDevtoolsMessage[]>>;
   setMessageKey: Dispatch<SetStateAction<string>>;
-  isRecording: boolean;
   onDisconnected: () => void;
   onConnected: () => void;
   setExtensionConnectionInfo: Dispatch<SetStateAction<ConnectionInfo>>;
@@ -24,41 +20,24 @@ interface PortConnectionProps {
  */
 export const PortConnection: FC<PortConnectionProps> = ({
   extensionId,
-  setMessages,
   setMessageKey,
-  isRecording,
   onDisconnected,
   onConnected,
   setExtensionConnectionInfo,
 }) => {
+  const [, updateMessage] = useAtom(updateMessageAtom);
+  const [, createMessage] = useAtom(createMessageAtom);
   const port = usePort({
     extensionId,
     portName: FinchDevtools.portName,
-    dependencies: [isRecording],
+    dependencies: [],
     onMessage: (message: FinchDevtoolsIncomingMessage) => {
       switch (message.type) {
         case FinchDevToolsMessageType.Start:
-          if (isRecording) {
-            setMessages(messages => [...messages, message]);
-          }
+          createMessage(message);
           break;
         case FinchDevToolsMessageType.Response:
-          if (isRecording) {
-            setMessages(messages => {
-              const foundMessage = messages.find(
-                existingMessage => existingMessage.id === message.id,
-              );
-              if (!foundMessage) {
-                return messages;
-              }
-              const index = messages.indexOf(foundMessage);
-              return [
-                ...messages.slice(0, index),
-                { ...foundMessage, ...message },
-                ...messages.slice(index + 1),
-              ];
-            });
-          }
+          updateMessage(message);
           break;
         case FinchDevToolsMessageType.MessageKey:
           setMessageKey(message.messageKey);
