@@ -7,7 +7,6 @@ import { Header } from './Header';
 import { StorageKey, DefaultQuery } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { MessagesViewer } from './MessageViewer';
-import { FinchDevtoolsMessage } from './MessageViewer/types';
 import { PortConnection } from './PortConnection';
 import { useCallback } from 'react';
 import { ConnectionInfo } from './types';
@@ -31,8 +30,6 @@ export const DevtoolsApp = () => {
     },
   );
   const [tabIndex, setTabIndex] = useLocalStorage(StorageKey.TabIndex, 0);
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [messages, setMessages] = useState<FinchDevtoolsMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
   const messageKey = extensionProfile.messageKey;
@@ -93,8 +90,6 @@ export const DevtoolsApp = () => {
       >
         <PortConnection
           extensionId={extensionId}
-          setMessages={setMessages}
-          isRecording={isRecording}
           onDisconnected={() => setIsConnected(false)}
           onConnected={() => setIsConnected(true)}
           setMessageKey={setMessageKey}
@@ -102,7 +97,6 @@ export const DevtoolsApp = () => {
         />
         <Header
           isConnected={isConnected}
-          isRecording={isRecording}
           extensionId={extensionId}
           setMessageKey={setMessageKey}
           setExtensionId={setExtensionId}
@@ -114,13 +108,7 @@ export const DevtoolsApp = () => {
             <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
           </TabPanel>
           <TabPanel p="0" height="100%">
-            <MessagesViewer
-              extensionId={extensionId}
-              isRecording={isRecording}
-              setIsRecording={setIsRecording}
-              messages={messages}
-              setMessages={setMessages}
-            />
+            <MessagesViewer extensionId={extensionId} />
           </TabPanel>
         </TabPanels>
       </Tabs>
