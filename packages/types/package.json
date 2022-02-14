@@ -18,7 +18,8 @@
     "build": "tsc",
     "prepublish": "yarn build",
     "test": "echo \"No tests in types\"",
-    "lint": "eslint -c ./.eslintrc.js ./src/**/*.ts"
+    "lint": "eslint -c ./.eslintrc.js ./src/**/*.ts",
+    "dev": "tsc --watch"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.170",

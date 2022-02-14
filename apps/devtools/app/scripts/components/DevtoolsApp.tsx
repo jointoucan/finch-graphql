@@ -1,5 +1,5 @@
 import { FinchClient, FinchProvider } from '@finch-graphql/react';
-import { FinchMessageKey } from '@finch-graphql/types';
+import { FinchDefaultPortName, FinchMessageKey } from '@finch-graphql/types';
 import { useMemo, useState } from 'react';
 import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react';
 import GraphiQL, { Fetcher } from 'graphiql';
@@ -34,7 +34,8 @@ export const DevtoolsApp = () => {
 
   const messageKey = extensionProfile.messageKey;
   const connectionType = extensionProfile.connectionType;
-  const messagePortName = extensionProfile.messagePortName;
+  const messagePortName =
+    extensionProfile.messagePortName ?? FinchDefaultPortName;
 
   // TODO need to destroy the client when new on is created
   const externalClient = useMemo(() => {
@@ -105,7 +106,7 @@ export const DevtoolsApp = () => {
         />
         <TabPanels display="flex" flexDirection="column" height="100%">
           <TabPanel p="0" height="100%">
-            <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
+            <GraphiQL fetcher={graphQLFetcher} defaultQuery={DefaultQuery} />
           </TabPanel>
           <TabPanel p="0" height="100%">
             <MessagesViewer extensionId={extensionId} />
