@@ -131,7 +131,7 @@ export class FinchClient {
       const decoratedMessage = messageCreator(
         query,
         variables,
-        options.messageKey,
+        options.messageKey ?? this.messageKey,
         !!this.id,
       );
 

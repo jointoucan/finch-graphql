@@ -59,24 +59,11 @@ export const DevtoolsApp = () => {
   );
 
   const graphQLFetcher = useCallback(
-    ({
-      messageKey: fetcherMessageKey,
-      extensionId: fetcherExtensionId,
-    }: {
-      messageKey: string;
-      extensionId: string;
-    }): Fetcher => async ({ query, variables }) => {
-      return externalClient.queryApi(query, variables || {}, {
-        messageKey: fetcherMessageKey,
-        id: fetcherExtensionId,
-      });
+    async ({ query, variables }) => {
+      return externalClient.mutate(query, variables || {});
     },
     [externalClient],
   );
-
-  const fetcher = useMemo(() => {
-    return graphQLFetcher({ messageKey, extensionId });
-  }, [messageKey, extensionId]);
 
   return (
     <FinchProvider client={client}>
