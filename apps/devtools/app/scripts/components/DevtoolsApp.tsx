@@ -1,8 +1,8 @@
 import { FinchClient, FinchProvider } from '@finch-graphql/react';
-import { FinchMessageKey } from '@finch-graphql/types';
+import { FinchDefaultPortName, FinchMessageKey } from '@finch-graphql/types';
 import { useMemo, useState } from 'react';
 import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react';
-import GraphiQL, { Fetcher } from 'graphiql';
+import GraphiQL from 'graphiql';
 import { Header } from './Header';
 import { StorageKey, DefaultQuery } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -34,7 +34,8 @@ export const DevtoolsApp = () => {
 
   const messageKey = extensionProfile.messageKey;
   const connectionType = extensionProfile.connectionType;
-  const messagePortName = extensionProfile.messagePortName;
+  const messagePortName =
+    extensionProfile.messagePortName ?? FinchDefaultPortName;
 
   // TODO need to destroy the client when new on is created
   const externalClient = useMemo(() => {
@@ -58,24 +59,11 @@ export const DevtoolsApp = () => {
   );
 
   const graphQLFetcher = useCallback(
-    ({
-      messageKey: fetcherMessageKey,
-      extensionId: fetcherExtensionId,
-    }: {
-      messageKey: string;
-      extensionId: string;
-    }): Fetcher => async ({ query, variables }) => {
-      return externalClient.queryApi(query, variables || {}, {
-        messageKey: fetcherMessageKey,
-        id: fetcherExtensionId,
-      });
+    async ({ query, variables }) => {
+      return externalClient.mutate(query, variables || {});
     },
     [externalClient],
   );
-
-  const fetcher = useMemo(() => {
-    return graphQLFetcher({ messageKey, extensionId });
-  }, [messageKey, extensionId]);
 
   return (
     <FinchProvider client={client}>
@@ -105,7 +93,7 @@ export const DevtoolsApp = () => {
         />
         <TabPanels display="flex" flexDirection="column" height="100%">
           <TabPanel p="0" height="100%">
-            <GraphiQL fetcher={fetcher} defaultQuery={DefaultQuery} />
+            <GraphiQL fetcher={graphQLFetcher} defaultQuery={DefaultQuery} />
           </TabPanel>
           <TabPanel p="0" height="100%">
             <MessagesViewer extensionId={extensionId} />

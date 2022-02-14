@@ -100,11 +100,9 @@ export class FinchApi {
      */
     if (!disableDevtools) {
       this.devtools = new FinchDevtools({
-        messageKey: disableIntrospection ? undefined : this.messageKey,
+        messageKey: this.messageKey,
         connectionType: this.connection.type,
-        messagePortName: disableIntrospection
-          ? undefined
-          : this.messagePortName,
+        messagePortName: this.messagePortName,
       });
       this.devtools.onStart();
     }
