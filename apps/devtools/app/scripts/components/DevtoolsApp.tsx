@@ -2,7 +2,7 @@ import { FinchClient, FinchProvider } from '@finch-graphql/react';
 import { FinchDefaultPortName, FinchMessageKey } from '@finch-graphql/types';
 import { useMemo, useState } from 'react';
 import { Tabs, TabPanels, TabPanel } from '@chakra-ui/react';
-import GraphiQL, { Fetcher } from 'graphiql';
+import GraphiQL from 'graphiql';
 import { Header } from './Header';
 import { StorageKey, DefaultQuery } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
