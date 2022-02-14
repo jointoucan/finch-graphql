@@ -1,6 +1,6 @@
 {
   "name": "@finch-graphql/react",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Graphql api for your background script of a web extension",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -53,9 +53,9 @@
     "react": "<=16.x"
   },
   "dependencies": {
-    "@finch-graphql/browser-polyfill": "^3.1.1",
-    "@finch-graphql/client": "^3.1.1",
-    "@finch-graphql/types": "^3.1.1",
+    "@finch-graphql/browser-polyfill": "^3.1.2",
+    "@finch-graphql/client": "^3.1.2",
+    "@finch-graphql/types": "^3.1.2",
     "graphql-tag": "^2.11.0",
     "use-deep-compare-effect": "^1.6.1",
     "uuid": "^8.3.2"
