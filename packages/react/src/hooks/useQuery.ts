@@ -22,6 +22,7 @@ type QueryError = GraphQLFormattedError | Error;
  * @param options.skip if true, the query will not be run until true
  * @param options.pollInterval [optional] how often to poll the server for updates
  * @param options.poll [optional] not needed for simple polling queries but allows you turn off polling on mount
+ * @param options.timeout [optional] how long to wait for a response from the server before timing out, this is used only for port based connections overrides the global timeout
  * @returns the response, and loading states of the query.
  */
 export const useQuery = <Query, Variables>(
