@@ -68,6 +68,7 @@ class FinchVisitor extends ClientSideBaseVisitor {
         skip?: Boolean;
         pollInterval?: number;
         poll?: boolean;
+        timeout?: number;
       }) => use${operationType}<${operationResultType}, ${operationVariablesTypes}>(${documentVariableName}, config);`;
     }
     if (operationType === 'Mutation') {
