@@ -146,7 +146,7 @@ export class FinchClient {
             },
           ],
         });
-      }, this.messageTimeout);
+      }, options.timeout ?? this.messageTimeout);
 
       const onMessage = ({
         id,

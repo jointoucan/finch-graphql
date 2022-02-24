@@ -65,6 +65,7 @@ export interface FinchQueryOptions {
   port?: browser.runtime.Port;
   messageKey?: string;
   external?: boolean;
+  timeout?: number;
 }
 
 export interface FinchExecutionResults<Query> {
