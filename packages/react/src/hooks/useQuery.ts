@@ -8,6 +8,7 @@ interface BackgroundQueryOptions<Variables> {
   skip?: Boolean;
   pollInterval?: number;
   poll?: boolean;
+  timeout?: number;
 }
 
 type QueryError = GraphQLFormattedError | Error;
@@ -30,6 +31,7 @@ export const useQuery = <Query, Variables>(
     variables,
     pollInterval: passedPollInterval = 0,
     poll,
+    timeout,
   }: BackgroundQueryOptions<Variables> = {},
 ) => {
   const { client } = useFinchClient();
@@ -55,6 +57,7 @@ export const useQuery = <Query, Variables>(
           query,
           // @ts-ignore variables are kinda weird
           argVars ?? variables ?? {},
+          { timeout },
         );
 
         if (resp.data && mounted.current) {
