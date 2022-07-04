@@ -84,6 +84,45 @@ describe('connections', () => {
 
       teardown();
     });
+    it('should send messages from the port to a passed handler', async () => {
+      // Setup connection start listening for connections
+      const connection = new FinchPortConnection({
+        messagePortName: 'test',
+        external: false,
+      });
+      const teardown = connection.onStart();
+      // Setup message listener and attach
+      const listener = jest.fn().mockResolvedValue({
+        type: 'bar',
+      });
+      connection.addMessageListener(listener);
+      // Setup port connection
+      const port = {
+        name: 'test',
+        onDisconnect: {
+          addListener: jest.fn(),
+        },
+        onMessage: {
+          addListener: jest.fn(),
+        },
+        postMessage: jest.fn(),
+      };
+      const portConnectionHandler =
+        // @ts-ignore
+        browser.runtime.onConnect.addListener.mock.calls[0][0];
+      // Attach port
+      portConnectionHandler(port);
+      const messageHandler = port.onMessage.addListener.mock.calls[0][0];
+      const disconnectHandler = port.onDisconnect.addListener.mock.calls[0][0];
+      // Send message
+      messageHandler({ id: 'foo' });
+      expect(listener).toHaveBeenCalled();
+      disconnectHandler();
+      // Needed to make sure port message is resolved
+      await listener();
+      expect(port.postMessage).not.toBeCalled();
+      teardown();
+    });
   });
   describe('FinchMessageConnection', () => {
     it('should be a valid connection', () => {
