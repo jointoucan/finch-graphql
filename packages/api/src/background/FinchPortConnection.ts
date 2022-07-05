@@ -100,6 +100,8 @@ export class FinchPortConnection implements FinchConnection {
         return;
       }
 
+      let portDisconnected = false;
+
       this.messagePorts.push(port);
 
       /**
@@ -108,6 +110,7 @@ export class FinchPortConnection implements FinchConnection {
        * process shutting down the client will attempt to make another connection.
        */
       port.onDisconnect.addListener(() => {
+        portDisconnected = true;
         const portIndex = this.messagePorts.indexOf(port);
         if (portIndex === -1) {
           return;
@@ -121,6 +124,9 @@ export class FinchPortConnection implements FinchConnection {
        */
       port.onMessage.addListener((msg: AnyFinchMessage) => {
         this.messageListener(msg, port.sender).then(resp => {
+          if (portDisconnected) {
+            return;
+          }
           port.postMessage({ id: msg.id, ...resp, external: isExternal });
         });
       });

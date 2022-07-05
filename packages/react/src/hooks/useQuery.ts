@@ -48,34 +48,47 @@ export const useQuery = <Query, Variables>(
   /**
    * makeQuery is a helper function that runs the query against the Finch client
    * and sets the state of the query.
+   *
+   * It will clear out old cache, and will also cancel the cache update if a new query is
+   * made.
+   *
+   * @returns a function that will stop cache from being updated with the result of the promise.
    */
   const makeQuery = useCallback(
-    async (argVars?: Variables) => {
-      try {
-        // Clear out old error cache
-        setError(null);
-        const resp = await client.query<Query, Variables>(
+    (argVars?: Variables) => {
+      let cancelled = false;
+
+      // Clear out old error cache
+      setError(null);
+      client
+        .query<Query, Variables>(
           query,
           // @ts-ignore variables are kinda weird
           argVars ?? variables ?? {},
           { timeout },
-        );
+        )
+        .then(resp => {
+          if (resp.data && mounted.current && !cancelled) {
+            setData(resp.data);
+          }
+          if (resp.errors && resp.errors.length && !cancelled) {
+            setError(resp.errors[0]);
+          }
+        })
+        .catch(e => {
+          if (mounted.current && !cancelled) {
+            setError(e);
+          }
+        })
+        .finally(() => {
+          if (mounted.current && !cancelled) {
+            setLoading(false);
+          }
+        });
 
-        if (resp.data && mounted.current) {
-          setData(resp.data);
-        }
-        if (resp.errors && resp.errors.length) {
-          setError(resp.errors[0]);
-        }
-      } catch (e) {
-        if (mounted.current) {
-          setError(e);
-        }
-      } finally {
-        if (mounted.current) {
-          setLoading(false);
-        }
-      }
+      return () => {
+        cancelled = true;
+      };
     },
     [query, variables],
   );
@@ -113,12 +126,14 @@ export const useQuery = <Query, Variables>(
         setData(updatedData);
       },
     );
+    let cancelQuery = () => {};
 
     if (!skip) {
       setLoading(true);
-      makeQuery();
+      cancelQuery = makeQuery();
     }
     return () => {
+      cancelQuery();
       unsubscribe();
     };
   }, [query, skip, variables]);
