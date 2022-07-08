@@ -44,7 +44,8 @@ export class FinchClient {
   private useMessages: boolean;
   private messageTimeout = 5000;
   private portTimeoutCount = 0;
-  private maxPortTimeoutCount = 2;
+  private maxPortTimeoutCount = 10;
+  private cancellableQueries: Set<() => void> = new Set();
   public status = FinchClientStatus.Idle;
 
   /**
@@ -64,7 +65,7 @@ export class FinchClient {
     useMessages,
     messageTimeout,
     autoStart = true,
-    maxPortTimeoutCount = 2,
+    maxPortTimeoutCount = 10,
   }: FinchClientOptions = {}) {
     this.cache = cache;
     this.id = id;
@@ -131,6 +132,7 @@ export class FinchClient {
     data: Query | null;
     errors?: GraphQLFormattedError[];
   }> {
+    let cancelled = false;
     return new Promise(resolve => {
       const messageId = v4();
       const decoratedMessage = messageCreator(
@@ -139,11 +141,27 @@ export class FinchClient {
         options.messageKey ?? this.messageKey,
         !!this.id,
       );
-
+      const cancel = () => {
+        cancelled = true;
+        this.cancellableQueries.delete(cancel);
+        resolve({
+          data: null,
+          errors: [
+            {
+              message: `Promise cancelled`,
+            },
+          ],
+        });
+      };
+      this.cancellableQueries.add(cancel);
       this.port?.postMessage({ id: messageId, ...decoratedMessage });
 
       const requestTimeout = setTimeout(() => {
+        if (cancelled) {
+          return;
+        }
         this.portTimeoutCount += 1;
+        this.cancellableQueries.delete(cancel);
         resolve({
           data: null,
           errors: [
@@ -153,6 +171,9 @@ export class FinchClient {
           ],
         });
         if (this.portTimeoutCount >= this.maxPortTimeoutCount) {
+          Array.from(this.cancellableQueries.values()).forEach(cancelQuery =>
+            cancelQuery(),
+          );
           this.port.disconnect();
           this.connectPort();
         }
@@ -172,7 +193,10 @@ export class FinchClient {
         if (id === messageId) {
           clearTimeout(requestTimeout);
           this.port?.onMessage.removeListener(onMessage);
-          resolve(response);
+          if (!cancelled) {
+            this.cancellableQueries.delete(cancel);
+            resolve(response);
+          }
         }
       };
 
