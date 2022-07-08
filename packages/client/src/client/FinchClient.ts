@@ -19,6 +19,7 @@ interface FinchClientOptions {
   useMessages?: boolean;
   messageTimeout?: number;
   autoStart?: boolean;
+  maxPortTimeoutCount?: number;
 }
 
 enum FinchClientStatus {
@@ -42,6 +43,8 @@ export class FinchClient {
   private portReconnectTimeout = 1000;
   private useMessages: boolean;
   private messageTimeout = 5000;
+  private portTimeoutCount = 0;
+  private maxPortTimeoutCount = 2;
   public status = FinchClientStatus.Idle;
 
   /**
@@ -61,6 +64,7 @@ export class FinchClient {
     useMessages,
     messageTimeout,
     autoStart = true,
+    maxPortTimeoutCount = 2,
   }: FinchClientOptions = {}) {
     this.cache = cache;
     this.id = id;
@@ -68,6 +72,7 @@ export class FinchClient {
     this.portName = portName || this.portName;
     this.useMessages = useMessages ?? false;
     this.messageTimeout = messageTimeout ?? this.messageTimeout;
+    this.maxPortTimeoutCount = maxPortTimeoutCount;
     if (autoStart) {
       this.start();
     }
@@ -138,6 +143,7 @@ export class FinchClient {
       this.port?.postMessage({ id: messageId, ...decoratedMessage });
 
       const requestTimeout = setTimeout(() => {
+        this.portTimeoutCount += 1;
         resolve({
           data: null,
           errors: [
@@ -146,6 +152,10 @@ export class FinchClient {
             },
           ],
         });
+        if (this.portTimeoutCount >= this.maxPortTimeoutCount) {
+          this.port.disconnect();
+          this.connectPort();
+        }
       }, options.timeout ?? this.messageTimeout);
 
       const onMessage = ({
