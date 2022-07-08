@@ -121,6 +121,17 @@ export class FinchClient {
     });
   }
 
+  /**
+   * queryApiViaPort will make a graphQL query to the background script via a [port](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port).
+   * This method has a timeout for messages build into it, because if a port is disconnected
+   * the would be no way to get a response without a timeout. There is also a max number of
+   * timeouts ( 10 by default ) that can trigger the port to attempt a reconnection.
+   *
+   * @param query A Document node or string to query the api
+   * @param variables Variables for this query
+   * @param options Any additional options for the query
+   * @returns The result of the query
+   */
   private queryApiViaPort<
     Query extends {} = {},
     Variables extends GenericVariables = {}
