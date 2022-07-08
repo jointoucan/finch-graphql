@@ -22,7 +22,7 @@ interface FinchClientOptions {
   maxPortTimeoutCount?: number;
 }
 
-enum FinchClientStatus {
+export enum FinchClientStatus {
   Disconnected = 'disconnected',
   Connected = 'connected',
   Connecting = 'connecting',
