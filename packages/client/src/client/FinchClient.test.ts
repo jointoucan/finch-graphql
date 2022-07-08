@@ -1,32 +1,31 @@
 import { FinchClient, FinchClientStatus } from './FinchClient';
 
 describe('FinchClient', () => {
-  let mockPort: browser.runtime.Port;
-  let originalConnect: () => browser.runtime.Port;
-  beforeEach(() => {
-    originalConnect = browser.runtime.connect;
-    mockPort = {
-      name: 'mockPort',
-      disconnect: jest.fn(),
-      postMessage: jest.fn(),
-      onDisconnect: {
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        hasListener: jest.fn(),
-      },
-      onMessage: {
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        hasListener: jest.fn(),
-      },
-    };
-    browser.runtime.connect = jest.fn().mockImplementation(() => mockPort);
-  });
-  afterEach(() => {
-    browser.runtime.connect = originalConnect;
-  });
-
   describe('a port connection', () => {
+    let mockPort: browser.runtime.Port;
+    let originalConnect: () => browser.runtime.Port;
+    beforeEach(() => {
+      originalConnect = browser.runtime.connect;
+      mockPort = {
+        name: 'mockPort',
+        disconnect: jest.fn(),
+        postMessage: jest.fn(),
+        onDisconnect: {
+          addListener: jest.fn(),
+          removeListener: jest.fn(),
+          hasListener: jest.fn(),
+        },
+        onMessage: {
+          addListener: jest.fn(),
+          removeListener: jest.fn(),
+          hasListener: jest.fn(),
+        },
+      };
+      browser.runtime.connect = jest.fn().mockImplementation(() => mockPort);
+    });
+    afterEach(() => {
+      browser.runtime.connect = originalConnect;
+    });
     it('should attempt to connect a port if useMessages is false', () => {
       const client = new FinchClient({
         useMessages: false,
