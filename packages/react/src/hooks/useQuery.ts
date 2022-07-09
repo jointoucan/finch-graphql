@@ -57,38 +57,42 @@ export const useQuery = <Query, Variables>(
   const makeQuery = useCallback(
     (argVars?: Variables) => {
       let cancelled = false;
+      const queryRequest = {
+        cancel: () => {
+          cancelled = true;
+        },
+        request: client
+          .query<Query, Variables>(
+            query,
+            // @ts-ignore variables are kinda weird
+            argVars ?? variables ?? {},
+            { timeout },
+          )
+          .then(resp => {
+            if (resp.data && mounted.current && !cancelled) {
+              setData(resp.data);
+            }
+            if (resp.errors && resp.errors.length && !cancelled) {
+              setError(resp.errors[0]);
+            }
+          })
+          .catch(e => {
+            if (mounted.current && !cancelled) {
+              setError(e);
+            }
+          })
+          .finally(() => {
+            if (mounted.current && !cancelled) {
+              setLoading(false);
+            }
+          }),
+        response: null,
+      };
 
       // Clear out old error cache
       setError(null);
-      client
-        .query<Query, Variables>(
-          query,
-          // @ts-ignore variables are kinda weird
-          argVars ?? variables ?? {},
-          { timeout },
-        )
-        .then(resp => {
-          if (resp.data && mounted.current && !cancelled) {
-            setData(resp.data);
-          }
-          if (resp.errors && resp.errors.length && !cancelled) {
-            setError(resp.errors[0]);
-          }
-        })
-        .catch(e => {
-          if (mounted.current && !cancelled) {
-            setError(e);
-          }
-        })
-        .finally(() => {
-          if (mounted.current && !cancelled) {
-            setLoading(false);
-          }
-        });
 
-      return () => {
-        cancelled = true;
-      };
+      return queryRequest;
     },
     [query, variables],
   );
@@ -115,6 +119,16 @@ export const useQuery = <Query, Variables>(
   }, []);
 
   /**
+   * refetch is a small methods that allows you to refetch the query.
+   */
+  const refetch = useCallback(
+    (overrideVariables?: Variables) => {
+      return makeQuery(overrideVariables).request;
+    },
+    [makeQuery],
+  );
+
+  /**
    * This effect handles the initial query and updating the query
    * if the variables or query changes.
    */
@@ -130,7 +144,7 @@ export const useQuery = <Query, Variables>(
 
     if (!skip) {
       setLoading(true);
-      cancelQuery = makeQuery();
+      cancelQuery = makeQuery().cancel;
     }
     return () => {
       cancelQuery();
@@ -180,7 +194,7 @@ export const useQuery = <Query, Variables>(
     data,
     error,
     loading,
-    refetch: makeQuery,
+    refetch,
     startPolling,
     stopPolling,
   };
