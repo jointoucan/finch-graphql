@@ -19,9 +19,10 @@ interface FinchClientOptions {
   useMessages?: boolean;
   messageTimeout?: number;
   autoStart?: boolean;
+  maxPortTimeoutCount?: number;
 }
 
-enum FinchClientStatus {
+export enum FinchClientStatus {
   Disconnected = 'disconnected',
   Connected = 'connected',
   Connecting = 'connecting',
@@ -42,6 +43,9 @@ export class FinchClient {
   private portReconnectTimeout = 1000;
   private useMessages: boolean;
   private messageTimeout = 5000;
+  private portTimeoutCount = 0;
+  private maxPortTimeoutCount = 10;
+  private cancellableQueries: Set<() => void> = new Set();
   public status = FinchClientStatus.Idle;
 
   /**
@@ -61,6 +65,7 @@ export class FinchClient {
     useMessages,
     messageTimeout,
     autoStart = true,
+    maxPortTimeoutCount = 10,
   }: FinchClientOptions = {}) {
     this.cache = cache;
     this.id = id;
@@ -68,6 +73,7 @@ export class FinchClient {
     this.portName = portName || this.portName;
     this.useMessages = useMessages ?? false;
     this.messageTimeout = messageTimeout ?? this.messageTimeout;
+    this.maxPortTimeoutCount = maxPortTimeoutCount;
     if (autoStart) {
       this.start();
     }
@@ -115,6 +121,17 @@ export class FinchClient {
     });
   }
 
+  /**
+   * queryApiViaPort will make a graphQL query to the background script via a [port](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port).
+   * This method has a timeout for messages build into it, because if a port is disconnected
+   * the would be no way to get a response without a timeout. There is also a max number of
+   * timeouts ( 10 by default ) that can trigger the port to attempt a reconnection.
+   *
+   * @param query A Document node or string to query the api
+   * @param variables Variables for this query
+   * @param options Any additional options for the query
+   * @returns The result of the query
+   */
   private queryApiViaPort<
     Query extends {} = {},
     Variables extends GenericVariables = {}
@@ -126,6 +143,7 @@ export class FinchClient {
     data: Query | null;
     errors?: GraphQLFormattedError[];
   }> {
+    let cancelled = false;
     return new Promise(resolve => {
       const messageId = v4();
       const decoratedMessage = messageCreator(
@@ -134,10 +152,27 @@ export class FinchClient {
         options.messageKey ?? this.messageKey,
         !!this.id,
       );
-
+      const cancel = () => {
+        cancelled = true;
+        this.cancellableQueries.delete(cancel);
+        resolve({
+          data: null,
+          errors: [
+            {
+              message: `Promise cancelled`,
+            },
+          ],
+        });
+      };
+      this.cancellableQueries.add(cancel);
       this.port?.postMessage({ id: messageId, ...decoratedMessage });
 
       const requestTimeout = setTimeout(() => {
+        if (cancelled) {
+          return;
+        }
+        this.portTimeoutCount += 1;
+        this.cancellableQueries.delete(cancel);
         resolve({
           data: null,
           errors: [
@@ -146,6 +181,13 @@ export class FinchClient {
             },
           ],
         });
+        if (this.portTimeoutCount >= this.maxPortTimeoutCount) {
+          Array.from(this.cancellableQueries.values()).forEach(cancelQuery =>
+            cancelQuery(),
+          );
+          this.port.disconnect();
+          this.connectPort();
+        }
       }, options.timeout ?? this.messageTimeout);
 
       const onMessage = ({
@@ -162,7 +204,10 @@ export class FinchClient {
         if (id === messageId) {
           clearTimeout(requestTimeout);
           this.port?.onMessage.removeListener(onMessage);
-          resolve(response);
+          if (!cancelled) {
+            this.cancellableQueries.delete(cancel);
+            resolve(response);
+          }
         }
       };
 
