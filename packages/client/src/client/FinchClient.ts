@@ -92,7 +92,7 @@ export class FinchClient {
   }
 
   stop() {
-    this.port.disconnect();
+    this.port?.disconnect();
     // Timeout is to let the event fire before setting state
     setTimeout(() => {
       this.status = FinchClientStatus.Idle;
@@ -106,9 +106,11 @@ export class FinchClient {
       connectInfo: { name: this.portName },
     });
     this.port = port;
-    this.status = FinchClientStatus.Connected;
+    this.status = port
+      ? FinchClientStatus.Connected
+      : FinchClientStatus.Disconnected;
 
-    port.onDisconnect.addListener(() => {
+    port?.onDisconnect.addListener(() => {
       this.status = FinchClientStatus.Disconnected;
       this.portReconnectTimeout = window.setTimeout(() => {
         if (this.status === FinchClientStatus.Idle) {
@@ -185,7 +187,7 @@ export class FinchClient {
           Array.from(this.cancellableQueries.values()).forEach(cancelQuery =>
             cancelQuery(),
           );
-          this.port.disconnect();
+          this.port?.disconnect();
           this.connectPort();
         }
       }, options.timeout ?? this.messageTimeout);

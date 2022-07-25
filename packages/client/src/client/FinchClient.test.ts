@@ -26,6 +26,12 @@ describe('FinchClient', () => {
     afterEach(() => {
       browser.runtime.connect = originalConnect;
     });
+
+    it('should not throw when no port is connected', () => {
+      browser.runtime.connect = jest.fn().mockImplementation(() => undefined);
+      expect(() => new FinchClient()).not.toThrow();
+    });
+
     it('should attempt to connect a port if useMessages is false', () => {
       const client = new FinchClient({
         useMessages: false,
