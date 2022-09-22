@@ -1,3 +1,5 @@
+> 🫡 Maintained fork of finch-graphql
+
 ![Finch GraphQL](./assets/finch-graphql.svg)
 
 # Finch GraphQL
