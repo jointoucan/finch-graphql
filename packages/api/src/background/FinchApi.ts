@@ -64,11 +64,12 @@ export class FinchApi {
     validationRules = [],
     disableDevtools = false,
     connection,
+    middleware,
     ...options
   }: FinchApiOptions) {
     this.schema = makeExecutableSchema(options);
-    if (options.middleware) {
-      this.schema = applyMiddleware(this.schema, ...options.middleware);
+    if (middleware) {
+      this.schema = applyMiddleware(this.schema, ...middleware);
     }
     this.context = context ?? { source: FinchMessageSource.Internal };
     this.messageKey = messageKey ?? FinchMessageKey.Generic;
