@@ -1,6 +1,6 @@
 {
   "name": "@finch-graphql/api",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Graphql api for your background script of a web extension",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
