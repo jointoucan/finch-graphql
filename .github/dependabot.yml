@@ -6,8 +6,6 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
-    reviewers:
-      - jcblw
     ignore:
       - dependency-name: framer-motion
         versions:
