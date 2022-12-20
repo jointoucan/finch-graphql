@@ -68,7 +68,9 @@ export class FinchClient {
     autoStart = true,
     maxPortTimeoutCount = 10,
   }: FinchClientOptions = {}) {
-    this.cache = cache;
+    if (cache) {
+      this.cache = cache;
+    }
     this.id = id;
     this.messageKey = messageKey;
     this.portName = portName || this.portName;

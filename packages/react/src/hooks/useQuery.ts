@@ -38,14 +38,13 @@ export const useQuery = <Query, Variables>(
   const [variables, setVariables] = useState(passedVariables);
   const cache = useMemo(() => {
     const queryCache = client.cache.getCache<Query>(query, variables);
-    if (skip) {
+    if (!skip) {
       client.query(query, variables, { timeout: timeout });
     }
     return queryCache;
   }, useDeepCompareMemoize([variables, query, skip, timeout]));
-  const { data, errors, loading } = useSyncExternalStore(
-    cache.subscribe,
-    cache.getSnapshot,
+  const { data, errors, loading } = useSyncExternalStore(cache.subscribe, () =>
+    cache.getSnapshot(),
   );
   const error = errors?.[0];
   const mounted = useRef(true);
@@ -132,12 +131,15 @@ export const useQuery = <Query, Variables>(
     };
   }, []);
 
-  return {
-    data,
-    error,
-    loading,
-    refetch,
-    startPolling,
-    stopPolling,
-  };
+  return useMemo(
+    () => ({
+      data,
+      error,
+      loading,
+      refetch,
+      startPolling,
+      stopPolling,
+    }),
+    [data, error, loading, refetch, startPolling, stopPolling],
+  );
 };

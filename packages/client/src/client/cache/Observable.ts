@@ -14,19 +14,19 @@ export class Observable<T = any> {
    * @param function to be called when the observable changes
    * @returns a function that can be called to unsubscribe
    */
-  public subscribe(fn: () => void) {
+  public subscribe = (fn: () => void) => {
     this.emitter.on('change', fn);
     return () => {
       this.emitter.off('change', fn);
     };
-  }
+  };
 
   /**
    * This method allows for the getting of a snapshot of the current value
    */
-  public getSnapshot() {
+  public getSnapshot = () => {
     return this.value;
-  }
+  };
 
   /**
    * This method allows for the updating of the observable value
