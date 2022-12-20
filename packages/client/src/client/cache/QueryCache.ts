@@ -1,12 +1,13 @@
 import { DocumentNode, print } from 'graphql';
-import { Listener, FinchCache } from './types';
+import { Observable } from './Observable';
+import {
+  FinchCache,
+  FinchQueryObservable,
+  FinchQueryResults,
+  FinchCacheStatus,
+} from './types';
 
-type Cache = Map<string, unknown>;
-
-interface ListenerMap {
-  [key: string]: Array<Listener<unknown>>;
-}
-
+type Cache = Map<string, FinchQueryObservable<unknown>>;
 interface QueryCacheOptions {
   hydrate?: Cache;
 }
@@ -18,8 +19,7 @@ interface QueryCacheOptions {
  * @implements FinchCache
  */
 export class QueryCache implements FinchCache {
-  cache: Cache;
-  listeners: ListenerMap;
+  store: Cache;
 
   /**
    * serializeQuery is a static method on the the QueryCache class that allow
@@ -39,33 +39,13 @@ export class QueryCache implements FinchCache {
    * @param options.hydrate A Map with the serialized query cache.
    */
   constructor(options: QueryCacheOptions = {}) {
-    this.cache = options.hydrate ?? new Map();
-    this.listeners = {};
-  }
-
-  subscribe<Query extends unknown>(
-    doc: DocumentNode,
-    variables: any,
-    listener: Listener<Query>,
-  ) {
-    const key = QueryCache.serializeQuery(doc, variables);
-    if (typeof this.listeners[key] === 'undefined') {
-      this.listeners[key] = [];
-    }
-    this.listeners[key].push(listener);
-    return () => {
-      const index = this.listeners[key].indexOf(listener);
-      this.listeners[key] = [
-        ...this.listeners[key].slice(0, index),
-        ...this.listeners[key].slice(index + 1),
-      ];
-    };
+    this.store = options.hydrate ?? new Map();
   }
 
   setCache<Query extends unknown>(
     doc: DocumentNode,
     variables: any,
-    result: Query,
+    result: FinchQueryResults<Query>,
   ) {
     const key = QueryCache.serializeQuery(doc, variables);
     this.setCacheKey<Query>(key, result);
@@ -73,14 +53,25 @@ export class QueryCache implements FinchCache {
 
   getCache<Query extends unknown>(doc: DocumentNode, variables: any) {
     const key = QueryCache.serializeQuery(doc, variables);
-    return this.cache.get(key) as Query | undefined;
+    let cache = this.store.get(key) as FinchQueryObservable<Query> | undefined;
+    if (!cache) {
+      cache = new Observable<FinchQueryResults<Query>>({
+        data: undefined,
+        errors: undefined,
+        loading: true,
+        cacheStatus: FinchCacheStatus.Unknown,
+      });
+      this.store.set(key, cache);
+    }
+    return cache;
   }
 
-  private setCacheKey<Query extends unknown>(key: string, value: Query) {
-    const listeners = this.listeners[key] ?? [];
-    this.cache.set(key, value);
-    listeners.forEach(fn => {
-      fn(value);
-    });
+  private setCacheKey<Query extends unknown>(
+    key: string,
+    value: FinchQueryResults<Query>,
+  ) {
+    const cache =
+      this.store.get(key) ?? new Observable<FinchQueryResults<Query>>(value);
+    cache.update(value);
   }
 }

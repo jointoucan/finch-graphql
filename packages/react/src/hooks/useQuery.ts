@@ -1,6 +1,7 @@
-import { DocumentNode, GraphQLFormattedError } from 'graphql';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import useDeepCompareEffect from 'use-deep-compare-effect';
+import { DocumentNode } from 'graphql';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useDeepCompareMemoize } from 'use-deep-compare-effect';
+import { useSyncExternalStore } from 'use-sync-external-store/shim';
 import { useFinchClient } from './FinchProvider';
 
 interface BackgroundQueryOptions<Variables> {
@@ -10,8 +11,6 @@ interface BackgroundQueryOptions<Variables> {
   poll?: boolean;
   timeout?: number;
 }
-
-type QueryError = GraphQLFormattedError | Error;
 
 /**
  * useQuery is a hook that allows you to easily fetch data from a Finch GraphQL
@@ -29,73 +28,31 @@ export const useQuery = <Query, Variables>(
   query: DocumentNode,
   {
     skip,
-    variables,
+    variables: passedVariables,
     pollInterval: passedPollInterval = 0,
     poll,
     timeout,
   }: BackgroundQueryOptions<Variables> = {},
 ) => {
   const { client } = useFinchClient();
+  const [variables, setVariables] = useState(passedVariables);
+  const cache = useMemo(() => {
+    const queryCache = client.cache.getCache<Query>(query, variables);
+    if (skip) {
+      client.query(query, variables, { timeout: timeout });
+    }
+    return queryCache;
+  }, useDeepCompareMemoize([variables, query, skip, timeout]));
+  const { data, errors, loading } = useSyncExternalStore(
+    cache.subscribe,
+    cache.getSnapshot,
+  );
+  const error = errors?.[0];
   const mounted = useRef(true);
-  const [data, setData] = useState<Query | null>(null);
-  const [error, setError] = useState<QueryError | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [shouldPoll, setShouldPoll] = useState<boolean>(
     () => poll ?? !!passedPollInterval,
   );
   const [pollInterval, setPollInterval] = useState<number>(passedPollInterval);
-
-  /**
-   * makeQuery is a helper function that runs the query against the Finch client
-   * and sets the state of the query.
-   *
-   * It will clear out old cache, and will also cancel the cache update if a new query is
-   * made.
-   *
-   * @returns a function that will stop cache from being updated with the result of the promise.
-   */
-  const makeQuery = useCallback(
-    (argVars?: Variables) => {
-      let cancelled = false;
-      const queryRequest = {
-        cancel: () => {
-          cancelled = true;
-        },
-        request: client
-          .query<Query, Variables>(
-            query,
-            // @ts-ignore variables are kinda weird
-            argVars ?? variables ?? {},
-            { timeout },
-          )
-          .then(resp => {
-            if (resp.data && mounted.current && !cancelled) {
-              setData(resp.data);
-            }
-            if (resp.errors && resp.errors.length && !cancelled) {
-              setError(resp.errors[0]);
-            }
-          })
-          .catch(e => {
-            if (mounted.current && !cancelled) {
-              setError(e);
-            }
-          })
-          .finally(() => {
-            if (mounted.current && !cancelled) {
-              setLoading(false);
-            }
-          }),
-        response: null,
-      };
-
-      // Clear out old error cache
-      setError(null);
-
-      return queryRequest;
-    },
-    [query, variables],
-  );
 
   /**
    * startPolling turns on polling for the query. This is useful for
@@ -123,34 +80,15 @@ export const useQuery = <Query, Variables>(
    */
   const refetch = useCallback(
     (overrideVariables?: Variables) => {
-      return makeQuery(overrideVariables).request;
+      if (overrideVariables) {
+        setVariables(overrideVariables);
+      }
+      return client.query(query, overrideVariables ?? variables, {
+        timeout: timeout,
+      });
     },
-    [makeQuery],
+    [client, timeout],
   );
-
-  /**
-   * This effect handles the initial query and updating the query
-   * if the variables or query changes.
-   */
-  useDeepCompareEffect(() => {
-    const unsubscribe = client.subscribe<Query>(
-      query,
-      variables,
-      updatedData => {
-        setData(updatedData);
-      },
-    );
-    let cancelQuery = () => {};
-
-    if (!skip) {
-      setLoading(true);
-      cancelQuery = makeQuery().cancel;
-    }
-    return () => {
-      cancelQuery();
-      unsubscribe();
-    };
-  }, [query, skip, variables]);
 
   /**
    * This effect handles polling the query if the pollInterval is set,
@@ -161,7 +99,7 @@ export const useQuery = <Query, Variables>(
     let timer: number | undefined;
     if (shouldPoll && pollInterval) {
       timer = window.setInterval(async () => {
-        await makeQuery();
+        refetch();
       }, pollInterval);
     }
     return () => {
@@ -178,6 +116,10 @@ export const useQuery = <Query, Variables>(
       setPollInterval(passedPollInterval);
     }
   }, [passedPollInterval]);
+
+  useEffect(() => {
+    setVariables(passedVariables);
+  }, useDeepCompareMemoize([passedVariables]));
 
   /**
    * This effect handles the mounted ref, to make sure we dont update state after the

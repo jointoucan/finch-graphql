@@ -1,20 +1,31 @@
-import { DocumentNode } from 'graphql';
+import { DocumentNode, GraphQLFormattedError } from 'graphql';
+import { Observable } from './Observable';
 
-export type Listener<Query extends unknown> = (updateInfo: Query) => void;
+export enum FinchCacheStatus {
+  Fresh = 'fresh',
+  Stale = 'stale',
+  Unknown = 'unknown',
+}
+
+export interface FinchQueryResults<Query extends unknown> {
+  data?: Query;
+  errors?: Array<GraphQLFormattedError>;
+  loading: boolean;
+  cacheStatus: FinchCacheStatus;
+}
+
+export type FinchQueryObservable<Query extends unknown> = Observable<
+  FinchQueryResults<Query>
+>;
 
 export interface FinchCache {
   setCache<Query extends unknown>(
     doc: DocumentNode,
     variables: any,
-    result: Query,
+    result: FinchQueryResults<Query>,
   ): void;
   getCache<Query extends unknown>(
     doc: DocumentNode,
     variables: any,
-  ): Query | undefined;
-  subscribe<Query extends unknown>(
-    doc: DocumentNode,
-    variables: any,
-    listener: Listener<Query>,
-  );
+  ): FinchQueryObservable<Query> | undefined;
 }

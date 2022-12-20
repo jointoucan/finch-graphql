@@ -1,6 +1,6 @@
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import gql from 'graphql-tag';
-import { FinchCache, Listener } from './cache';
+import { QueryCache } from './cache';
 import {
   FinchDefaultPortName,
   FinchQueryOptions,
@@ -10,9 +10,10 @@ import { isDocumentNode } from '../utils';
 import { messageCreator, queryApi } from './client';
 import { connectPort } from '@finch-graphql/browser-polyfill';
 import { v4 } from 'uuid';
+import { FinchCacheStatus } from './cache/types';
 
 interface FinchClientOptions {
-  cache?: FinchCache;
+  cache?: QueryCache;
   id?: string;
   messageKey?: string;
   portName?: string;
@@ -35,7 +36,6 @@ export enum FinchClientStatus {
  * are made and also any query caching.
  */
 export class FinchClient {
-  private cache: FinchCache | undefined;
   private id: string | undefined;
   private messageKey: string | undefined;
   private port: browser.runtime.Port | chrome.runtime.Port | null;
@@ -47,6 +47,7 @@ export class FinchClient {
   private maxPortTimeoutCount = 10;
   private cancellableQueries: Set<() => void> = new Set();
   public status = FinchClientStatus.Idle;
+  public cache: QueryCache = new QueryCache();
 
   /**
    *
@@ -251,6 +252,15 @@ export class FinchClient {
     options: FinchQueryOptions = {},
   ) {
     const documentNode = isDocumentNode(query) ? query : gql(query);
+    let cache = this.cache?.getCache(documentNode, variables);
+    const snapshot = cache?.getSnapshot();
+    if (!snapshot.data || !snapshot.errors) {
+      cache.update({
+        ...snapshot,
+        loading: true,
+      });
+    }
+
     const result = await this.queryApi<Query, Variables>(
       documentNode,
       variables,
@@ -261,8 +271,13 @@ export class FinchClient {
       },
     );
 
-    if (this.cache && result?.data) {
-      this.cache.setCache(documentNode, variables, result.data);
+    if (this.cache) {
+      this.cache.setCache(documentNode, variables, {
+        data: result.data,
+        errors: result.errors,
+        loading: false,
+        cacheStatus: FinchCacheStatus.Fresh,
+      });
     }
     return result;
   }
@@ -303,15 +318,16 @@ export class FinchClient {
    * @param listener A Function that is called when the cache is updated
    * @returns A function that unsubscribes from the query.
    */
-  subscribe<Query extends unknown>(
-    query: string | DocumentNode,
+  subscribe<Query extends DocumentNode>(
+    query: Query,
     variables: unknown,
-    listener: Listener<Query>,
+    listener: () => void,
   ) {
     if (!this.cache) {
       return () => {};
     }
     const documentNode = isDocumentNode(query) ? query : gql(query);
-    return this.cache.subscribe<Query>(documentNode, variables, listener);
+    const cache = this.cache.getCache(documentNode, variables);
+    return cache.subscribe(listener);
   }
 }
