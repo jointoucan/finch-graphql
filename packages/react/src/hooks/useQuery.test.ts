@@ -40,8 +40,9 @@ describe('useQuery', () => {
     await wrapper.waitForNextUpdate();
 
     expect(sendMessageMock.mock.calls[0][0]).toEqual({
+      external: undefined,
       query: testDoc,
-      variables: {},
+      variables: undefined,
       type: FinchMessageKey.Generic,
     });
 
@@ -68,7 +69,7 @@ describe('useQuery', () => {
 
     await wrapper.waitForNextUpdate();
 
-    expect(wrapper.result.current.error.message).toBe('foo');
+    expect(wrapper.result.current.error?.message).toBe('foo');
   });
   it('refetch should send another message', async () => {
     const sendMessageMock = jest
@@ -99,8 +100,9 @@ describe('useQuery', () => {
 
     expect(sendMessageMock.mock.calls[1][0]).toEqual({
       query: testDoc,
-      variables: {},
+      variables: undefined,
       type: FinchMessageKey.Generic,
+      external: undefined,
     });
   });
   it('should clear out any old error values on refetch', async () => {
@@ -126,7 +128,7 @@ describe('useQuery', () => {
     await wrapper.waitForNextUpdate();
 
     // Original error
-    expect(wrapper.result.current.error.message).toBe('foo');
+    expect(wrapper.result.current.error?.message).toBe('foo');
 
     sendMessageMock.mockReset().mockImplementation((message, callback) => {
       setTimeout(() => {
@@ -139,7 +141,7 @@ describe('useQuery', () => {
     });
 
     // Error cache is cleared
-    expect(wrapper.result.current.error).toBe(null);
+    expect(wrapper.result.current.error).toBe(undefined);
   });
   it('wrapping it in a provider should allow for external calls', async () => {
     const sendMessageMock = jest
@@ -228,13 +230,15 @@ describe('useQuery', () => {
     // Validate initial data is present
     expect(wrapper.result.current.data).toEqual({ bar: 'baz' });
 
-    await act(async () => {
+    act(() => {
       // Change the response
       sendMessageMock.mockImplementationOnce((_, callback) =>
         callback({ data: { bar: 'qux' } }),
       );
-      await client.query(testDoc, { foo: 'bar' });
+      client.query(testDoc, { foo: 'bar' });
     });
+
+    await wrapper.waitForNextUpdate();
 
     // Validate new value is present
     expect(wrapper.result.current.data).toEqual({ bar: 'qux' });
@@ -329,5 +333,55 @@ describe('useQuery', () => {
     });
 
     expect(() => expect(sendMessageMock).toBeCalledTimes(4)).toThrow(/3/);
+  });
+  it.only('should refetch cache when the cache is invalidated', async () => {
+    const sendMessageMock = jest
+      .fn()
+      .mockImplementationOnce((_, callback) =>
+        callback({ data: { bar: 'baz' } }),
+      );
+    chrome.runtime.sendMessage = sendMessageMock;
+
+    const client = new FinchClient({
+      cache: new QueryCache(),
+      useMessages: true,
+    });
+
+    const wrapper = renderHook(
+      ({ foo }) =>
+        useQuery(testDoc, {
+          variables: { foo },
+        }),
+      {
+        initialProps: {
+          foo: 'bar',
+        },
+        wrapper: ({ children }) => {
+          return React.createElement(FinchProvider, {
+            // @ts-ignore
+            children,
+            client,
+          });
+        },
+      },
+    );
+
+    await wrapper.waitForNextUpdate();
+    expect(sendMessageMock).toBeCalledTimes(1);
+
+    expect(wrapper.result.current.data).toEqual({ bar: 'baz' });
+
+    sendMessageMock.mockImplementationOnce((_, callback) =>
+      callback({ data: { bar: 'qux' } }),
+    );
+
+    act(() => {
+      wrapper.result.current.invalidate();
+    });
+
+    await wrapper.waitForNextUpdate();
+
+    expect(sendMessageMock).toBeCalledTimes(2);
+    expect(wrapper.result.current.data).toEqual({ bar: 'qux' });
   });
 });

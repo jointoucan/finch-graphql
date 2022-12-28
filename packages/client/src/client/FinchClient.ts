@@ -1,6 +1,7 @@
 import { DocumentNode, GraphQLFormattedError } from 'graphql';
 import gql from 'graphql-tag';
-import { FinchCache, Listener } from './cache';
+import { Awaited, FinchCachePolicy } from '@finch-graphql/types';
+import { QueryCache } from './cache';
 import {
   FinchDefaultPortName,
   FinchQueryOptions,
@@ -10,9 +11,10 @@ import { isDocumentNode } from '../utils';
 import { messageCreator, queryApi } from './client';
 import { connectPort } from '@finch-graphql/browser-polyfill';
 import { v4 } from 'uuid';
+import { FinchCacheStatus, FinchQueryObservable } from './types';
 
 interface FinchClientOptions {
-  cache?: FinchCache;
+  cache?: QueryCache;
   id?: string;
   messageKey?: string;
   portName?: string;
@@ -20,6 +22,7 @@ interface FinchClientOptions {
   messageTimeout?: number;
   autoStart?: boolean;
   maxPortTimeoutCount?: number;
+  cachePolicy?: FinchCachePolicy;
 }
 
 export enum FinchClientStatus {
@@ -35,7 +38,6 @@ export enum FinchClientStatus {
  * are made and also any query caching.
  */
 export class FinchClient {
-  private cache: FinchCache | undefined;
   private id: string | undefined;
   private messageKey: string | undefined;
   private port: browser.runtime.Port | chrome.runtime.Port | null;
@@ -46,7 +48,13 @@ export class FinchClient {
   private portTimeoutCount = 0;
   private maxPortTimeoutCount = 10;
   private cancellableQueries: Set<() => void> = new Set();
+  private subscriptions: WeakMap<
+    FinchQueryObservable<unknown>,
+    () => void
+  > = new WeakMap();
+  private cachePolicy: FinchCachePolicy;
   public status = FinchClientStatus.Idle;
+  public cache: QueryCache = new QueryCache();
 
   /**
    *
@@ -66,14 +74,18 @@ export class FinchClient {
     messageTimeout,
     autoStart = true,
     maxPortTimeoutCount = 10,
+    cachePolicy = FinchCachePolicy.CacheFirst,
   }: FinchClientOptions = {}) {
-    this.cache = cache;
+    if (cache) {
+      this.cache = cache;
+    }
     this.id = id;
     this.messageKey = messageKey;
     this.portName = portName || this.portName;
     this.useMessages = useMessages ?? false;
     this.messageTimeout = messageTimeout ?? this.messageTimeout;
     this.maxPortTimeoutCount = maxPortTimeoutCount;
+    this.cachePolicy = cachePolicy;
     if (autoStart) {
       this.start();
     }
@@ -251,20 +263,67 @@ export class FinchClient {
     options: FinchQueryOptions = {},
   ) {
     const documentNode = isDocumentNode(query) ? query : gql(query);
-    const result = await this.queryApi<Query, Variables>(
-      documentNode,
-      variables,
-      {
-        id: this.id,
-        messageKey: this.messageKey,
-        ...options,
-      },
-    );
+    let cache = this.cache?.getCache(documentNode, variables) as
+      | FinchQueryObservable<Query>
+      | undefined;
+    const respondWithCache =
+      (options.cachePolicy ?? this.cachePolicy) === FinchCachePolicy.CacheFirst;
 
-    if (this.cache && result?.data) {
-      this.cache.setCache(documentNode, variables, result.data);
+    const snapshot = cache?.getSnapshot();
+    if (!snapshot.data && !snapshot.errors) {
+      cache.update({
+        ...snapshot,
+        cacheStatus: FinchCacheStatus.Fresh,
+        loading: true,
+      });
     }
-    return result;
+
+    const pendingFetch = new Promise(async resolve => {
+      let result: Awaited<Omit<typeof snapshot, 'cacheStatus' | 'loading'>>;
+      try {
+        result = await this.queryApi<Query, Variables>(
+          documentNode,
+          variables,
+          {
+            id: this.id,
+            messageKey: this.messageKey,
+            ...options,
+          },
+        );
+
+        if (this.cache) {
+          this.cache.setCache(documentNode, variables, {
+            data: result?.data ?? snapshot.data,
+            errors: result?.errors,
+            loading: false,
+            cacheStatus: FinchCacheStatus.Fresh,
+          });
+          this.queryLifecycleManager(documentNode, variables);
+
+          resolve(result);
+          return;
+        }
+      } catch (e) {
+        result = {
+          data: snapshot?.data,
+          errors: [e],
+        };
+        if (this.cache) {
+          this.cache.setCache(documentNode, variables, {
+            data: snapshot.data,
+            errors: [e],
+            loading: false,
+            cacheStatus: FinchCacheStatus.Fresh,
+          });
+        }
+      }
+      resolve(result);
+    });
+
+    if (respondWithCache && snapshot.data && !snapshot.errors) {
+      return snapshot;
+    }
+    return pendingFetch;
   }
 
   /**
@@ -303,15 +362,44 @@ export class FinchClient {
    * @param listener A Function that is called when the cache is updated
    * @returns A function that unsubscribes from the query.
    */
-  subscribe<Query extends unknown>(
-    query: string | DocumentNode,
+  subscribe<Query extends DocumentNode>(
+    query: Query,
     variables: unknown,
-    listener: Listener<Query>,
+    listener: () => void,
   ) {
     if (!this.cache) {
       return () => {};
     }
     const documentNode = isDocumentNode(query) ? query : gql(query);
-    return this.cache.subscribe<Query>(documentNode, variables, listener);
+    const cache = this.cache.getCache(documentNode, variables);
+    return cache.subscribe(listener);
+  }
+
+  /**
+   * Query lifecycle manager manages the lifecycle of a query. This is mainly used
+   * revalidating queries when the cache is stale.
+   * @param query A Document node or string to query the api
+   * @param variables Variables for this query
+   * @param observable The observable to subscribe to
+   */
+  private queryLifecycleManager<
+    Query extends {} = {},
+    Variables extends GenericVariables = {}
+  >(query: DocumentNode, variables?: Variables, options?: FinchQueryOptions) {
+    const observable = this.cache?.getCache(
+      query,
+      variables,
+    ) as FinchQueryObservable<Query>;
+    const unsubscribe = this.subscriptions.get(observable);
+    if (unsubscribe) {
+      unsubscribe();
+    }
+    const subscription = observable.subscribe(() => {
+      const snapshot = observable.getSnapshot();
+      if (snapshot.cacheStatus === FinchCacheStatus.Stale) {
+        this.query(query, variables, { timeout: options?.timeout });
+      }
+    });
+    this.subscriptions.set(observable, subscription);
   }
 }
