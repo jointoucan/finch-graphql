@@ -270,7 +270,12 @@ export class FinchClient {
       (options.cachePolicy ?? this.cachePolicy) === FinchCachePolicy.CacheFirst;
 
     const snapshot = cache?.getSnapshot();
-    if (!snapshot.data && !snapshot.errors) {
+
+    if (snapshot.loading) {
+      return snapshot;
+    }
+
+    if (!snapshot.data && !snapshot.errors && !snapshot.loading) {
       cache.update({
         ...snapshot,
         cacheStatus: FinchCacheStatus.Fresh,

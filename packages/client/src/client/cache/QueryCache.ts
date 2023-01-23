@@ -58,7 +58,7 @@ export class QueryCache implements FinchCache {
       cache = new Observable<FinchQueryResults<Query>>({
         data: undefined,
         errors: undefined,
-        loading: true,
+        loading: false,
         cacheStatus: FinchCacheStatus.Unknown,
       });
       this.store.set(key, cache);

@@ -101,12 +101,12 @@ describe('FinchClient', () => {
       expect(browser.runtime.connect).toHaveBeenCalledTimes(1);
       await client.query('query foo { bar }');
       const timeoutPendingQuery = client.query(
-        'query foo { bar }',
+        'query bar { baz }',
         {},
         { timeout: 100 },
       );
       const pendingQuery = client.query(
-        'query foo { bar }',
+        'query baz { qux }',
         {},
         { timeout: 1000 },
       );
