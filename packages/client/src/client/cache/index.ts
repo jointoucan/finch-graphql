@@ -1,2 +1,2 @@
 export { QueryCache } from './QueryCache';
-export type { Listener, FinchCache } from './types';
+export { Observable } from './Observable';

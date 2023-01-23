@@ -17,6 +17,18 @@ export enum FinchConnectionType {
   Message = 'message',
 }
 
+export enum FinchCachePolicy {
+  /**
+   * CacheFirst will try to get the data from the cache, and respond with the
+   * cached data and update the data in the background.
+   */
+  CacheFirst = 'cache-first',
+  /**
+   * FetchFirst will fetch and respond with the data from the fetch, and update the cache.
+   */
+  FetchFirst = 'fetch-first',
+}
+
 export const FinchDefaultPortName = '_finchMessagePort';
 
 export type GenericVariables = { [key: string]: any };
@@ -66,6 +78,7 @@ export interface FinchQueryOptions {
   messageKey?: string;
   external?: boolean;
   timeout?: number;
+  cachePolicy?: FinchCachePolicy;
 }
 
 export interface FinchExecutionResults<Query> {
